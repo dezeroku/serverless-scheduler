@@ -8,8 +8,9 @@ import os
 import sys
 import logging
 import time
-import smtplib
 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 def check_for_variable_existence(variables):
     logger = logging.getLogger('checker')
@@ -20,44 +21,54 @@ def check_for_variable_existence(variables):
     return True
 
 
+def started_mail(url):
+    logger = logging.getLogger('email')
+    if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
+                                         'SENDGRID_API_KEY']):
+        return
+
+    message = Mail(
+        from_email=os.environ.get('MAIL_SENDER'),
+        to_emails=os.environ.get("MAIL_RECIPIENT"),
+        subject="Started monitoring " + url,
+        html_content="""Hi user!<br> We started monitoring {} for you.
+        <br>
+MAY THE FORCE BE WITH YOU""".format(url)
+    )
+
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        logger.info(response.status_code)
+        logger.info(response.body)
+        logger.info(response.headers)
+    except Exception as e:
+        logger.error(e.message)
+
+
 def changes_mail(url):
     logger = logging.getLogger('email')
     if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
-                                        'MAIL_PASSWORD', 'MAIL_HOST',
-                                         'MAIL_PORT']):
+                                         'SENDGRID_API_KEY']):
         return
 
-    to = os.environ.get("MAIL_RECIPIENT")
-    subject = "Changes detected on " + url
-    message = """Changes were detected on the page you ordered to monitor.
+    message = Mail(
+        from_email=os.environ.get('MAIL_SENDER'),
+        to_emails=os.environ.get("MAIL_RECIPIENT"),
+        subject="Changes detected on " + url,
+        html_content="""Changes were detected on the page you ordered to monitor.
+        <br>
 MAY THE FORCE BE WITH YOU"""
-
-    sender = os.environ.get("MAIL_SENDER")
-    password = os.environ.get("MAIL_PASSWORD")
-
-    host = os.environ.get("MAIL_HOST")
-    try:
-        port = int(os.environ.get("MAIL_PORT"))
-    except ValueError:
-        logger.error("Cannot convert MAIL_PORT to integer")
-        return
-
-    server = smtplib.SMTP(host, port)
-    server.ehlo()
-    server.starttls()
-    server.login(sender, password)
-
-    body = '\r\n'.join(['To: %s' % to,
-                        'From: %s' % sender, 'Subject: %s' % subject,
-                        '', message])
+    )
 
     try:
-        server.sendmail(sender, [to], body)
-        logger.info("Email sent")
-    except:
-        logger.error("Could not send email")
-
-    server.quit()
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        logger.info(response.status_code)
+        logger.info(response.body)
+        logger.info(response.headers)
+    except Exception as e:
+        logger.error(e.message)
 
 
 def main():
@@ -65,6 +76,7 @@ def main():
     if not check_for_variable_existence(['URL_TO_CHECK', 'SLEEP_TIME']):
         sys.exit(1)
 
+    started_mail(os.environ.get('URL_TO_CHECK'))
     try:
         int(os.environ.get("SLEEP_TIME"))
     except ValueError:
@@ -73,7 +85,7 @@ def main():
 
     text = None
     while True:
-        print("LOOP")
+        logger.debug("Loop")
         temp = requests.get(os.environ.get("URL_TO_CHECK"))
         if text is None:
             # First time check.
@@ -89,5 +101,4 @@ def main():
         time.sleep(int(os.environ.get("SLEEP_TIME")))
 
 
-changes_mail(os.environ.get("URL_TO_CHECK"))
-#main()
+main()
