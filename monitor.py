@@ -31,9 +31,11 @@ def started_mail(url):
         from_email=os.environ.get('MAIL_SENDER'),
         to_emails=os.environ.get("MAIL_RECIPIENT"),
         subject="Started monitoring " + url,
-        html_content="""Hi user!<br> We started monitoring {} for you.
-        <br>
-MAY THE FORCE BE WITH YOU""".format(url)
+        html_content="""Hi user!<br> We started monitoring {0} for you.
+<br>
+It will be checked every {1} seconds. We will let you know if something changes.
+<br>
+MAY THE FORCE BE WITH YOU""".format(url, os.environ.get("SLEEP_TIME"))
     )
 
     try:
