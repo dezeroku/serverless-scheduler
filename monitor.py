@@ -100,6 +100,7 @@ def main():
             else:
                 logger.info("Changes detected.")
                 changes_mail(os.environ.get("URL_TO_CHECK"))
+                text = temp.text
         time.sleep(int(os.environ.get("SLEEP_TIME")))
 
 
