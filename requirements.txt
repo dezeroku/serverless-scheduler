@@ -1,2 +1,4 @@
 requests
 sendgrid
+selenium
+pillow
