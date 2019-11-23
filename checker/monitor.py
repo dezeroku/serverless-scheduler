@@ -86,7 +86,6 @@ def changes_mail(url):
     if os.environ.get('MAKE_SCREENSHOTS') == '1':
         mark_diff_images("old_state.png", "new_state.png", "diff.png")
     print("CHANGED")
-    return
     logger = logging.getLogger('email')
     if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
                                          'SENDGRID_API_KEY']):
