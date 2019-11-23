@@ -143,7 +143,8 @@ def main():
     make_screenshots = (os.environ.get('MAKE_SCREENSHOTS') == "1")
     if make_screenshots:
         screenshot_url(url, "old_state.png")
-    started_mail(url)
+    if os.environ.get('STARTED_MAIL') == '1':
+        started_mail(url)
     print("STARTED")
     while True:
         logger.debug("Loop")
