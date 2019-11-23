@@ -13,6 +13,8 @@ def screenshot_url(url, filename):
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--start-maximized")
+    # Added to use disk instead of memory (docker may have limitations)
+    chrome_options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     time.sleep(3)
