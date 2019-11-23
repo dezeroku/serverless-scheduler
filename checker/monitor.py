@@ -14,28 +14,23 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import (
     Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId )
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageDraw
 from PIL import ImageColor
 
 def screenshot_url(url, filename):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--start-maximized")
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.get(url)
-    time.sleep(3)
-
-    # Just some big value.
-    driver.set_window_size(1920, 2160)
-
-    screenshot = driver.save_screenshot(filename)
-    driver.quit()
+    check_for_variable_existence(['SCREENSHOT_API'])
+    r = requests.get("{0}/v1/screenshot".format(os.environ.get('SCREENSHOT_API')),
+                     params={"url": url})
+    if r.status_code == 200:
+        decoded = base64.b64decode(r.json()['image'])
+        with open(filename, 'wb') as f:
+                f.write(decoded)
+                f.close()
+    else:
+        print("Incorrect status code: {0}".format(r.status_code))
+        sys.exit(1)
 
 def mark_diff_images(first, second, output):
     im1 = Image.open(first)
@@ -46,7 +41,8 @@ def mark_diff_images(first, second, output):
     im2.crop(diff).save('real_diff.png')
     draw = ImageDraw.Draw(im2)
     diff_list = list(diff) if diff else []
-    draw.rectangle(diff_list, outline=ImageColor.getrgb("red"), width=5)
+    if diff_list:
+        draw.rectangle(diff_list, outline=ImageColor.getrgb("red"), width=5)
     im2.convert('RGB').save(output)
 
 def check_for_variable_existence(variables):
@@ -57,9 +53,7 @@ def check_for_variable_existence(variables):
             return False
     return True
 
-
 def started_mail(url):
-    return
     logger = logging.getLogger('email')
     if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
                                          'SENDGRID_API_KEY']):
@@ -89,8 +83,10 @@ We are changing for the better :)""".format(url, os.environ.get("SLEEP_TIME"))
 
 
 def changes_mail(url):
-    mark_diff_images("old_state.png", "new_state.png", "diff.png")
+    if os.environ.get('MAKE_SCREENSHOTS') == '1':
+        mark_diff_images("old_state.png", "new_state.png", "diff.png")
     print("CHANGED")
+    return
     logger = logging.getLogger('email')
     if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
                                          'SENDGRID_API_KEY']):
@@ -102,7 +98,6 @@ def changes_mail(url):
         subject="Changes detected on " + url,
         html_content="""Changes were detected on the page you ordered to monitor.
 <br>
-Take a look at included attachments to see them. (They are marked with red.)
 MAY THE FORCE BE WITH YOU"""
     )
 
@@ -119,7 +114,8 @@ MAY THE FORCE BE WITH YOU"""
         attachment.content_id = ContentId(file_path)
         return attachment
 
-    message.attachment = [attach_png('diff.png'), attach_png('real_diff.png')]
+    if os.environ.get('MAKE_SCREENSHOTS' == '1'):
+        message.attachment = [attach_png('diff.png'), attach_png('real_diff.png')]
 
     try:
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
@@ -144,7 +140,9 @@ def main():
 
     text = None
     url = os.environ.get('URL_TO_CHECK')
-    screenshot_url(url, "old_state.png")
+    make_screenshots = (os.environ.get('MAKE_SCREENSHOTS') == "1")
+    if make_screenshots:
+        screenshot_url(url, "old_state.png")
     started_mail(url)
     print("STARTED")
     while True:
@@ -161,11 +159,14 @@ def main():
             else:
                 print("CHANGES START")
                 logger.info("Changes detected.")
-                screenshot_url(url, "new_state.png")
+                if make_screenshots:
+                    screenshot_url(url, "new_state.png")
                 changes_mail(url)
-                os.rename("new_state.png", "old_state.png")
+                if make_screenshots:
+                    os.rename("new_state.png", "old_state.png")
                 text = temp.text
                 print("CHANGES DONE")
         time.sleep(int(os.environ.get("SLEEP_TIME")))
 
+# if MAKE_SCREENSHOTS == 1 then SCREENSHOT_API has to be provided and correct
 main()

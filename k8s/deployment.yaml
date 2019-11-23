@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: monitor-page
+  namespace: monitor-page
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: monitor
+    spec:
+      containers:
+      - name: master
+        image: registry.example.url/d0ku/monitor_page
+        resources:
+          requests:
+            cpu: 20m
+            memory: 20Mi
+          limits:
+            cpu: 400m
+            memory: 350Mi
+        env:
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secret-sendgrid
+              key: api-key
+        - name: URL_TO_CHECK
+          value: http://prs.pwr.edu.pl
+        - name: MAIL_RECIPIENT
+          value: darthtyranus666666@gmail.com
+        - name: MAIL_SENDER
+          value: monitor@example.url
+        - name: SLEEP_TIME
+          value: "750"
+      imagePullSecrets:
+      - name: regcred

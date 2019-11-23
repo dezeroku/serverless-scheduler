@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: screenshoter
+  namespace: monitor-page
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: screenshoter
+    spec:
+      containers:
+      - name: master
+        image: registry.example.url/d0ku/monitor_page_screenshoter
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 400m
+            memory: 600Mi
+        env:
+      imagePullSecrets:
+      - name: regcred

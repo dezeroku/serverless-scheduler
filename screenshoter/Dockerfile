@@ -29,18 +29,17 @@ RUN apt-get update && \
     libatk-bridge2.0-0 \
     libgtk-3-dev
 
-# Set up app.
-WORKDIR /app
-COPY ./requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-ENV PYTHONUNBUFFERED=1
-ENV SLEEP_TIME=600
-#ENV URL_TO_CHECK=url \
-#    MAIL_RECIPIENT=recipient \
-#    MAIL_SENDER=sender \
-#    SENDGRID_API_KEY=key
+COPY requirements.txt /usr/src/app/
 
-COPY . .
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python3", "monitor.py"]
+COPY . /usr/src/app
+
+EXPOSE 8080
+
+ENTRYPOINT ["python3"]
+
+CMD ["-m", "swagger_server"]
