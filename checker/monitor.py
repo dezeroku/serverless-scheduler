@@ -113,7 +113,7 @@ MAY THE FORCE BE WITH YOU"""
         attachment.content_id = ContentId(file_path)
         return attachment
 
-    if os.environ.get('MAKE_SCREENSHOTS' == '1'):
+    if os.environ.get('MAKE_SCREENSHOTS') == '1':
         message.attachment = [attach_png('diff.png'), attach_png('real_diff.png')]
 
     try:
