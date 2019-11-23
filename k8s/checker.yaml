@@ -33,7 +33,7 @@ spec:
         - name: MAIL_SENDER
           value: monitor@example.url
         - name: SLEEP_TIME
-          value: "750"
+          value: "1200"
         - name: MAKE_SCREENSHOTS
           value: "1"
         - name: SCREENSHOT_API
