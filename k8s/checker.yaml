@@ -30,13 +30,13 @@ spec:
           value: http://prs.pwr.edu.pl
         - name: MAIL_RECIPIENT
           value: darthtyranus666666@gmail.com
-        - name: MAIL_SENDER
-          value: monitor@example.url
         - name: SLEEP_TIME
           value: "1200"
         - name: MAKE_SCREENSHOTS
           value: "1"
         - name: SCREENSHOT_API
           value: "http://screenshoter.monitor-page.svc.cluster.local:8080"
+        - name: SENDER_API
+          value: "http://sender.monitor-page.svc.cluster.local:8080"
       imagePullSecrets:
       - name: regcred

@@ -10,10 +10,6 @@ import sys
 import logging
 import time
 
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import (
-    Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId )
-
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageDraw
@@ -47,84 +43,86 @@ def mark_diff_images(first, second, output):
 
 def check_for_variable_existence(variables):
     logger = logging.getLogger('checker')
+    result = True
     for var in variables:
         if os.environ.get(var) is None:
             logger.error('NOT SPECIFIED {}'.format(var))
-            return False
-    return True
+            result = False
+    return result
 
 def started_mail(url):
-    logger = logging.getLogger('email')
-    if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
-                                         'SENDGRID_API_KEY']):
-        sys.exit(1)
+    print("STARTED")
+    check_for_variable_existence(['MAIL_RECIPIENT', 'SENDER_API'])
+    attachments = []
 
-    message = Mail(
-        from_email=os.environ.get('MAIL_SENDER'),
-        to_emails=os.environ.get("MAIL_RECIPIENT"),
-        subject="Started monitoring " + url,
-        html_content="""Hi user!<br> We started monitoring {0} for you.
+    subject="Started monitoring {0}".format(url)
+    content="""Hi user!<br> We started monitoring {0} for you.
 <br>
 It will be checked every {1} seconds. We will let you know if something changes.
 <br>
 MAY THE FORCE BE WITH YOU
 <br>
 We are changing for the better :)""".format(url, os.environ.get("SLEEP_TIME"))
-    )
 
-    try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-        logger.info(response.status_code)
-        logger.info(response.body)
-        logger.info(response.headers)
-    except Exception as e:
-        logger.error(e.message)
-
-
-def changes_mail(url):
-    if os.environ.get('MAKE_SCREENSHOTS') == '1':
-        mark_diff_images("old_state.png", "new_state.png", "diff.png")
-    print("CHANGED")
-    logger = logging.getLogger('email')
-    if not check_for_variable_existence(['MAIL_RECIPIENT', 'MAIL_SENDER',
-                                         'SENDGRID_API_KEY']):
+    mail = {
+        "data" : {
+            "url" : url,
+            "attachments" : attachments
+        },
+        "recipients" : os.environ.get('MAIL_RECIPIENT').split(),
+        "subject" : subject,
+        "html_content" : content
+        }
+    r = requests.post("{0}/v1/mail".format(os.environ.get('SENDER_API')),
+                     json=mail)
+    if r.status_code == 200:
+        print("Successfully sent.")
+    else:
+        print("Incorrect status code: {0}".format(r.status_code))
+        print(r.json())
         sys.exit(1)
 
-    message = Mail(
-        from_email=os.environ.get('MAIL_SENDER'),
-        to_emails=os.environ.get("MAIL_RECIPIENT"),
-        subject="Changes detected on " + url,
-        html_content="""Changes were detected on the page you ordered to monitor.
+def changes_mail(url):
+    print("CHANGED")
+    check_for_variable_existence(['MAIL_RECIPIENT', 'SENDER_API'])
+    attachments = []
+    if os.environ.get('MAKE_SCREENSHOTS') == '1':
+        def attach_png(file_path):
+            with open(file_path, 'rb') as f:
+                    data = f.read()
+                    f.close()
+            encoded = base64.b64encode(data).decode()
+            return {
+                'filename' : file_path,
+                'filetype' : 'image/png',
+                'content' : encoded
+            }
+
+        mark_diff_images("old_state.png", "new_state.png", "diff.png")
+        attachments = [attach_png('diff.png'), attach_png('real_diff.png')]
+
+    subject = "Changes detected on {0}".format(url)
+    content = """Changes were detected on the page you ordered to monitor.
 <br>
 MAY THE FORCE BE WITH YOU"""
-    )
 
-    def attach_png(file_path):
-        with open(file_path, 'rb') as f:
-                data = f.read()
-                f.close()
-        encoded = base64.b64encode(data).decode()
-        attachment = Attachment()
-        attachment.file_content = FileContent(encoded)
-        attachment.file_type = FileType('image/png')
-        attachment.file_name = FileName(file_path)
-        attachment.disposition = Disposition('attachment')
-        attachment.content_id = ContentId(file_path)
-        return attachment
-
-    if os.environ.get('MAKE_SCREENSHOTS') == '1':
-        message.attachment = [attach_png('diff.png'), attach_png('real_diff.png')]
-
-    try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-        logger.info(response.status_code)
-        logger.info(response.body)
-        logger.info(response.headers)
-    except Exception as e:
-        logger.error(e.message)
-
+    mail = {
+        "data" : {
+            "url" : url,
+            "attachments" : attachments
+        },
+        "recipients" : os.environ.get('MAIL_RECIPIENT').split(),
+        "subject" : subject,
+        "html_content" : content
+        }
+    r = requests.post("{0}/v1/mail".format(os.environ.get('SENDER_API')),
+                     json=mail)
+    if r.status_code == 200:
+        print("Successfully sent.")
+    else:
+        print("Incorrect status code: {0}".format(r.status_code))
+        print(r.json())
+        sys.exit(1)
 
 def main():
     logger = logging.getLogger('main')
