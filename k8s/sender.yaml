@@ -4,7 +4,7 @@ metadata:
   name: sender
   namespace: monitor-page
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -12,6 +12,8 @@ spec:
     spec:
       containers:
       - name: master
+        ports:
+        - containerPort: 8080
         image: registry.example.url/d0ku/monitor_page_sender
         resources:
           requests:

@@ -1,0 +1,219 @@
+openapi: 3.0.0
+info:
+  title: Manager
+  description: Main control point of monitoring. Creates new deployments, keeps info about current ones etc.
+  contact:
+    email: darthtyranus666666@gmail.com
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+# Added by API Auto Mocking Plugin
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/d0ku/monitor_page-manager/1.0.0
+- url: /v1
+  description: first api version
+paths:
+  /items/{email}:
+    get:
+      parameters:
+        - in: path
+          name: email
+          schema:
+            type: string
+          required: true
+          description: email that is connected with the user account
+      security: 
+      - bearerAuth: []
+      operationId: items_get
+      description: return all items that are monitored by specified user
+      responses:
+        200:
+          description: list of all monitoring jobs that are assigned to an email
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemWithId'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id of the job
+      security: 
+      - bearerAuth: []
+      operationId: item_get
+      description: get a job from provided id
+      responses:
+        200:
+          description: a job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/update/{id}:
+    put:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id of the job
+      security: 
+      - bearerAuth: []
+      operationId: item_update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      description: update a job under provided ID
+      responses:
+        200:
+          description: successfully updated job
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/delete/{id}:
+    delete:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id of the job
+      security: 
+      - bearerAuth: []
+      operationId: item_delete
+      description: delete a job under provided ID
+      responses:
+        200:
+          description: successfully deleted job
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/create:
+    post:
+      security: 
+      - bearerAuth: []
+      operationId: item_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      description: create a job, and return it with id
+      responses:
+        200:
+          description: successfully created job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemWithId'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /passwordless/start:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - email
+              - redirectUri
+              properties:
+                email:
+                  type: string
+                redirectUri:
+                  type: string
+      operationId: request_passwordless
+      description: send mail with magic-link
+      responses:
+        400:
+          description: bad request
+        422:
+          description: bad input parameters
+        204:
+          description: successfully send email or ignored request if user with such email does not exist
+        503:
+          description: mail could not be send
+  /passwordless/verify_redirect:
+    post:
+      parameters:
+        - in: query
+          name: verification_code
+          schema:
+            type: string
+          required: true
+          description: verification code from email
+        - in: query
+          name: redirect_uri
+          schema:
+            type: string
+          required: true
+          description: to which URI redirect after obtaining JWT token
+      operationId: verify_passwordless
+      description: get JWT token based on verification code and redirect to a page
+      responses:
+        302:
+          description: successfully validated and redirecting
+        422:
+          description: bad input parameters
+        400:
+          description: incorrect/invalidated code
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  schemas:
+    ItemWithId:
+      allOf:
+      - $ref: '#/components/schemas/Item'
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
+    Item:
+      # Recipient email can be easily read, just check whose job is it.
+      description: Single monitoring job
+      required:
+        - owner
+        - url
+        - sleepTime
+        - makeScreenshots
+      type: object
+      properties:
+        url: 
+          type: string
+        sleepTime:
+          type: integer
+        makeScreenshots:
+          type: boolean
+        owner:
+          type: string

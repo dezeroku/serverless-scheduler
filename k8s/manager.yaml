@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: manager
+  namespace: monitor-page
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: manager
+    spec:
+      containers:
+      - name: master
+        image: registry.example.url/d0ku/monitor_page_manager:test
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: 40m
+            memory: 40Mi
+          limits:
+            cpu: 300m
+            memory: 300Mi
+        env:
+        - name: APP_URL
+          value: https://api.monitor.example.url
+        - name: JWT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secret-jwt
+              key: jwt-secret
+        - name: SENDER_API
+          value: "http://sender.monitor-page.svc.cluster.local:8080"
+        - name: DATABASE_TYPE
+          value: "postgres"
+        - name: DEVELOP_MODE
+          value: "true"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: secret-postgres
+              key: conn-string
+      imagePullSecrets:
+      - name: regcred
