@@ -10,6 +10,7 @@ import (
 	"example.url/monitor_page/manager/v2/auth"
 	"example.url/monitor_page/manager/v2/common"
 	"example.url/monitor_page/manager/v2/swagger"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -92,7 +93,13 @@ func main() {
 
 	mount(router, "/", apiRouter)
 
+	corsHost, ok := os.LookupEnv("FRONT_URL")
+	if !ok {
+		log.Fatalln("could not find FRONT_URL on environment variables. Add it or CORS will be angry.")
+	}
+	corsObj := handlers.AllowedOrigins([]string{corsHost})
+
 	port := 3000
 	log.Printf("starting server at %s:%d🚀\n", "0.0.0.0", port)
-	log.Fatalf("could not start server: %v\n", http.ListenAndServe(fmt.Sprintf(":%d", port), router))
+	log.Fatalf("could not start server: %v\n", http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsObj)(router)))
 }
