@@ -26,7 +26,7 @@ const Login: React.FC = () => {
       let config = {timeout: 10000}
       let data = {
 	  email: email,
-	  redirectUri: window.location.protocol + "//" + window.location.hostname + "/login/parser/"
+	  redirectUri: window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/login/parser/"
       }
 
       setLoading(true);
@@ -104,11 +104,6 @@ const Login: React.FC = () => {
 const token_session_name = "auth_token";
 
 export function getToken() {
-        // TODO: REMOVE IN PRODUCTION.
-        if (process.env.NODE_ENV === "development") {
-            window.sessionStorage.setItem(token_session_name, "DEV_TOKEN");
-        }
-       console.log(window.sessionStorage.getItem(token_session_name));
        return window.sessionStorage.getItem(token_session_name);
 }
 
@@ -116,8 +111,30 @@ export function setToken(token : string) {
        window.sessionStorage.setItem(token_session_name, token);
 }
 
+export function userMail() {
+       let token = getToken();
+       if (token !== null) {
+           let parsed = parseJwt(token);
+           if (parsed !== null) {
+               if ("sub" in parsed) {
+                   return parsed.sub;
+               }
+           }
+       }
+
+       return null;
+}
+
+export function parseJwt (token : string) {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 export function logOut() {
-       window.sessionStorage.setItem(token_session_name, "");
+    setToken("");
 }
 
 export default Login;

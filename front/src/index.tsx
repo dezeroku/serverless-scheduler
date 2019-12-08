@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import './index.css';
 import Login, {getToken, setToken} from './Login';
+import Home from './Home';
 import * as serviceWorker from './serviceWorker';
 import queryString from "query-string";
 
@@ -15,7 +16,7 @@ ReactDOM.render((
               <Login />
             </Route>
 	    <PrivateRoute path="/">
-	      <Home />
+	      <Home loggedOut={false} />
 	    </PrivateRoute>
         </Switch>
     </Router>), document.getElementById('root'));
@@ -26,10 +27,6 @@ function LoginParser(props : any) {
        setToken(responseData.jwt);
     }
     return <Redirect to="/" />;
-}
-
-function Home() {
-    return <h2>Home</h2>;
 }
 
 function PrivateRoute({ children, ...rest } : any) {
