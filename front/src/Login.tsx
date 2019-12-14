@@ -45,13 +45,14 @@ const Login: React.FC = () => {
 		  // Everything is good.
 		  setSuccessfullSent(true);
 	      }
+              setLoading(false);
 	  }).catch((error) => {
 	    // Something went wrong with sending.
 	      console.log(error);
 	      setModalContent("Something went wrong... Please try again later.");
 	      setShowModal(true);
+              setLoading(false);
 	  });
-      setLoading(false);
   }
 
   function validateForm() {

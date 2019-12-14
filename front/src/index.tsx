@@ -16,7 +16,7 @@ ReactDOM.render((
               <Login />
             </Route>
 	    <PrivateRoute path="/">
-	      <Home loggedOut={false} />
+	      <Home />
 	    </PrivateRoute>
         </Switch>
     </Router>), document.getElementById('root'));

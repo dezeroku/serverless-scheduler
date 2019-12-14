@@ -9,16 +9,27 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import ClipLoader from 'react-spinners/ClipLoader';
 
-type HomeState = {
-    loggedOut: boolean;
+import ItemProps from './Item';
+import ItemList from './ItemList';
+
+type HomeProps = {
 }
 
-class Home extends React.Component<HomeState> {
+type HomeState = {
+    loggedOut: boolean;
+    loading: boolean;
+    items: Array<ItemProps["props"]>;
+}
+
+class Home extends React.Component<HomeProps, HomeState> {
     state: HomeState = {
-	loggedOut: false
+        loggedOut: false,
+        loading: false,
+	items: Array(0).fill(null)
     }
 
     componentDidMount() {
+	this.setState({loading: true});
         console.log(userMail());
         let config = {
             headers: {
@@ -26,21 +37,22 @@ class Home extends React.Component<HomeState> {
             }
         }
 
-	this.setState({loading: true});
 	axios.get(process.env.REACT_APP_API_SERVER + "/v1/items/" + userMail(), config)
 	    .then((response) => {
+		console.log(response.data);
                 this.setState({loading: false});
 	      if (response.status !== 200) {
                   // Something went wrong on server side.
 		  console.log(response);
 	      } else {
+		  this.setState({items: response.data});
 		  // Everything is good.
 	      }
             }).catch((error) => {
                 console.log(error);
                 if (error.response.status === 401) {
                     alert("Your session timed out!");
-                    logOut();
+		    this.handleLogout();
                     this.forceUpdate();
                 }
 	    // Something went wrong with sending.
@@ -57,10 +69,8 @@ class Home extends React.Component<HomeState> {
     render () {
   return (
       <div className="container-fluid">
-	<Button onClick={() => {this.handleLogout();}}>Log Out</Button>
-	<ClipLoader
-	  size={150}
-	  />
+        <Button onClick={() => {this.handleLogout();}}>Log Out</Button>
+        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items}/>}
 	MAIN PAGE!!!
 	<Route exact path="/">
 	  {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}
