@@ -2,7 +2,7 @@ import React from "react";
 //import "./Login.scss";
 
 import {Route, Redirect} from "react-router-dom";
-import {Button} from "react-bootstrap";
+import {Button, Navbar, Nav, Form} from "react-bootstrap";
 import {logOut, userMail, getToken} from "./Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -24,7 +24,7 @@ type HomeState = {
 class Home extends React.Component<HomeProps, HomeState> {
     state: HomeState = {
         loggedOut: false,
-        loading: false,
+        loading: true,
 	items: Array(0).fill(null)
     }
 
@@ -39,25 +39,23 @@ class Home extends React.Component<HomeProps, HomeState> {
 
 	axios.get(process.env.REACT_APP_API_SERVER + "/v1/items/" + userMail(), config)
 	    .then((response) => {
-		console.log(response.data);
-                this.setState({loading: false});
 	      if (response.status !== 200) {
                   // Something went wrong on server side.
 		  console.log(response);
 	      } else {
-		  this.setState({items: response.data});
+		this.setState({items: response.data});
 		  // Everything is good.
 	      }
+               this.setState({loading: false});
             }).catch((error) => {
                 console.log(error);
+		// Something went wrong with sending.
+		this.setState({loading: false});
+
                 if (error.response.status === 401) {
-                    alert("Your session timed out!");
+                    //alert("Your session timed out!");
 		    this.handleLogout();
-                    this.forceUpdate();
                 }
-	    // Something went wrong with sending.
-	      this.setState({loading: false});
-	      console.log(error);
 	  });
     }
 
@@ -69,7 +67,17 @@ class Home extends React.Component<HomeProps, HomeState> {
     render () {
   return (
       <div className="container-fluid">
-        <Button onClick={() => {this.handleLogout();}}>Log Out</Button>
+	<Navbar className="bg-light">
+	  <Navbar.Brand>Page Monitor</Navbar.Brand>
+	  <Navbar.Toggle aria-controls="basic-navbar-nav" />
+	  <Navbar.Collapse id="basic-navbar-nav">
+	    <Nav className="mr-auto">
+	    </Nav>
+	    <Form inline>
+	      <Button variant="outline-success" onClick={() => this.handleLogout()}>Log Out</Button>
+	    </Form>
+	  </Navbar.Collapse>
+	</Navbar>
         {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items}/>}
 	MAIN PAGE!!!
 	<Route exact path="/">
