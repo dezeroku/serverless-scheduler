@@ -69,14 +69,23 @@ func main() {
 		log.Fatalln("could not find SENDER_API on environment variables")
 	}
 
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		panic(err.Error())
-	}
+	var clientset *kubernetes.Clientset
+	var config *rest.Config
+	_, ok = os.LookupEnv("DEVELOP_MODE")
+	if ok {
+		fmt.Println("DEV: kubernetes stub inserted")
+		config = nil
+		clientset = nil
+	} else {
+		config, err = rest.InClusterConfig()
+		if err != nil {
+			panic(err.Error())
+		}
 
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		panic(err.Error())
+		clientset, err = kubernetes.NewForConfig(config)
+		if err != nil {
+			panic(err.Error())
+		}
 	}
 
 	router := mux.NewRouter()
@@ -97,9 +106,11 @@ func main() {
 	if !ok {
 		log.Fatalln("could not find FRONT_URL on environment variables. Add it or CORS will be angry.")
 	}
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	corsObj := handlers.AllowedOrigins([]string{corsHost})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	port := 3000
+	port := 8000
 	log.Printf("starting server at %s:%d🚀\n", "0.0.0.0", port)
-	log.Fatalf("could not start server: %v\n", http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsObj)(router)))
+	log.Fatalf("could not start server: %v\n", http.ListenAndServe(fmt.Sprintf(":%d", port), handlers.CORS(corsObj, headersOk, methodsOk)(router)))
 }

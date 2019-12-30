@@ -78,8 +78,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 	    </Form>
 	  </Navbar.Collapse>
 	</Navbar>
-        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items}/>}
-	MAIN PAGE!!!
+        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} />}
 	<Route exact path="/">
 	  {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}
 	</Route>

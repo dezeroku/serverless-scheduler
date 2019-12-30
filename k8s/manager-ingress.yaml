@@ -18,4 +18,4 @@ spec:
         - path: /
           backend:
             serviceName: manager
-            servicePort: 3000
+            servicePort: 8000

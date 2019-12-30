@@ -16,6 +16,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 
 	"example.url/monitor_page/manager/v2/auth"
@@ -232,6 +233,12 @@ func booltoBoolPtr(i bool) *bool {
 }
 
 func createDeployment(item Item) {
+	_, ok := os.LookupEnv("DEVELOP_MODE")
+	if ok {
+		fmt.Println("DEV: Deployment created")
+		return
+	}
+
 	deploymentsClient := clientset.AppsV1().Deployments("monitor-page")
 
 	deployment := &appsv1.Deployment{
@@ -331,6 +338,12 @@ func createDeployment(item Item) {
 }
 
 func deleteDeployment(item Item) {
+	_, ok := os.LookupEnv("DEVELOP_MODE")
+	if ok {
+		fmt.Println("DEV: Deployment deleted")
+		return
+	}
+
 	// TODO: get it from environment
 	deploymentsClient := clientset.AppsV1().Deployments("monitor-page")
 	deletePolicy := metav1.DeletePropagationForeground
@@ -344,6 +357,12 @@ func deleteDeployment(item Item) {
 
 // TODO: It can cause problems when name should change, use delete/create as a workaround.
 func updateDeployment(item Item) {
+	_, ok := os.LookupEnv("DEVELOP_MODE")
+	if ok {
+		fmt.Println("DEV: Deployment updated")
+		return
+	}
+
 	deploymentsClient := clientset.AppsV1().Deployments("monitor-page")
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		// Retrieve the latest version of Deployment before attempting update
@@ -382,5 +401,4 @@ func updateDeployment(item Item) {
 		log.Fatalf("Update failed: %v", retryErr)
 	}
 	fmt.Println("Updated deployment...")
-
 }
