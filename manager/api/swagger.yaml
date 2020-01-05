@@ -154,6 +154,8 @@ paths:
           description: bad input parameters
         204:
           description: successfully send email or ignored request if user with such email does not exist
+        429:
+          description: timeout after previous verification code
         503:
           description: mail could not be send
   /passwordless/verify_redirect:

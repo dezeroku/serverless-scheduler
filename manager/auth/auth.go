@@ -44,6 +44,7 @@ type User struct {
 }
 
 type VerificationCode struct {
+	gorm.Model
 	Code      string `gorm:"primary_key"`
 	UserEmail string `gorm:"not null"`
 	Timeout   int64  `gorm:"not null"`
@@ -142,6 +143,19 @@ func passwordlessStart(w http.ResponseWriter, r *http.Request) {
 	}
 	u := temp.String()
 	fmt.Println(u)
+
+	// Check whether last verification code was sent at least 15 minutes before current one.
+	var lastCode VerificationCode
+	lastCodeFound := !db.Last(&lastCode, "user_email = ?", input.Email).RecordNotFound()
+
+	if lastCodeFound {
+		if lastCode.CreatedAt.After(time.Now().Add(-1 * time.Minute * 15)) {
+			log.Printf("Request another verification code before cooldown: %s\n", input.Email)
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+	}
+
 	verificationCode := &VerificationCode{Code: u, UserEmail: input.Email, Timeout: time.Now().Add(time.Minute * 15).Unix()}
 	db.Create(verificationCode)
 

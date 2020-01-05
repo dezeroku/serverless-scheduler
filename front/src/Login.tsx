@@ -47,9 +47,13 @@ const Login: React.FC = () => {
 	      }
               setLoading(false);
 	  }).catch((error) => {
-	    // Something went wrong with sending.
-	      console.log(error);
-	      setModalContent("Something went wrong... Please try again later.");
+	      // Something went wrong with sending.
+	      if (error.response.status === 429) {
+		  setModalContent("You requested another verification code without using previous one. Please try again later.");
+	      } else {
+		  console.log(error);
+		  setModalContent("Something went wrong... Please try again later.");
+	      }
 	      setShowModal(true);
               setLoading(false);
 	  });
