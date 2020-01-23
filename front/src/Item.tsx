@@ -1,6 +1,5 @@
 import React from "react";
 
-import {Button} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 //import axios from "axios";
@@ -26,7 +25,10 @@ class Item extends React.Component<ItemProps, ItemState> {
     render () {
   return (
       <div className="Item">
-	{this.props.id}|{this.props.url}|{this.props.sleepTime}|{this.props.makeScreenshots.toString()}
+	{this.props.id}|
+	<a href={this.props.url}>{this.props.url}</a>|
+	{this.props.sleepTime}|
+	{this.props.makeScreenshots.toString()}
       </div>
   );
     }
