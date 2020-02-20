@@ -108,7 +108,7 @@ func main() {
 	}
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	corsObj := handlers.AllowedOrigins([]string{corsHost})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
 
 	port := 8000
 	log.Printf("starting server at %s:%d🚀\n", "0.0.0.0", port)

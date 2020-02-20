@@ -84,9 +84,9 @@ func ItemCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(createdItem)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(createdItem)
 
 	createDeployment(*item)
 }

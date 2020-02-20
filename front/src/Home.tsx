@@ -4,6 +4,8 @@ import React from "react";
 import {Route, Redirect} from "react-router-dom";
 import {Button, Navbar, Nav, Form} from "react-bootstrap";
 import {logOut, userMail, getToken} from "./Login";
+import {handleUpdate, handleCreate, handleDelete} from "./API";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import axios from "axios";
@@ -11,6 +13,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 
 import ItemProps from './Item';
 import ItemList from './ItemList';
+import EditModal from './EditModal';
 
 type HomeProps = {
 }
@@ -19,13 +22,15 @@ type HomeState = {
     loggedOut: boolean;
     loading: boolean;
     items: Array<ItemProps["props"]>;
+    showCreateModal : boolean;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
     state: HomeState = {
         loggedOut: false,
         loading: true,
-	items: Array(0).fill(null)
+	items: Array(0).fill(null),
+	showCreateModal : false
     }
 
     componentDidMount() {
@@ -64,6 +69,14 @@ class Home extends React.Component<HomeProps, HomeState> {
 	this.setState({loggedOut: true});
     }
 
+    openCreateModal() {
+	this.setState({showCreateModal: true});
+    }
+
+    closeCreateModal() {
+	this.setState({showCreateModal: false});
+    }
+
     render () {
   return (
       <div className="container-fluid">
@@ -74,11 +87,14 @@ class Home extends React.Component<HomeProps, HomeState> {
 	    <Nav className="mr-auto">
 	    </Nav>
 	    <Form inline>
-	      <Button variant="outline-success" onClick={() => this.handleLogout()}>Log Out</Button>
+	      <Button variant="success" onClick={() => this.openCreateModal()} className="mr-2">Create</Button>
+	      <Button variant="outline-primary" onClick={() => this.handleLogout()}>Log Out</Button>
 	    </Form>
 	  </Navbar.Collapse>
 	</Navbar>
-        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} />}
+        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} handleUpdate={handleUpdate} handleDelete={handleDelete}/>}
+	  <EditModal show={this.state.showCreateModal} handleTask={handleCreate} onHide={() => this.setState({showCreateModal: false})} item={null} editMode={false} handleDelete={handleDelete}/>
+
 	<Route exact path="/">
 	  {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}
 	</Route>
