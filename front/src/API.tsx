@@ -17,7 +17,8 @@ export function handleCreate(json : ItemProps["props"]) {
             Authorization: "Bearer " + getToken()
         }
     }
-    let data : ItemProps["props"] & {owner: string} = { ...json, ...{owner: userMail()}}
+    let data : any = { ...json, ...{owner: userMail()}}
+    data["sleepTime"] *= 60;
 
     axios.post(process.env.REACT_APP_API_SERVER + "/v1/item/create", data, config)
 	.then((response) => {
@@ -87,7 +88,8 @@ export function handleUpdate(json : ItemProps["props"]) {
             Authorization: "Bearer " + getToken()
         }
     }
-    let data : ItemProps["props"] & {owner: string} = { ...json, ...{owner: userMail()}}
+    let data : any = { ...json, ...{owner: userMail()}}
+    data["sleepTime"] *= 60;
 
     axios.put(process.env.REACT_APP_API_SERVER + "/v1/item/update/" + json.id, data, config)
 	.then((response) => {
