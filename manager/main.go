@@ -64,7 +64,7 @@ func main() {
 			panic("No DATABASE_DB_NAME provided.")
 		}
 
-		databaseConnString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", databaseHost, databasePort, databaseUser, databasePassword, databaseDBName)
+		databaseConnString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", databaseHost, databasePort, databaseUser, databasePassword, databaseDBName)
 
 		databaseType := common.Env("DATABASE_TYPE", "postgres")
 		db, err = gorm.Open(databaseType, databaseConnString)
