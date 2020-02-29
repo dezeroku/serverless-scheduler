@@ -38,13 +38,36 @@ func mount(r *mux.Router, path string, handler http.Handler) {
 func main() {
 	var err error
 	var db *gorm.DB
-	databaseURL, ok := os.LookupEnv("DATABASE_URL")
-	if !ok {
+	_, ok := os.LookupEnv("DEVELOP_MODE")
+	if ok {
 		db, err = gorm.Open("sqlite3", "test.db")
 		log.Println("No DATABASE_URL in environment, using sqlite3.")
 	} else {
+		databaseUser, ok := os.LookupEnv("DATABASE_USER")
+		if !ok {
+			panic("No DATABASE_USER provided.")
+		}
+		databasePassword, ok := os.LookupEnv("DATABASE_PASSWORD")
+		if !ok {
+			panic("No DATABASE_PASSWORD provided.")
+		}
+		databasePort, ok := os.LookupEnv("DATABASE_PORT")
+		if !ok {
+			panic("No DATABASE_PORT provided.")
+		}
+		databaseHost, ok := os.LookupEnv("DATABASE_HOST")
+		if !ok {
+			panic("No DATABASE_HOST provided.")
+		}
+		databaseDBName, ok := os.LookupEnv("DATABASE_DB_NAME")
+		if !ok {
+			panic("No DATABASE_DB_NAME provided.")
+		}
+
+		databaseConnString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", databaseHost, databasePort, databaseUser, databasePassword, databaseDBName)
+
 		databaseType := common.Env("DATABASE_TYPE", "postgres")
-		db, err = gorm.Open(databaseType, databaseURL)
+		db, err = gorm.Open(databaseType, databaseConnString)
 	}
 
 	if err != nil {
