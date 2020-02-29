@@ -36,8 +36,8 @@ spec:
           value: "http://sender.monitor-page.svc.cluster.local:8080"
         - name: DATABASE_TYPE
           value: "postgres"
-        - name: DEVELOP_MODE
-          value: "true"
+          #        - name: DEVELOP_MODE
+          #          value: "true"
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
