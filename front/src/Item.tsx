@@ -22,7 +22,7 @@ class Item extends React.Component<ItemProps, ItemState> {
   return (
       <div className="Item">
 	<a href={this.props.url}>{this.props.url}</a>|
-	sleep time: {this.props.sleepTime} minutes|
+        sleep time: {Math.ceil(this.props.sleepTime / 60)} minutes|
 	diff screenshots: {this.props.makeScreenshots.toString()}
       </div>
   );

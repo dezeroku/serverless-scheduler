@@ -88,7 +88,7 @@ function EditModal (props : EditModalProps) {
 		  <Form.Group controlId="sleepTime">
 		    <Form.Label>How often (in minutes) should the page be checked</Form.Label>
 		    <Form.Control as="select">
-		      <option>{temp.sleepTime}</option>
+                        <option>{Math.ceil(temp.sleepTime/60)}</option>
 		      <option>2</option>
 		      <option>5</option>
 		      <option>10</option>
