@@ -125,10 +125,9 @@ func main() {
 
 	mount(router, "/", apiRouter)
 
-	//corsHost, ok := os.LookupEnv("FRONT_URL")
-	corsHost := "*"
+	corsHost, ok := os.LookupEnv("ALLOWED_ORIGIN")
 	if !ok {
-		log.Fatalln("could not find FRONT_URL on environment variables. Add it or CORS will be angry.")
+		log.Fatalln("could not find ALLOWED_ORIGIN in environment variables. Add it or CORS will be angry.")
 	}
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	corsObj := handlers.AllowedOrigins([]string{corsHost})
