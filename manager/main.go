@@ -125,7 +125,8 @@ func main() {
 
 	mount(router, "/", apiRouter)
 
-	corsHost, ok := os.LookupEnv("FRONT_URL")
+	//corsHost, ok := os.LookupEnv("FRONT_URL")
+	corsHost := "*"
 	if !ok {
 		log.Fatalln("could not find FRONT_URL on environment variables. Add it or CORS will be angry.")
 	}
