@@ -30,6 +30,8 @@ spec:
           value: https://api.monitor.example.url
         - name: FRONT_URL
           value: https://monitor.example.url
+        - name: ALLOWED_ORIGIN
+          value: "*"
         - name: JWT_KEY
           valueFrom:
             secretKeyRef:
