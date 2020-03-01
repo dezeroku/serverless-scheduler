@@ -1,0 +1,19 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: monitor-page-db
+  namespace: monitor-page
+spec:
+  teamId: "monitor"
+  volume:
+    size: 1Gi
+    storageClass: "nfs-master"
+  numberOfInstances: 2
+  users:
+    monitor:  # database owner
+    - superuser
+    - createdb
+  databases:
+    monitor: monitor  # dbname: owner
+  postgresql:
+    version: "11"

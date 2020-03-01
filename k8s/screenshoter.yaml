@@ -1,9 +1,12 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: screenshoter
   namespace: monitor-page
 spec:
+  selector:
+    matchLabels:
+      app: screenshoter
   replicas: 2
   template:
     metadata:

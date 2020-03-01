@@ -11,4 +11,3 @@ These secrets have to be manually provided:
 * `secret-registry` that contains `dockerconfigjson` data required to access private Docker registry.
 * `secret-sendgrid` that provides `api-key` entry containing, well... API key to sendgrid (it's used by mail senders)
 * `secret-jwt`      that provides `jwt-secret` entry containing value that's a base for JWT
-* `secret-postgres` that provides connection string `conn-string` in gorm format for manager pod

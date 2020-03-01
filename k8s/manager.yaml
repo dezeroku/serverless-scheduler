@@ -1,9 +1,12 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: manager
   namespace: monitor-page
 spec:
+  selector:
+    matchLabels:
+      app: manager
   replicas: 1
   template:
     metadata:
@@ -36,12 +39,21 @@ spec:
           value: "http://sender.monitor-page.svc.cluster.local:8080"
         - name: DATABASE_TYPE
           value: "postgres"
-          #        - name: DEVELOP_MODE
-          #          value: "true"
-        - name: DATABASE_URL
+        - name: DATABASE_USER
           valueFrom:
             secretKeyRef:
-              name: secret-postgres
-              key: conn-string
+              name: monitor.monitor-page-db.credentials
+              key: username
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: monitor.monitor-page-db.credentials
+              key: password
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: DATABASE_HOST
+          value: "monitor-page-db.monitor-page.svc.cluster.local"
+        - name: DATABASE_DB_NAME
+          value: "monitor"
       imagePullSecrets:
       - name: regcred
