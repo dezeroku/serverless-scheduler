@@ -33,8 +33,8 @@ function EditModal (props : EditModalProps) {
 	setLoading(true);
 	let result : string = props.handleTask(json);
 	setLoading(false);
-	alert(props.editMode ? "Updated" : "Created");
-	window.location.reload();
+        //alert(props.editMode ? "Updated" : "Created");
+        //window.location.reload();
     }
 
     function handleDeleteLocal(id : number) {
@@ -50,8 +50,8 @@ function EditModal (props : EditModalProps) {
 	setLoading(true);
 	let result : string = props.handleDelete(json);
 	setLoading(false);
-	alert("Deleted");
-	window.location.reload();
+        //alert("Deleted");
+        //window.location.reload();
     }
 
     
