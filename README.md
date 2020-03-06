@@ -11,4 +11,4 @@ Contains all necessary manifests to deploy on Kubernetes in `monitor-page` names
 * sender - sender, sends mesage with data it gets using one of (mail, SMS (TODO), messenger(TODO)) , internal service
 * manager container - manager, manages pods that actually do the checking job, reads/writes db, API container, service
 * frontend container - frontend, allows user to login based on supported emails and one-time passwords, contacts API, reads DB
-* db container
+* db container - postgres, handled with postgres-operator on k8s
