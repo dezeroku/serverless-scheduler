@@ -403,7 +403,25 @@ func updateDeployment(item Item) {
 			},
 		}
 
-		result.Spec.Template.Spec.Containers[0].Env = envObject
+		// Create environment object that is same as in old pod, but contains updated values.
+		oldEnv := result.Spec.Template.Spec.Containers[0].Env
+		newEnv := envObject
+
+		alreadyAdded := make(map[string]bool, 0)
+
+		for _, item := range newEnv {
+			alreadyAdded[item.Name] = true
+		}
+
+		for _, item := range oldEnv {
+			if !alreadyAdded[item.Name] {
+				newEnv = append(newEnv, item)
+				alreadyAdded[item.Name] = true
+			}
+		}
+
+		// Override settings that changed, keeping not changed untouched).
+		result.Spec.Template.Spec.Containers[0].Env = newEnv
 
 		_, updateErr := deploymentsClient.Update(result)
 		return updateErr
