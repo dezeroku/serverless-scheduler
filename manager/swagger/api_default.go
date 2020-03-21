@@ -187,7 +187,13 @@ func ItemUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.Save(&item).Error
+	// Get necessary data from DB.
+	//item.CreatedAt = itemDB.CreatedAt
+
+	//err = db.Save(&item).Error
+
+	var createdItem Item
+	err = db.Save(&item).Scan(&createdItem).Error
 
 	if err != nil {
 		common.RespondInternalError(w, fmt.Errorf("could not update in DB: %v", err))
@@ -198,7 +204,7 @@ func ItemUpdate(w http.ResponseWriter, r *http.Request) {
 
 	//deleteDeployment(itemDB)
 	//createDeployment(*item)
-	updateDeployment(*item)
+	updateDeployment(createdItem)
 }
 
 func ItemsGet(w http.ResponseWriter, r *http.Request) {
