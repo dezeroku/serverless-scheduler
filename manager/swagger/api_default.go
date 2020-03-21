@@ -176,6 +176,11 @@ func ItemUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if item.URL != itemDB.URL {
+		http.Error(w, http.StatusText(http.StatusUnprocessableEntity)+": changing URL is not allowed on update", http.StatusUnprocessableEntity)
+		return
+	}
+
 	if authUserEmail != item.Owner {
 		log.Printf("Email %s tried to create %s's item.", authUserEmail, item.Owner)
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -191,8 +196,9 @@ func ItemUpdate(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 
-	deleteDeployment(itemDB)
-	createDeployment(*item)
+	//deleteDeployment(itemDB)
+	//createDeployment(*item)
+	updateDeployment(*item)
 }
 
 func ItemsGet(w http.ResponseWriter, r *http.Request) {
@@ -355,7 +361,6 @@ func deleteDeployment(item Item) {
 	fmt.Println("Deleted deployment.")
 }
 
-// TODO: It can cause problems when name should change, use delete/create as a workaround.
 func updateDeployment(item Item) {
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {

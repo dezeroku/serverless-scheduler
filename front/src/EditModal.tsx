@@ -81,7 +81,7 @@ function EditModal (props : EditModalProps) {
 		  </Form.Group>
 		  <Form.Group controlId="url">
 		    <Form.Label>URL of the page you want to monitor</Form.Label>
-		    <Form.Control type="url" defaultValue={temp.url}/>
+		    <Form.Control type="url" defaultValue={temp.url} readOnly={props.editMode}/>
 		    <Form.Text className="text-muted">
 		    </Form.Text>
 		  </Form.Group>
