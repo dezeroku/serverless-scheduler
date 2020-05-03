@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: master
-        image: registry.example.url/d0ku/monitor_page_checker:latest
+        image: registry.example.url/d0ku/monitor_page_checker:%LATEST_HASH%
         resources:
           requests:
             cpu: 20m

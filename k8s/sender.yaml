@@ -17,7 +17,7 @@ spec:
       - name: master
         ports:
         - containerPort: 8080
-        image: registry.example.url/d0ku/monitor_page_sender:latest
+        image: registry.example.url/d0ku/monitor_page_sender:%LATEST_HASH%
         resources:
           requests:
             cpu: 20m
