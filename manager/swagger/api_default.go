@@ -257,6 +257,9 @@ func createDeployment(item Item) {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      item.GetDeploymentName(),
 			Namespace: "monitor-page",
+			Labels: map[string]string{
+				"app": "checker",
+			},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: int32Ptr(1),
