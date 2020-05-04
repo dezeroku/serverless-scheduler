@@ -34,15 +34,18 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
+	this.updateTasks()
+    }
+
+    async updateTasks() {
 	this.setState({loading: true});
-        console.log(userMail());
-        let config = {
+	let config = {
             headers: {
                 Authorization: "Bearer " + getToken()
             }
         }
 
-	axios.get(process.env.REACT_APP_API_SERVER + "/v1/items/" + userMail(), config)
+	return axios.get(process.env.REACT_APP_API_SERVER + "/v1/items/" + userMail(), config)
 	    .then((response) => {
 	      if (response.status !== 200) {
                   // Something went wrong on server side.
@@ -77,6 +80,11 @@ class Home extends React.Component<HomeProps, HomeState> {
 	this.setState({showCreateModal: false});
     }
 
+    // TODO: that's ugly hack which should be solved by proper architecture usage
+    refresh() {
+	this.updateTasks();
+    }
+
     render () {
   return (
       <div className="container-fluid">
@@ -92,8 +100,8 @@ class Home extends React.Component<HomeProps, HomeState> {
 	    </Form>
 	  </Navbar.Collapse>
 	</Navbar>
-        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} handleUpdate={handleUpdate} handleDelete={handleDelete}/>}
-	  <EditModal show={this.state.showCreateModal} handleTask={handleCreate} onHide={() => this.setState({showCreateModal: false})} item={null} editMode={false} handleDelete={handleDelete}/>
+        {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} handleUpdate={handleUpdate} handleDelete={handleDelete} refresh={() => this.refresh()}/>}
+	  <EditModal show={this.state.showCreateModal} handleTask={handleCreate} onHide={() => this.setState({showCreateModal: false})} item={null} editMode={false} handleDelete={handleDelete} closeModal={() => this.closeCreateModal()} refresh={() => this.refresh()}/>
 
 	<Route exact path="/">
 	  {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}

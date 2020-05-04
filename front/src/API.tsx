@@ -8,7 +8,7 @@ import ItemProps from "./Item";
 
 
 
-export function handleCreate(json : ItemProps["props"]) {
+export async function handleCreate(json : ItemProps["props"]) {
     console.log(json);
     console.log("REAL CREATE!");
     let config = {
@@ -20,7 +20,7 @@ export function handleCreate(json : ItemProps["props"]) {
     let data : any = { ...json, ...{owner: userMail()}}
     data["sleepTime"] *= 60;
 
-    axios.post(process.env.REACT_APP_API_SERVER + "/v1/item/create", data, config)
+    return axios.post(process.env.REACT_APP_API_SERVER + "/v1/item/create", data, config)
 	.then((response) => {
 	    console.log("AA");
 	    if (response.status !== 200) {
@@ -44,7 +44,7 @@ export function handleCreate(json : ItemProps["props"]) {
 	});
 }
 
-export function handleDelete(json : ItemProps["props"]) {
+export async function handleDelete(json : ItemProps["props"]) {
     console.log(json);
     console.log("REAL DELETE!");
 
@@ -55,7 +55,7 @@ export function handleDelete(json : ItemProps["props"]) {
         }
     }
 
-    axios.delete(process.env.REACT_APP_API_SERVER + "/v1/item/delete/" + json.id, config)
+    return axios.delete(process.env.REACT_APP_API_SERVER + "/v1/item/delete/" + json.id, config)
 	.then((response) => {
 	    console.log("AA");
 	    if (response.status !== 200) {
@@ -79,7 +79,7 @@ export function handleDelete(json : ItemProps["props"]) {
 	});
 }
 
-export function handleUpdate(json : ItemProps["props"]) {
+export async function handleUpdate(json : ItemProps["props"]) {
     console.log(json);
     console.log("REAL UPDATE!");
     let config = {
@@ -91,7 +91,7 @@ export function handleUpdate(json : ItemProps["props"]) {
     let data : any = { ...json, ...{owner: userMail()}}
     data["sleepTime"] *= 60;
 
-    axios.put(process.env.REACT_APP_API_SERVER + "/v1/item/update/" + json.id, data, config)
+    return axios.put(process.env.REACT_APP_API_SERVER + "/v1/item/update/" + json.id, data, config)
 	.then((response) => {
 	    console.log("AA");
 	    if (response.status !== 200) {

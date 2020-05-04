@@ -11,13 +11,13 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import ItemProps from "./Item";
 
 
-type EditModalProps = {show: boolean; onHide: any; item: ItemProps["props"] | null; handleTask: any; handleDelete: any; editMode: boolean}
+type EditModalProps = {show: boolean; onHide: any; item: ItemProps["props"] | null; handleTask: any; handleDelete: any; editMode: boolean; closeModal: any; refresh: any}
 
 function EditModal (props : EditModalProps) {
 
     const [loading, setLoading] = React.useState(false);
 
-    const handleTaskLocal = (event : any) => {
+    const handleTaskLocal = async (event : any) => {
 	// Get data to json form and send it to higher level handler.
 	const form = event.currentTarget;
 	event.preventDefault();
@@ -31,13 +31,15 @@ function EditModal (props : EditModalProps) {
 	}
 
 	setLoading(true);
-	let result : string = props.handleTask(json);
+	let result : string = await props.handleTask(json);
 	setLoading(false);
+	props.closeModal()
+	props.refresh()
         //alert(props.editMode ? "Updated" : "Created");
         //window.location.reload();
     }
 
-    function handleDeleteLocal(id : number) {
+    const handleDeleteLocal = async (id : number) => {
 	// Get data to json form and send it to higher level handler.
 
 	let json : ItemProps["props"] = {
@@ -48,9 +50,11 @@ function EditModal (props : EditModalProps) {
 	}
 
 	setLoading(true);
-	let result : string = props.handleDelete(json);
+	let result : string = await props.handleDelete(json);
 	setLoading(false);
-        //alert("Deleted");
+	props.closeModal()
+	props.refresh()
+        //alert(result);
         //window.location.reload();
     }
 

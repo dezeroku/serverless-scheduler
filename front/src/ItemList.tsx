@@ -14,6 +14,7 @@ type ItemListProps = {
     handleDelete : any;
     items : Array<ItemProps["props"]>;
     visibleCount : number;
+    refresh : any;
 }
 
 function ItemList (props : ItemListProps) {
@@ -64,7 +65,7 @@ function ItemList (props : ItemListProps) {
 	    {renderTabButtons(props.items.length, props.visibleCount)}
 	  </ToggleButtonGroup>
 	</div>
-	<EditModal show={showEditModal} handleTask={(json : ItemProps["props"]) => props.handleUpdate(json)} onHide={() => {setShowEditModal(false);}} item={activeItem} editMode={true} handleDelete={(json: ItemProps["props"]) => props.handleDelete(json)}/>
+	<EditModal show={showEditModal} handleTask={(json : ItemProps["props"]) => props.handleUpdate(json)} onHide={() => {setShowEditModal(false);}} item={activeItem} editMode={true} handleDelete={(json: ItemProps["props"]) => props.handleDelete(json)} closeModal={() => setShowEditModal(false)} refresh={() => props.refresh()}/>
       </div>
   );
 };
