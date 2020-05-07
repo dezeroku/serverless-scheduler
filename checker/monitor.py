@@ -9,14 +9,21 @@ import os
 import sys
 import logging
 import time
+import difflib
 
 from PIL import Image
 from PIL import ImageChops
 from PIL import ImageDraw
 from PIL import ImageColor
 
+from bs4 import BeautifulSoup
+
+DEVELOPMENT = False
+
 def screenshot_url(url, filename):
-    check_for_variable_existence(['SCREENSHOT_API'])
+    if not check_for_variable_existence(['SCREENSHOT_API']):
+        sys.exit(1)
+
     r = requests.get("{0}/v1/screenshot".format(os.environ.get('SCREENSHOT_API')),
                      params={"url": url})
     if r.status_code == 200:
@@ -41,6 +48,7 @@ def mark_diff_images(first, second, output):
         draw.rectangle(diff_list, outline=ImageColor.getrgb("red"), width=5)
     im2.convert('RGB').save(output)
 
+
 def check_for_variable_existence(variables):
     logger = logging.getLogger('checker')
     result = True
@@ -51,8 +59,9 @@ def check_for_variable_existence(variables):
     return result
 
 def started_mail(url):
+    global DEVELOPMENT
     print("STARTED")
-    check_for_variable_existence(['MAIL_RECIPIENT', 'SENDER_API'])
+    # Create mail object
     attachments = []
 
     subject="Started monitoring {0}".format(url)
@@ -64,27 +73,38 @@ MAY THE FORCE BE WITH YOU
 <br>
 We are changing for the better :)""".format(url, os.environ.get("SLEEP_TIME"))
 
+    recipients = os.environ.get('MAIL_RECIPIENT').split() if not DEVELOPMENT else "mail_recipients"
     mail = {
         "data" : {
             "url" : url,
             "attachments" : attachments
         },
-        "recipients" : os.environ.get('MAIL_RECIPIENT').split(),
+        "recipients" : recipients,
         "subject" : subject,
         "html_content" : content
         }
-    r = requests.post("{0}/v1/mail".format(os.environ.get('SENDER_API')),
-                     json=mail)
-    if r.status_code == 200:
-        print("Successfully sent.")
-    else:
-        print("Incorrect status code: {0}".format(r.status_code))
-        print(r.json())
-        sys.exit(1)
 
-def changes_mail(url):
+    if not DEVELOPMENT:
+        if not check_for_variable_existence(['MAIL_RECIPIENT', 'SENDER_API']):
+            sys.exit(1)
+
+        r = requests.post("{0}/v1/mail".format(os.environ.get('SENDER_API')),
+                         json=mail)
+        if r.status_code == 200:
+            print("Successfully sent.")
+        else:
+            print("Incorrect status code: {0}".format(r.status_code))
+            print(r.json())
+            sys.exit(1)
+    else:
+        print("started mail sent")
+        print(mail)
+
+def changes_mail(url, diff=""):
+    global DEVELOPMENT
     print("CHANGED")
-    check_for_variable_existence(['MAIL_RECIPIENT', 'SENDER_API'])
+
+    # Create mail object.
     attachments = []
     if os.environ.get('MAKE_SCREENSHOTS') == '1':
         def attach_png(file_path):
@@ -101,33 +121,48 @@ def changes_mail(url):
         mark_diff_images("old_state.png", "new_state.png", "diff.png")
         attachments = [attach_png('diff.png'), attach_png('real_diff.png')]
 
-    subject = "Changes detected on {0}".format(url)
-    content = """Changes were detected on the page you ordered to monitor.
+    subject = "Changes on {0}".format(url)
+    content = """Changes were detected on the <a href="${0}">page you ordered to monitor</a>.
 <br>
-MAY THE FORCE BE WITH YOU"""
+{1}
+<br>
+MAY THE FORCE BE WITH YOU""".format(url, diff)
 
+    recipients = os.environ.get('MAIL_RECIPIENT').split() if not DEVELOPMENT else "mail_recipients"
     mail = {
         "data" : {
             "url" : url,
             "attachments" : attachments
         },
-        "recipients" : os.environ.get('MAIL_RECIPIENT').split(),
+        "recipients" : recipients,
         "subject" : subject,
         "html_content" : content
         }
-    r = requests.post("{0}/v1/mail".format(os.environ.get('SENDER_API')),
-                     json=mail)
-    if r.status_code == 200:
-        print("Successfully sent.")
+
+    if not DEVELOPMENT:
+        if not check_for_variable_existence(['MAIL_RECIPIENT', 'SENDER_API']):
+            sys.exit(1)
+
+        r = requests.post("{0}/v1/mail".format(os.environ.get('SENDER_API')),
+                         json=mail)
+        if r.status_code == 200:
+            print("Successfully sent.")
+        else:
+            print("Incorrect status code: {0}".format(r.status_code))
+            print(r.json())
+            sys.exit(1)
     else:
-        print("Incorrect status code: {0}".format(r.status_code))
-        print(r.json())
-        sys.exit(1)
+        print("change mail sent")
+        print(mail)
 
 def main():
     logger = logging.getLogger('main')
     if not check_for_variable_existence(['URL_TO_CHECK', 'SLEEP_TIME']):
         sys.exit(1)
+
+    global DEVELOPMENT
+    if os.environ.get("DEVELOPMENT") == "true":
+        DEVELOPMENT = True
 
     try:
         int(os.environ.get("SLEEP_TIME"))
@@ -149,6 +184,7 @@ def main():
         if text is None:
             # First time check.
             text = temp.text
+            first = BeautifulSoup(text, 'html.parser')
             logger.info("Initialized.")
         else:
             # Main checking loop.
@@ -156,13 +192,21 @@ def main():
                 logger.info("Nothing changed on website.")
             else:
                 print("CHANGES START")
+                second = BeautifulSoup(temp.text, 'html.parser')
+                differ = difflib.HtmlDiff()
+                #diff = differ.make_table(first.prettify().split("\n"),
+                #                         second.prettify().split("\n"), '', '',
+                #                         True, 2)
+                diff = ""
+
                 logger.info("Changes detected.")
                 if make_screenshots:
                     screenshot_url(url, "new_state.png")
-                changes_mail(url)
+                changes_mail(url, diff)
                 if make_screenshots:
                     os.rename("new_state.png", "old_state.png")
                 text = temp.text
+                first = BeautifulSoup(text, 'html.parser')
                 print("CHANGES DONE")
         time.sleep(int(os.environ.get("SLEEP_TIME")))
 
