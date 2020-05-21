@@ -122,7 +122,7 @@ def changes_mail(url, diff=""):
         attachments = [attach_png('diff.png'), attach_png('real_diff.png')]
 
     subject = "Changes on {0}".format(url)
-    content = """Changes were detected on the <a href="${0}">page you ordered to monitor</a>.
+    content = """Changes were detected on the <a href="{0}">page you ordered to monitor</a>.
 <br>
 {1}
 <br>
