@@ -5,10 +5,26 @@
 #    pip-compile requirements.txt
 #
 beautifulsoup4==4.9.0     # via -r requirements.txt
-certifi==2020.4.5.1       # via requests
-chardet==3.0.4            # via requests
-idna==2.9                 # via requests
-pillow==7.1.2             # via -r requirements.txt
+certifi==2020.4.5.1       # via -r requirements.txt, requests
+chardet==3.0.4            # via -r requirements.txt, requests
+cycler==0.10.0            # via matplotlib
+decorator==4.4.2          # via networkx
+idna==2.9                 # via -r requirements.txt, requests
+imageio==2.8.0            # via scikit-image
+imutils==0.5.3            # via -r requirements.txt
+kiwisolver==1.2.0         # via matplotlib
+matplotlib==3.2.1         # via scikit-image
+networkx==2.4             # via scikit-image
+numpy==1.18.4             # via imageio, matplotlib, opencv-python, pywavelets, scikit-image, scipy, tifffile
+opencv-python==4.2.0.34   # via -r requirements.txt
+pillow==7.1.2             # via imageio, scikit-image
+pyparsing==2.4.7          # via matplotlib
+python-dateutil==2.8.1    # via matplotlib
+pywavelets==1.1.1         # via scikit-image
 requests==2.23.0          # via -r requirements.txt
-soupsieve==2.0            # via beautifulsoup4
-urllib3==1.25.9           # via requests
+scikit-image==0.17.2      # via -r requirements.txt
+scipy==1.4.1              # via scikit-image
+six==1.15.0               # via cycler, python-dateutil
+soupsieve==2.0            # via -r requirements.txt, beautifulsoup4
+tifffile==2020.5.25       # via scikit-image
+urllib3==1.25.9           # via -r requirements.txt, requests

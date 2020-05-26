@@ -1,7 +1,6 @@
 """Page Monitor
 Periodically check for changes in HTML code of webpage and notify users if
-detected (also send diffs).
-d0ku 2019"""
+detected (also send diff image)."""
 
 import base64
 import requests
@@ -9,13 +8,14 @@ import os
 import sys
 import logging
 import time
-import difflib
+#import difflib
 
-from PIL import Image
-from PIL import ImageChops
-from PIL import ImageDraw
-from PIL import ImageColor
+# Image diff calculation
+from skimage.metrics import structural_similarity
+import imutils
+import cv2
 
+# HTML diff calculation
 from bs4 import BeautifulSoup
 
 DEVELOPMENT = False
@@ -36,17 +36,35 @@ def screenshot_url(url, filename):
         sys.exit(1)
 
 def mark_diff_images(first, second, output):
-    im1 = Image.open(first)
-    im2 = Image.open(second)
+    # Load images.
+    im1 = cv2.imread(first)
+    im2 = cv2.imread(second)
 
-    im_diff = ImageChops.difference(im1, im2)
-    diff = im_diff.getbbox()
-    im2.crop(diff).save('real_diff.png')
-    draw = ImageDraw.Draw(im2)
-    diff_list = list(diff) if diff else []
-    if diff_list:
-        draw.rectangle(diff_list, outline=ImageColor.getrgb("red"), width=5)
-    im2.convert('RGB').save(output)
+    # Convert to grayscale.
+    gray1 = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+
+    # Compute similarity index.
+    (score, diff) = structural_similarity(gray1, gray2, full=True)
+    diff = (diff * 255).astype("uint8")
+    print("Image similarity: {}".format(score))
+
+    # Find contours of the differences.
+    thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV |
+                           cv2.THRESH_OTSU)[1]
+    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+                            cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
+
+    # Draw rectangles that indicate differences.
+    for c in cnts:
+        (x, y, w, h) = cv2.boundingRect(c)
+        cv2.rectangle(im1, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 0, 255), 2)
+
+    # Write files.
+    cv2.imwrite("original.png", im1)
+    cv2.imwrite(output, im2)
 
 
 def check_for_variable_existence(variables):
@@ -118,8 +136,8 @@ def changes_mail(url, diff=""):
                 'content' : encoded
             }
 
-        mark_diff_images("old_state.png", "new_state.png", "diff.png")
-        attachments = [attach_png('diff.png'), attach_png('real_diff.png')]
+        mark_diff_images("old_state.png", "new_state.png", "new.png")
+        attachments = [attach_png('original.png'), attach_png('new.png')]
 
     subject = "Changes on {0}".format(url)
     content = """Changes were detected on the <a href="{0}">page you ordered to monitor</a>.
@@ -193,7 +211,7 @@ def main():
             else:
                 print("CHANGES START")
                 second = BeautifulSoup(temp.text, 'html.parser')
-                differ = difflib.HtmlDiff()
+                #differ = difflib.HtmlDiff()
                 #diff = differ.make_table(first.prettify().split("\n"),
                 #                         second.prettify().split("\n"), '', '',
                 #                         True, 2)
@@ -210,5 +228,4 @@ def main():
                 print("CHANGES DONE")
         time.sleep(int(os.environ.get("SLEEP_TIME")))
 
-# if MAKE_SCREENSHOTS == 1 then SCREENSHOT_API has to be provided and correct
 main()
