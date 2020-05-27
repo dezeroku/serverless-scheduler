@@ -285,8 +285,8 @@ func createDeployment(item Item) {
 									apiv1.ResourceMemory: resource.MustParse("20Mi"),
 								},
 								Limits: apiv1.ResourceList{
-									apiv1.ResourceCPU:    resource.MustParse("100m"),
-									apiv1.ResourceMemory: resource.MustParse("100Mi"),
+									apiv1.ResourceCPU:    resource.MustParse("2"),
+									apiv1.ResourceMemory: resource.MustParse("600Mi"),
 								},
 							},
 							Env: []apiv1.EnvVar{
