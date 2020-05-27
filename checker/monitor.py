@@ -32,7 +32,7 @@ def screenshot_url(url, filename):
                 f.write(decoded)
                 f.close()
     else:
-        print("Incorrect status code: {0}".format(r.status_code))
+        print("Screenshoter HTTP code: {0}".format(r.status_code))
         sys.exit(1)
 
 def mark_diff_images(first, second, output):
@@ -111,7 +111,7 @@ We are changing for the better :)""".format(url, os.environ.get("SLEEP_TIME"))
         if r.status_code == 200:
             print("Successfully sent.")
         else:
-            print("Incorrect status code: {0}".format(r.status_code))
+            print("Sender HTTP code: {0}".format(r.status_code))
             print(r.json())
             sys.exit(1)
     else:
@@ -166,7 +166,7 @@ MAY THE FORCE BE WITH YOU""".format(url, diff)
         if r.status_code == 200:
             print("Successfully sent.")
         else:
-            print("Incorrect status code: {0}".format(r.status_code))
+            print("Sender HTTP code: {0}".format(r.status_code))
             print(r.json())
             sys.exit(1)
     else:
