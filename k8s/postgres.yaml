@@ -7,8 +7,8 @@ spec:
   teamId: "monitor"
   volume:
     size: 1Gi
-    storageClass: "nfs-master"
-  numberOfInstances: 2
+    storageClass: "local-path"
+  numberOfInstances: 1
   users:
     monitor:  # database owner
     - superuser
