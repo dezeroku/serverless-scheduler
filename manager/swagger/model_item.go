@@ -37,6 +37,6 @@ type Item struct {
 func (i *Item) GetDeploymentName() string {
 	// Make sure that DeploymentName is deterministic and does not contain any info that may change when updating.
 	temp := strings.ToLower(i.URL) + "-" + strconv.Itoa(int(i.ID)) + "-" + i.CreatedAt.Format("2006-01-02-15-04-05") + "-" + strings.ToLower(i.Owner)
-	temp = strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(temp, "@", "at"), ":", "-"), "/", "-"), "#", "-")
+	temp = strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(temp, "@", "at"), ":", "-"), "/", "-"), "#", "-"), "_", "-")
 	return temp
 }
