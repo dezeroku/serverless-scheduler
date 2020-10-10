@@ -1,13 +1,18 @@
-FROM golang:1.13
+FROM golang:1.13 as builder
 
-WORKDIR /app
+WORKDIR /go/src/github.com/d0ku/monitor_page/manager
 
 COPY go.mod go.sum ./
-
 RUN go mod download
 
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build
 
-RUN go build
+FROM alpine:latest
 
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+COPY --from=builder /go/src/github.com/d0ku/monitor_page/manager/manager .
+COPY --from=builder /go/src/github.com/d0ku/monitor_page/manager/templates ./templates
 CMD ["./manager"]
