@@ -66,6 +66,8 @@ def mark_diff_images(first, second, output):
     cv2.imwrite("original.png", im1)
     cv2.imwrite(output, im2)
 
+    return score
+
 
 def check_for_variable_existence(variables):
     logger = logging.getLogger('checker')
@@ -136,7 +138,10 @@ def changes_mail(url, diff=""):
                 'content' : encoded
             }
 
-        mark_diff_images("old_state.png", "new_state.png", "new.png")
+        if os.environ.get("IMAGE_BASED_CHECKING") == "1":
+            pass
+        else:
+            mark_diff_images("old_state.png", "new_state.png", "new.png")
         attachments = [attach_png('original.png'), attach_png('new.png')]
 
     subject = "Changes on {0}".format(url)
@@ -179,7 +184,7 @@ def main():
         sys.exit(1)
 
     global DEVELOPMENT
-    if os.environ.get("DEVELOPMENT") == "true":
+    if os.environ.get("DEVELOPMENT") == "1":
         DEVELOPMENT = True
 
     try:
@@ -195,37 +200,72 @@ def main():
         screenshot_url(url, "old_state.png")
     if os.environ.get('STARTED_MAIL') == '1':
         started_mail(url)
-    print("STARTED")
-    while True:
-        logger.debug("Loop")
-        temp = requests.get(url)
-        if text is None:
-            # First time check.
-            text = temp.text
-            first = BeautifulSoup(text, 'html.parser')
-            logger.info("Initialized.")
-        else:
-            # Main checking loop.
-            if temp.text == text:
-                logger.info("Nothing changed on website.")
-            else:
-                print("CHANGES START")
-                second = BeautifulSoup(temp.text, 'html.parser')
-                #differ = difflib.HtmlDiff()
-                #diff = differ.make_table(first.prettify().split("\n"),
-                #                         second.prettify().split("\n"), '', '',
-                #                         True, 2)
-                diff = ""
 
-                logger.info("Changes detected.")
-                if make_screenshots:
-                    screenshot_url(url, "new_state.png")
-                changes_mail(url, diff)
-                if make_screenshots:
+    image_based_checking = False
+    if os.environ.get("IMAGE_BASED_CHECKING") == "1":
+        image_based_checking = True
+
+    print("STARTED")
+
+    if image_based_checking:
+        first_entry = True
+        while True:
+            logger.debug("Loop")
+            screenshot_url(url, "new_state.png")
+            if first_entry:
+                # First time check.
+                os.rename("new_state.png", "old_state.png")
+                logger.info("Initialized.")
+                first_entry = False
+            else:
+
+                # It's important to keep this definition same as the one in
+                # mail_changes to not do same operation twice.
+                score = mark_diff_images("old_state.png", "new_state.png", "new.png")
+
+                # Main checking loop.
+                if score == 1.0:
+                    logger.info("Nothing changed on website.")
+                else:
+                    print("CHANGES START")
+
+                    logger.info("Changes detected.")
+                    changes_mail(url)
+
                     os.rename("new_state.png", "old_state.png")
+                    print("CHANGES DONE")
+            time.sleep(int(os.environ.get("SLEEP_TIME")))
+    else:
+        while True:
+            logger.debug("Loop")
+            temp = requests.get(url)
+            if text is None:
+                # First time check.
                 text = temp.text
                 first = BeautifulSoup(text, 'html.parser')
-                print("CHANGES DONE")
-        time.sleep(int(os.environ.get("SLEEP_TIME")))
+                logger.info("Initialized.")
+            else:
+                # Main checking loop.
+                if temp.text == text:
+                    logger.info("Nothing changed on website.")
+                else:
+                    print("CHANGES START")
+                    second = BeautifulSoup(temp.text, 'html.parser')
+                    #differ = difflib.HtmlDiff()
+                    #diff = differ.make_table(first.prettify().split("\n"),
+                    #                         second.prettify().split("\n"), '', '',
+                    #                         True, 2)
+                    diff = ""
+
+                    logger.info("Changes detected.")
+                    if make_screenshots:
+                        screenshot_url(url, "new_state.png")
+                    changes_mail(url, diff)
+                    if make_screenshots:
+                        os.rename("new_state.png", "old_state.png")
+                    text = temp.text
+                    first = BeautifulSoup(text, 'html.parser')
+                    print("CHANGES DONE")
+            time.sleep(int(os.environ.get("SLEEP_TIME")))
 
 main()
