@@ -7,6 +7,6 @@ RUN pip3 install -r requirements.txt
 ENV PYTHONUNBUFFERED=1
 ENV SLEEP_TIME=600
 
-COPY . .
+COPY monitor.py .
 
 ENTRYPOINT ["python3", "monitor.py"]
