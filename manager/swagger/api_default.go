@@ -326,6 +326,10 @@ func createDeployment(item Item) {
 									Value: "http://screenshoter.monitor-page.svc.cluster.local:8080",
 								},
 								{
+									Name:  "COMPARATOR_API",
+									Value: "http://comparator.monitor-page.svc.cluster.local:8080",
+								},
+								{
 									Name:  "SENDER_API",
 									Value: "http://sender.monitor-page.svc.cluster.local:8080",
 								},

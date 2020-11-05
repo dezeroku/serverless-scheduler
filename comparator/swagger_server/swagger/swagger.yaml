@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: Picture comparator
+  description: Allows to compare two pictures and calculate difference of them
+  contact:
+    email: darthtyranus666666@gmail.com
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+- url: /v1
+  description: first api version
+paths:
+  /compare:
+    post:
+      summary: returns score and picture diff of provided images
+      operationId: compare
+      requestBody:
+        description: data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompareRequest'
+      responses:
+        "200":
+          description: successful screenshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareResponse'
+        "400":
+          description: bad input parameters
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    CompareRequest:
+      required:
+      - first
+      - second
+      type: object
+      properties:
+        first:
+          type: string
+          example: base64 encoded png
+        second:
+          type: string
+          example: base64 encoded png
+    CompareResponse:
+      required:
+      - diff_image
+      - score
+      type: object
+      properties:
+        score:
+          type: number
+        diff_image:
+          type: string
+          example: base64 encoded png
+      example:
+        score: 0.80082819046101150206595775671303272247314453125
+        diff_image: base64 encoded png
+

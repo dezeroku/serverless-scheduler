@@ -10,11 +10,6 @@ import logging
 import time
 #import difflib
 
-# Image diff calculation
-from skimage.metrics import structural_similarity
-import imutils
-import cv2
-
 # HTML diff calculation
 from bs4 import BeautifulSoup
 
@@ -36,35 +31,35 @@ def screenshot_url(url, filename):
         sys.exit(1)
 
 def mark_diff_images(first, second, output):
-    # Load images.
-    im1 = cv2.imread(first)
-    im2 = cv2.imread(second)
+    if not check_for_variable_existence(['COMPARATOR_API']):
+        sys.exit(1)
 
-    # Convert to grayscale.
-    gray1 = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
-    gray2 = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+    def encode_png(file_path):
+        with open(file_path, 'rb') as f:
+                data = f.read()
+                f.close()
+        return base64.b64encode(data).decode()
 
-    # Compute similarity index.
-    (score, diff) = structural_similarity(gray1, gray2, full=True)
-    diff = (diff * 255).astype("uint8")
+
+    data = {
+        "first": encode_png(first),
+        "second": encode_png(second),
+        }
+
+    r = requests.post("{0}/v1/compare".format(os.environ.get('COMPARATOR_API')),
+                      json=data)
+
+    if r.status_code == 200:
+        score = r.json()['score']
+        decoded = base64.b64decode(r.json()['diff_image'])
+        with open(output, 'wb') as f:
+                f.write(decoded)
+                f.close()
+    else:
+        print("Screenshoter HTTP code: {0}".format(r.status_code))
+        sys.exit(1)
+
     print("Image similarity: {}".format(score))
-
-    # Find contours of the differences.
-    thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV |
-                           cv2.THRESH_OTSU)[1]
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-                            cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-
-    # Draw rectangles that indicate differences.
-    for c in cnts:
-        (x, y, w, h) = cv2.boundingRect(c)
-        cv2.rectangle(im1, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
-    # Write files.
-    cv2.imwrite("original.png", im1)
-    cv2.imwrite(output, im2)
 
     return score
 
@@ -142,7 +137,7 @@ def changes_mail(url, diff=""):
             pass
         else:
             mark_diff_images("old_state.png", "new_state.png", "new.png")
-        attachments = [attach_png('original.png'), attach_png('new.png')]
+        attachments = [attach_png('old_state.png'), attach_png('new.png')]
 
     subject = "Changes on {0}".format(url)
     content = """Changes were detected on the <a href="{0}">page you ordered to monitor</a>.

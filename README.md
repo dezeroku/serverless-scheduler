@@ -7,6 +7,7 @@ Contains all necessary manifests to deploy on Kubernetes in `monitor-page` names
 ## Structure
 
 * screenshot making container - screenshoter, API, internal service
+* picture comparing container - comparator, API, internal service
 * html checking container - checker, no service here (that's common worker here)
 * sender - sender, sends mesage with data it gets using one of (mail, SMS (TODO), messenger(TODO)) , internal service
 * manager container - manager, manages pods that actually do the checking job, reads/writes db, API container, service
