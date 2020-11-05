@@ -13,6 +13,9 @@ spec:
       labels:
         app: sender
     spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        workHorse: "yes"
       containers:
       - name: master
         ports:

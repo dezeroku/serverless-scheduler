@@ -15,6 +15,9 @@ spec:
       labels:
         app: checker
     spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        workHorse: "yes"
       containers:
       - name: master
         image: registry.example.url/d0ku/monitor_page_checker:%LATEST_HASH%
