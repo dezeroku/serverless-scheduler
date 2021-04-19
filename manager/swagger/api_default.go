@@ -53,42 +53,44 @@ func validateJSON(item *Item, w http.ResponseWriter) bool {
 	return true
 }
 
-func ItemCreate(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var item *Item
-	err := decoder.Decode(&item)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+func ItemCreateWrap(checkerImage string) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		var item *Item
+		err := decoder.Decode(&item)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if !validateJSON(item, w) {
+			return
+		}
+
+		ctx := r.Context()
+		authUserEmail := ctx.Value(auth.KeyAuthUserEmail)
+
+		if authUserEmail != item.Owner {
+			log.Printf("Email %s tried to create %s's item.", authUserEmail, item.Owner)
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+
+			return
+		}
+
+		var createdItem Item
+		err = db.Create(item).Scan(&createdItem).Error
+
+		if err != nil {
+			common.RespondInternalError(w, fmt.Errorf("could not save to DB: %v", err))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(createdItem)
+
+		createDeployment(*item, checkerImage)
 	}
-
-	if !validateJSON(item, w) {
-		return
-	}
-
-	ctx := r.Context()
-	authUserEmail := ctx.Value(auth.KeyAuthUserEmail)
-
-	if authUserEmail != item.Owner {
-		log.Printf("Email %s tried to create %s's item.", authUserEmail, item.Owner)
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-
-		return
-	}
-
-	var createdItem Item
-	err = db.Create(item).Scan(&createdItem).Error
-
-	if err != nil {
-		common.RespondInternalError(w, fmt.Errorf("could not save to DB: %v", err))
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(createdItem)
-
-	createDeployment(*item)
 }
 
 func ItemDelete(w http.ResponseWriter, r *http.Request) {
@@ -244,7 +246,7 @@ func booltoBoolPtr(i bool) *bool {
 	return &i
 }
 
-func createDeployment(item Item) {
+func createDeployment(item Item, checkerImage string) {
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {
 		fmt.Println("DEV: Deployment created")
@@ -278,7 +280,7 @@ func createDeployment(item Item) {
 					Containers: []apiv1.Container{
 						{
 							Name:  "main",
-							Image: "registry.example.url/d0ku/monitor_page_checker",
+							Image: checkerImage,
 							Resources: apiv1.ResourceRequirements{
 								Requests: apiv1.ResourceList{
 									apiv1.ResourceCPU:    resource.MustParse("20m"),

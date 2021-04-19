@@ -87,9 +87,13 @@ func main() {
 	}
 
 	senderAPI, ok := os.LookupEnv("SENDER_API")
-
 	if !ok {
 		log.Fatalln("could not find SENDER_API on environment variables")
+	}
+
+	checkerImage, ok := os.LookupEnv("CHECKER_IMAGE")
+	if !ok {
+		log.Fatalln("could not find CHECKER_IMAGE on environment variables")
 	}
 
 	var clientset *kubernetes.Clientset
@@ -120,7 +124,7 @@ func main() {
 
 	mount(router, "/passwordless", auth.NewRouter(appURL, jwtKey, senderAPI, db))
 	mount(router, "/auth", testRouter)
-	apiRouter := swagger.NewRouter(db, jwtKey, clientset)
+	apiRouter := swagger.NewRouter(db, jwtKey, clientset, checkerImage)
 	apiRouter.Use(authentication.Middleware)
 
 	mount(router, "/", apiRouter)

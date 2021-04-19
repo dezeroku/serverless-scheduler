@@ -37,7 +37,7 @@ type Routes []Route
 
 // NewRouter returns mux.Router that handles all the paths in module.
 // It requires open db handler and jwtKey to be provided.
-func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset) *mux.Router {
+func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset, checkerImage string) *mux.Router {
 	db = dbIn
 	jwtKey = jwtKeyIn
 	clientset = clientsetIn
@@ -59,6 +59,51 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 	}
 
 	router := mux.NewRouter().StrictSlash(true)
+
+	var routes = Routes{
+		Route{
+			"Index",
+			"GET",
+			"/v1",
+			Index,
+		},
+
+		Route{
+			"ItemCreate",
+			strings.ToUpper("Post"),
+			"/v1/item/create",
+			ItemCreateWrap(checkerImage),
+		},
+
+		Route{
+			"ItemDelete",
+			strings.ToUpper("Delete"),
+			"/v1/item/delete/{id}",
+			ItemDelete,
+		},
+
+		Route{
+			"ItemGet",
+			strings.ToUpper("Get"),
+			"/v1/item/{id}",
+			ItemGet,
+		},
+
+		Route{
+			"ItemUpdate",
+			strings.ToUpper("Put"),
+			"/v1/item/update/{id}",
+			ItemUpdate,
+		},
+
+		Route{
+			"ItemsGet",
+			strings.ToUpper("Get"),
+			"/v1/items/{email}",
+			ItemsGet,
+		},
+	}
+
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc
@@ -76,48 +121,4 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World!")
-}
-
-var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"/v1",
-		Index,
-	},
-
-	Route{
-		"ItemCreate",
-		strings.ToUpper("Post"),
-		"/v1/item/create",
-		ItemCreate,
-	},
-
-	Route{
-		"ItemDelete",
-		strings.ToUpper("Delete"),
-		"/v1/item/delete/{id}",
-		ItemDelete,
-	},
-
-	Route{
-		"ItemGet",
-		strings.ToUpper("Get"),
-		"/v1/item/{id}",
-		ItemGet,
-	},
-
-	Route{
-		"ItemUpdate",
-		strings.ToUpper("Put"),
-		"/v1/item/update/{id}",
-		ItemUpdate,
-	},
-
-	Route{
-		"ItemsGet",
-		strings.ToUpper("Get"),
-		"/v1/items/{email}",
-		ItemsGet,
-	},
 }

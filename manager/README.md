@@ -9,5 +9,6 @@ Its role is also to manage all the checkers that are currently running.
 * SENDER_API - should contain URL to an API that's responsible for sending stuff (sender)
 * DATABASE_TYPE - defaults to postgres if not provided
 * DATABASE_URL - gorm formatted url that contains information necessary to connect to DB
+* CHECKER_IMAGE - URL to the docker image that should be run as a checker job
 
 * DEVELOP_MODE - if set in environment, mail is not send and its content is displayed on the screen. Also dummy data is inserted into db.

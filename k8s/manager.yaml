@@ -31,6 +31,8 @@ spec:
         env:
         - name: APP_URL
           value: https://api.monitor.example.url
+        - name: CHECKER_IMAGE
+          value: registry.example.url/d0ku/monitor_page_checker
         - name: FRONT_URL
           value: https://monitor.example.url
         - name: ALLOWED_ORIGIN
