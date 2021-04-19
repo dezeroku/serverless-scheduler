@@ -28,6 +28,7 @@ The `checker` manifest should not be deployed, it's there just for a reference.
 Requires `postgres-operator` to be installed on k8s and configured for the target namespace.
 
 ### TODOs
+* Setup Github Actions instead of relying on private CI
 * Add a script or different utility that would allow initial setup without directly changing the db entries to add the users
 * Switch k8s manifests to helm for easier configuration
 * Write tests
