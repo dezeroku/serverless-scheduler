@@ -15,7 +15,7 @@ import (
 	"text/template"
 	"time"
 
-	"example.url/monitor_page/manager/v2/common"
+	"github.com/d0ku/monitor_page/manager/v2/common"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -316,8 +316,8 @@ func NewRouter(appURL string, jwtKey string, senderAPI string, dbIn *gorm.DB) *m
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {
 		log.Println("Inserting dummy users to DB.")
-		db.Save(&User{Email: "d0ku@example.url"})
-		db.Save(&User{Email: "test@example.url"})
+		db.Save(&User{Email: "d0ku@example"})
+		db.Save(&User{Email: "test@example"})
 	}
 
 	router := mux.NewRouter()

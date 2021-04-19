@@ -16,7 +16,7 @@ import (
 	"os"
 	"strings"
 
-	"example.url/monitor_page/manager/v2/auth"
+	"github.com/d0ku/monitor_page/manager/v2/auth"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"k8s.io/client-go/kubernetes"
@@ -50,12 +50,12 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 	if ok {
 		log.Println("Inserting dummy items.")
 		var user auth.User
-		db.First(&user, "email = ?", "test@example.url")
-		db.Save(&Item{RealOwner: user, URL: "http://test.example.url", SleepTime: 13, MakeScreenshots: true})
+		db.First(&user, "email = ?", "test@example")
+		db.Save(&Item{RealOwner: user, URL: "http://test.example", SleepTime: 13, MakeScreenshots: true})
 
 		var userTwo auth.User
-		db.First(&userTwo, "email = ?", "d0ku@example.url")
-		db.Save(&Item{RealOwner: userTwo, URL: "http://portfolio.example.url", SleepTime: 13, MakeScreenshots: true})
+		db.First(&userTwo, "email = ?", "d0ku@example")
+		db.Save(&Item{RealOwner: userTwo, URL: "http://testtwo.example", SleepTime: 13, MakeScreenshots: true})
 	}
 
 	router := mux.NewRouter().StrictSlash(true)

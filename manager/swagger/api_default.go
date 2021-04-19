@@ -19,8 +19,8 @@ import (
 	"os"
 	"strconv"
 
-	"example.url/monitor_page/manager/v2/auth"
-	"example.url/monitor_page/manager/v2/common"
+	"github.com/d0ku/monitor_page/manager/v2/auth"
+	"github.com/d0ku/monitor_page/manager/v2/common"
 	"github.com/gorilla/mux"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"

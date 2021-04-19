@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"example.url/monitor_page/manager/v2/auth"
-	"example.url/monitor_page/manager/v2/common"
-	"example.url/monitor_page/manager/v2/swagger"
+	"github.com/d0ku/monitor_page/manager/v2/auth"
+	"github.com/d0ku/monitor_page/manager/v2/common"
+	"github.com/d0ku/monitor_page/manager/v2/swagger"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
