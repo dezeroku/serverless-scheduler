@@ -5,6 +5,7 @@ import {Route, Redirect} from "react-router-dom";
 import {Button, Navbar, Nav, Form} from "react-bootstrap";
 import {logOut, userMail, getToken} from "./Login";
 import {handleUpdate, handleCreate, handleDelete} from "./API";
+import {API_URL} from "./Config";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -45,7 +46,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             }
         }
 
-	return axios.get(process.env.REACT_APP_API_SERVER + "/v1/items/" + userMail(), config)
+	return axios.get(API_URL + "/v1/items/" + userMail(), config)
 	    .then((response) => {
 	      if (response.status !== 200) {
                   // Something went wrong on server side.

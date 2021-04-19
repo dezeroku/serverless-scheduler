@@ -2,6 +2,7 @@ import axios from "axios";
 
 // It is used to get access token.
 import {userMail, getToken} from "./Login";
+import {API_URL} from "./Config";
 
 // Ensuring that proper types are used.
 import ItemProps from "./Item";
@@ -20,7 +21,7 @@ export async function handleCreate(json : ItemProps["props"]) {
     let data : any = { ...json, ...{owner: userMail()}}
     data["sleepTime"] *= 60;
 
-    return axios.post(process.env.REACT_APP_API_SERVER + "/v1/item/create", data, config)
+    return axios.post(API_URL + "/v1/item/create", data, config)
 	.then((response) => {
 	    console.log("AA");
 	    if (response.status !== 200) {
@@ -55,7 +56,7 @@ export async function handleDelete(json : ItemProps["props"]) {
         }
     }
 
-    return axios.delete(process.env.REACT_APP_API_SERVER + "/v1/item/delete/" + json.id, config)
+    return axios.delete(API_URL + "/v1/item/delete/" + json.id, config)
 	.then((response) => {
 	    console.log("AA");
 	    if (response.status !== 200) {
@@ -91,7 +92,7 @@ export async function handleUpdate(json : ItemProps["props"]) {
     let data : any = { ...json, ...{owner: userMail()}}
     data["sleepTime"] *= 60;
 
-    return axios.put(process.env.REACT_APP_API_SERVER + "/v1/item/update/" + json.id, data, config)
+    return axios.put(API_URL + "/v1/item/update/" + json.id, data, config)
 	.then((response) => {
 	    console.log("AA");
 	    if (response.status !== 200) {

@@ -1,5 +1,6 @@
 import React from "react";
 import "./Login.scss";
+import {API_URL} from "./Config";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
@@ -30,7 +31,7 @@ const Login: React.FC = () => {
       }
 
       setLoading(true);
-      axios.post(process.env.REACT_APP_API_SERVER + "/passwordless/start", data, config)
+      axios.post(API_URL + "/passwordless/start", data, config)
 	  .then((response) => {
 	      if (response.status !== 204) {
 		  // Something went wrong on server side.
@@ -64,45 +65,45 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="container-fluid">
-      <div className="Login">
-	<Modal show={showModal} onHide={() => {setShowModal(false);}}>
-	  <Modal.Header closeButton>
-	    <Modal.Title>Success</Modal.Title>
-	  </Modal.Header>
-	  <Modal.Body>{modalContent}</Modal.Body>
-	</Modal>
-        <Card bg="light" id="centered-form">
-          <Card.Body hidden={successfullSent || loading}>
-            <form onSubmit={handleSubmit}>
-              <FormGroup controlId="email">
-                <FormLabel>Email</FormLabel>
-                <FormControl
-                  autoFocus
-                  type="email"
-                  value={email}
-                  onChange={(e: any) => setEmail(e.target.value)}
-                />
-              </FormGroup>
-              <Button block disabled={!validateForm()} type="submit">
-                Login
-              </Button>
-            </form>
-          </Card.Body>
-	  <div>
-	  <Card.Body hidden={!successfullSent || loading}>
-	    <Card.Title>Good job!</Card.Title>
-	    If your mail is in our database, you will shortly get a message with an one-time authenticating link. Click it, and you will be logged in.
-	  </Card.Body>
-	  <Card.Body hidden={!loading}>
-	    <ClipLoader
-	      size={150}
-	      />
-	  </Card.Body>
-	  </div>
-        </Card>
+      <div className="container-fluid">
+          <div className="Login">
+	          <Modal show={showModal} onHide={() => {setShowModal(false);}}>
+	              <Modal.Header closeButton>
+	                  <Modal.Title>Success</Modal.Title>
+	              </Modal.Header>
+	              <Modal.Body>{modalContent}</Modal.Body>
+	          </Modal>
+              <Card bg="light" id="centered-form">
+                  <Card.Body hidden={successfullSent || loading}>
+                      <form onSubmit={handleSubmit}>
+                          <FormGroup controlId="email">
+                              <FormLabel>Email</FormLabel>
+                              <FormControl
+                                  autoFocus
+                                  type="email"
+                                  value={email}
+                                  onChange={(e: any) => setEmail(e.target.value)}
+                              />
+                          </FormGroup>
+                          <Button block disabled={!validateForm()} type="submit">
+                              Login
+                          </Button>
+                      </form>
+                  </Card.Body>
+	              <div>
+	                  <Card.Body hidden={!successfullSent || loading}>
+	                      <Card.Title>Good job!</Card.Title>
+	                      If your mail is in our database, you will shortly get a message with an one-time authenticating link. Click it, and you will be logged in.
+	                  </Card.Body>
+	                  <Card.Body hidden={!loading}>
+	                      <ClipLoader
+	                          size={150}
+	                      />
+	                  </Card.Body>
+	              </div>
+              </Card>
+          </div>
       </div>
-    </div>
   );
 };
 
