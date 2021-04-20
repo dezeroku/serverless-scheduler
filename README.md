@@ -29,7 +29,9 @@ Requires `postgres-operator` to be installed on k8s and configured for the targe
 
 ### TODOs
 * Setup Github Actions instead of relying on private CI
-* Add a script or different utility that would allow initial setup without directly changing the db entries to add the users
+* Add a script or different utility that would allow initial setup without directly changing the db entries to add the users (admin panel basically)
 * Switch k8s manifests to helm for easier configuration
 * Write tests
-* Add support for additional notification methods (SMS, messenger, application?)
+* Support for additional notification methods (SMS, messenger, application?)
+* Tiers/roles, allowing limiting users
+* LDAP support for authentication
