@@ -1,13 +1,11 @@
 import React from "react";
 
-import {ToggleButton, ToggleButtonGroup, ListGroup} from "react-bootstrap";
+import {Card, ToggleButton, ToggleButtonGroup, ListGroup} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Item from "./Item";
 import ItemProps from "./Item";
 import EditModal from "./EditModal";
-//import axios from "axios";
-//import ClipLoader from 'react-spinners/ClipLoader';
 
 type ItemListProps = {
     handleUpdate : any;
@@ -55,17 +53,28 @@ function ItemList (props : ItemListProps) {
     
   return (
       <div className="ItemList">
-	<div className="Items m-2">
-	  <ListGroup>
-	    {renderItems(props.items, props.visibleCount)}
-	  </ListGroup>
-	</div>
-	<div className="Controls m-2 mt-1">
-	  <ToggleButtonGroup type="radio" onChange={(val : number) => setTab(val)} name="tab" defaultValue={0}>
-	    {renderTabButtons(props.items.length, props.visibleCount)}
-	  </ToggleButtonGroup>
-	</div>
-	<EditModal show={showEditModal} handleTask={(json : ItemProps["props"]) => props.handleUpdate(json)} onHide={() => {setShowEditModal(false);}} item={activeItem} editMode={true} handleDelete={(json: ItemProps["props"]) => props.handleDelete(json)} closeModal={() => setShowEditModal(false)} refresh={() => props.refresh()}/>
+	      { props.items.length !== 0 ?
+            <div className="Items m-2">
+	            <ListGroup>
+	                {renderItems(props.items, props.visibleCount)}
+	            </ListGroup>
+	        </div> :
+            <div>
+              <Card bg="light" id="centered-form">
+                  <Card.Body >
+                      It's so empty here... <br/>
+                      Add something to the watch list using the "Create" button
+                  </Card.Body>
+              </Card>
+
+            </div>
+          }
+	      <div className="Controls m-2 mt-1">
+	          <ToggleButtonGroup type="radio" onChange={(val : number) => setTab(val)} name="tab" defaultValue={0}>
+	              {renderTabButtons(props.items.length, props.visibleCount)}
+	          </ToggleButtonGroup>
+	      </div>
+	      <EditModal show={showEditModal} handleTask={(json : ItemProps["props"]) => props.handleUpdate(json)} onHide={() => {setShowEditModal(false);}} item={activeItem} editMode={true} handleDelete={(json: ItemProps["props"]) => props.handleDelete(json)} closeModal={() => setShowEditModal(false)} refresh={() => props.refresh()}/>
       </div>
   );
 };
