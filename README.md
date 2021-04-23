@@ -35,3 +35,4 @@ Requires `postgres-operator` to be installed on k8s and configured for the targe
 * Support for additional notification methods (SMS, messenger, application?)
 * Tiers/roles, allowing limiting users
 * LDAP support for authentication
+* Split development from production, mock front, cleanup manager
