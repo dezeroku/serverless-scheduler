@@ -1,0 +1,5 @@
+{
+    "/v1/*": "/$1",
+    "/passwordless/start": "passwordless_start",
+    "/items/:owner": "/items?owner=:owner"
+}

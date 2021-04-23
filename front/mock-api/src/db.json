@@ -1,0 +1,5 @@
+{
+    "items": [
+        {"id": 1, "url": "test.url", "sleepTime": 60, "makeScreenshots": true, "owner": "test@example.url"}
+    ]
+}

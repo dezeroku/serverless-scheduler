@@ -1,0 +1,3 @@
+# Just a dummy JWT with test@example.url mail defined
+# Set it as "auth_token" in window.sessionStorage
+m = window.sessionStorage; m.setItem("auth_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUudXJsIiwibmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNTE2MjM5MDIyfQ.FqZJO19KHW7EQoAf8LIVRu31nruBFLm4LrUBBSs_TQE");
