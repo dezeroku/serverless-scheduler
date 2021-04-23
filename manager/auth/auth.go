@@ -316,8 +316,8 @@ func NewRouter(appURL string, jwtKey string, senderAPI string, dbIn *gorm.DB) *m
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {
 		log.Println("Inserting dummy users to DB.")
-		db.Save(&User{Email: "d0ku@example"})
-		db.Save(&User{Email: "test@example"})
+		db.Save(&User{Email: "d0ku@example.url"})
+		db.Save(&User{Email: "test@example.url"})
 	}
 
 	router := mux.NewRouter()
