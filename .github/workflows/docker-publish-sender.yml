@@ -1,4 +1,4 @@
-name: Docker - front
+name: Docker - sender
 
 on:
   push:
