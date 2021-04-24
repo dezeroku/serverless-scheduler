@@ -10,11 +10,11 @@ on:
     tags:
       - v*
 env:
+  CONTEXT: front
   IMAGE_NAME: monitor_package_front
 
 jobs:
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
+  # Push image to GHCR.
   push:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -52,9 +52,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-front-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-front-
+            ${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-
 
       -
         name: Login to GHCR
@@ -68,11 +68,12 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./front
+          context: ./${{ env.CONTEXT }}
           platforms: linux/amd64
           push: true
           tags: |
             ${{ env.IMAGE_ID }}:${{ env.VERSION }}
+            ${{ env.IMAGE_ID }}:latest
             ${{ env.IMAGE_ID }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
