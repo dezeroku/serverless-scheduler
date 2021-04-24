@@ -37,3 +37,4 @@ Requires `postgres-operator` to be installed on k8s and configured for the targe
 * LDAP support for authentication
 * Split development from production, mock front, cleanup manager
 * Allow checking for specific string/regex appearance (basically different checker types)
+* Consider cutting the docker CI jobs to single defined action, preferably in another repo?
