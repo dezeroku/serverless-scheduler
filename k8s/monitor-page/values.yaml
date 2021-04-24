@@ -1,0 +1,204 @@
+# Default values for monitor_page.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+baseUrl: "monitor.example.url"
+baseRegistry: "registry.example.url"
+
+# This really isn't good according to the best practices, but I don't see a better way to call in-namespace services
+# without being aware of its name.
+# TODO: to be solved properly
+namespace: "monitor-page"
+
+manager:
+  # Overrides the namespace whose default is listed on top of the file.
+  namespace: ""
+
+  replicaCount: 1
+  
+  image:
+    repository: registry.example.url/d0ku/monitor_page_manager
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  
+  imagePullSecrets: ["regcred"]
+  nameOverride: ""
+  fullnameOverride: ""
+
+  selectorLabels:
+    app: manager
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+
+  env:
+    # Overrides the APP_URL whose default is "https://api.{{ baseUrl }}"
+    APP_URL: ""
+
+    # Overrides the CHECKER_IMAGE whose default is "{{ baseRegistry }}/d0ku/checker .Chart.appVersion"
+    CHECKER_IMAGE: ""
+
+    # Overrides the FRONT_URL whose default is "https://{{ Url }}"
+    FRONT_URL: ""
+
+    ALLOWED_ORIGIN: "*"
+
+  service:
+    type: ClusterIP
+    port: 80
+  
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: api.monitor.example.url
+        paths:
+        - path: /
+          backend:
+            serviceName: chart-example.local
+            servicePort: 80
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  
+  resources:
+    requests:
+      cpu: 40m
+      memory: 40Mi
+    limits:
+      cpu: 300m
+      memory: 300Mi
+  
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  
+  nodeSelector: 
+    kubernetes.io/arch: amd64
+    workHorse: "yes"
+    
+  tolerations: []
+  affinity: {}
+
+screenshoter:
+  # Overrides the namespace whose default is listed on top of the file.
+  namespace: ""
+  replicaCount: 1
+  
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  
+  podAnnotations: {}
+  
+  podSecurityContext: {}
+    # fsGroup: 2000
+  
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  resources: {}
+  
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  
+  nodeSelector: {}
+  
+  tolerations: []
+  
+  affinity: {}
+
+sender:
+  # Overrides the namespace whose default is listed on top of the file.
+  namespace: ""
+  replicaCount: 1
+  
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  
+  podAnnotations: {}
+  
+  podSecurityContext: {}
+    # fsGroup: 2000
+  
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  
+  service:
+    type: ClusterIP
+    port: 80
+  
+  resources: {}
+  
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  
+  nodeSelector: {}
+  
+  tolerations: []
+  
+  affinity: {}
+
+db:
+  # Overrides the namespace whose default is listed on top of the file.
+  namespace: ""
+  replicaCount: 1
+
+  dbType: "postgres"
+  dbName: "monitor"
+  dbOwner: "monitor"
+  dbPort: 5432
+  teamId: "monitor"
+  storageClass: "local-path"

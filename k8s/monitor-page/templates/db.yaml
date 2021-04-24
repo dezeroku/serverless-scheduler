@@ -1,0 +1,19 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: {{ include "monitor_page.fullname" . }}-db
+  namespace: {{ .Values.db.namespace }}
+spec:
+  teamId: "{{ .Values.db.teamId }}"
+  volume:
+    size: 1Gi
+    storageClass: "{{ .Values.db.storageClass }}"
+  numberOfInstances: "{{ .Values.db.replicaCount }}"
+  users:
+    {{ .Values.db.dbOwner }}:
+    - superuser
+    - createdb
+  databases:
+    monitor: "{{ .Values.db.dbOwner }}"
+  postgresql:
+    version: "11"
