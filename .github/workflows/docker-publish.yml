@@ -5,6 +5,7 @@ on:
     # Publish `master` as Docker `latest` image.
     branches:
       - master
+      - dev
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -81,7 +82,6 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_ID }}:${{ env.VERSION }}
-            ${{ env.IMAGE_ID }}:latest
             ${{ env.IMAGE_ID }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
