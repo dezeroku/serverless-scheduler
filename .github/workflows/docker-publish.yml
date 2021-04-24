@@ -1,4 +1,4 @@
-name: Docker - checker
+name: Publish docker images
 
 on:
   push:
@@ -10,13 +10,19 @@ on:
     tags:
       - v*
 env:
-  CONTEXT: checker
-  IMAGE_NAME: monitor_package_checker
+  CONTEXT: front
+  IMAGE_NAME: monitor_package_front
 
 jobs:
-  # Push image to GHCR.
-  push:
+  # Push images to GHCR.
+  docker-publish:
     runs-on: ubuntu-latest
+
+    # Smart way to publish images for all the components
+    strategy:
+      matrix:
+        component: ["front", "manager", "sender", "checker", "screenshoter", "comparator"]
+
     if: github.event_name == 'push'
 
     steps:
@@ -34,9 +40,11 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}" | tr '[A-Z]' '[a-z]')
+          IMAGE_NAME="monitor_package_${{ matrix.component }}"
+          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
 
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       -
@@ -68,8 +76,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./${{ env.CONTEXT }}
-          platforms: linux/amd64, linux/arm64/v8
+          context: ./${{ matrix.component }}
+          platforms: linux/amd64
           push: true
           tags: |
             ${{ env.IMAGE_ID }}:${{ env.VERSION }}
