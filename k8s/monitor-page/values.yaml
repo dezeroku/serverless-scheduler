@@ -55,14 +55,13 @@ manager:
     ALLOWED_ORIGIN: "*"
 
   service:
-    type: ClusterIP
     port: 80
-  
+
   ingress:
-    enabled: false
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
     hosts:
       - host: api.monitor.example.url
         paths:
@@ -70,10 +69,10 @@ manager:
           backend:
             serviceName: chart-example.local
             servicePort: 80
-    tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
+    tls:
+      - secretName: api-monitor-base-tls
+        hosts:
+          - api.monitor.example.url
   
   resources:
     requests:
