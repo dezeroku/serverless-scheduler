@@ -36,3 +36,4 @@ Requires `postgres-operator` to be installed on k8s and configured for the targe
 * Tiers/roles, allowing limiting users
 * LDAP support for authentication
 * Split development from production, mock front, cleanup manager
+* Allow checking for specific string/regex appearance (basically different checker types)
