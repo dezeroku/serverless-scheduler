@@ -8,7 +8,7 @@ spec:
   volume:
     size: 1Gi
     storageClass: "{{ .Values.db.storageClass }}"
-  numberOfInstances: "{{ .Values.db.replicaCount }}"
+  numberOfInstances: {{ .Values.db.replicaCount }}
   users:
     {{ .Values.db.dbOwner }}:
     - superuser
