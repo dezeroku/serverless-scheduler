@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monitor_page.fullname" . }}-comparator
+  namespace: {{ .Values.comparator.namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "monitor_page.selectorLabels" . | nindent 6 }}
+      app: comparator
+  {{- if not .Values.comparator.autoscaling.enabled }}
+  replicas: {{ .Values.comparator.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "monitor_page.selectorLabels" . | nindent 8 }}
+        app: comparator
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.comparator.securityContext | nindent 12 }}
+          image: "{{ .Values.comparator.image.repository }}:{{ .Values.comparator.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.comparator.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.comparator.resources | nindent 12 }}
+      {{- with .Values.comparator.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.comparator.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.comparator.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -191,6 +191,52 @@ sender:
   
   affinity: {}
 
+comparator:
+  # Overrides the namespace whose default is listed on top of the file.
+  namespace: ""
+  replicaCount: 2
+
+  image:
+    repository: registry.example.url/d0ku/monitor_page_comparator
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  imagePullSecrets: ["regcred"]
+  nameOverride: ""
+  fullnameOverride: ""
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+
+  service:
+    port: 80
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      cpu: 600m
+      memory: 900Mi
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+    workHorse: "yes"
+
+  tolerations: []
+
+  affinity: {}
+
 db:
   # Overrides the namespace whose default is listed on top of the file.
   namespace: ""
