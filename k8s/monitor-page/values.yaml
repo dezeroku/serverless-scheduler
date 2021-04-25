@@ -16,6 +16,8 @@ sendgridAPIKey: "nokey"
 # TODO: to be solved properly
 namespace: "monitor-page"
 
+# Also custom namespaces per component are probably not supported yet. At least checkers and rbac stuff should be in the same namespace.
+
 manager:
   # Overrides the namespace whose default is listed on top of the file.
   namespace: ""
