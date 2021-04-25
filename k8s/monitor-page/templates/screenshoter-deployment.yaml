@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monitor_page.fullname" . }}-screenshoter
+  namespace: {{ .Values.screenshoter.namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "monitor_page.selectorLabels" . | nindent 6 }}
+      app: screenshoter
+  {{- if not .Values.screenshoter.autoscaling.enabled }}
+  replicas: {{ .Values.screenshoter.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "monitor_page.selectorLabels" . | nindent 8 }}
+        app: screenshoter
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.screenshoter.securityContext | nindent 12 }}
+          image: "{{ .Values.screenshoter.image.repository }}:{{ .Values.screenshoter.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.screenshoter.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.screenshoter.resources | nindent 12 }}
+      {{- with .Values.screenshoter.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.screenshoter.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.screenshoter.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

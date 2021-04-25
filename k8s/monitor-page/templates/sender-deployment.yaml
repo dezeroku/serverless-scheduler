@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "monitor_page.fullname" . }}-sender
+  namespace: {{ .Values.sender.namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "monitor_page.selectorLabels" . | nindent 6 }}
+      app: sender
+  {{- if not .Values.sender.autoscaling.enabled }}
+  replicas: {{ .Values.sender.replicaCount }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "monitor_page.selectorLabels" . | nindent 8 }}
+        app: sender
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.sender.securityContext | nindent 12 }}
+          image: "{{ .Values.sender.image.repository }}:{{ .Values.sender.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sender.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.sender.resources | nindent 12 }}
+          env:
+          - name: SENDGRID_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: secret-jwt
+                key: jwt-secret
+          - name: MAIL_SENDER
+            value: "{{ .Values.sender.mailSender }}"
+      {{- with .Values.sender.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sender.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sender.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

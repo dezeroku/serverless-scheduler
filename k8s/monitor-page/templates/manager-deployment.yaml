@@ -8,8 +8,8 @@ spec:
     matchLabels:
       {{- include "monitor_page.selectorLabels" . | nindent 6 }}
       app: manager
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.manager.autoscaling.enabled }}
+  replicas: {{ .Values.manager.replicaCount }}
   {{- end }}
   template:
     metadata:
@@ -53,7 +53,7 @@ spec:
                 name: secret-jwt
                 key: jwt-secret
           - name: SENDER_API
-            value: "{{ (printf "http://sender.%s.svc.cluster.local:8080" (.Values.sender.namespace | default .Values.namespace)) }}"
+            value: "{{ (printf "http://sender.%s.svc.cluster.local:%.0f" (.Values.sender.namespace | default .Values.namespace) .Values.sender.service.port) }}"
           - name: DATABASE_TYPE
             value: "{{ .Values.db.dbType }}"
           - name: DATABASE_USER
@@ -72,15 +72,15 @@ spec:
             value: "{{ (printf "http://%s-db.%s.svc.cluster.local:8080"  (include "monitor_page.fullname" .) (.Values.db.namespace | default .Values.namespace)) }}"
           - name: DATABASE_DB_NAME
             value: "{{ .Values.db.dbName }}"
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.manager.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.manager.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.manager.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
