@@ -5,6 +5,12 @@
 baseUrl: "monitor.example.url"
 baseRegistry: "registry.example.url"
 
+# THESE HAVE TO BE CHANGED IN PRODUCTION
+# This can be just a random string
+jwtSecret: "development"
+# This one requires Sendgrid account and API key with permissions for sending mails
+sendgridAPIKey: "nokey"
+
 # This really isn't good according to the best practices, but I don't see a better way to call in-namespace services
 # without being aware of its name.
 # TODO: to be solved properly

@@ -41,8 +41,8 @@ spec:
           - name: SENDGRID_API_KEY
             valueFrom:
               secretKeyRef:
-                name: secret-jwt
-                key: jwt-secret
+                name: "{{ (printf "%s-secret-sendgrid" (include "monitor_page.fullname" .)) }}"
+                key: api-key
           - name: MAIL_SENDER
             value: "{{ .Values.sender.mailSender }}"
       {{- with .Values.sender.nodeSelector }}
