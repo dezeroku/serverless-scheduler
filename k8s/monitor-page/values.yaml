@@ -11,6 +11,8 @@ jwtSecret: "development"
 # This one requires Sendgrid account and API key with permissions for sending mails
 sendgridAPIKey: "nokey"
 
+# Postgres DB setup requires `postgres-operator` to be available in the cluster
+
 # This really isn't good according to the best practices, but I don't see a better way to call in-namespace services
 # without being aware of its name.
 # TODO: to be solved properly
