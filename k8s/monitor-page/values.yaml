@@ -28,7 +28,8 @@ manager:
   replicaCount: 1
   
   image:
-    repository: registry.example.url/d0ku/monitor_page_manager
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_manager" .Values.baseUrl) }}"
+    repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -113,7 +114,8 @@ screenshoter:
   replicaCount: 1
   
   image:
-    repository: registry.example.url/d0ku/monitor_page_screenshoter
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_screenshoter" .Values.baseUrl) }}"
+    repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -162,7 +164,8 @@ sender:
   mailSender: "monitor@example.url"
   
   image:
-    repository: registry.example.url/d0ku/monitor_page_sender
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_sender" .Values.baseUrl) }}"
+    repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -208,7 +211,8 @@ comparator:
   replicaCount: 2
 
   image:
-    repository: registry.example.url/d0ku/monitor_page_comparator
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_comparator" .Values.baseUrl) }}"
+    repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -255,7 +259,8 @@ front:
   replicaCount: 1
 
   image:
-    repository: registry.example.url/d0ku/monitor_page_front
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_front" .Values.baseUrl) }}"
+    repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""

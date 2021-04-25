@@ -21,7 +21,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.screenshoter.securityContext | nindent 12 }}
-          image: "{{ .Values.screenshoter.image.repository }}:{{ .Values.screenshoter.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor_page_screenshoter" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.screenshoter.image.pullPolicy }}
           ports:
             - name: http
