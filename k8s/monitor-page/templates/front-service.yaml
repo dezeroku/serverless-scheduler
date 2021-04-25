@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name:  {{ include "monitor_page.fullname" . }}-front
+  namespace: {{ .Values.front.namespace }}
+  labels:
+    app: front
+spec:
+  ports:
+  - protocol: TCP
+    port: {{ .Values.front.service.port }}
+    targetPort: 80
+  selector:
+    app: front
