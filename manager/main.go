@@ -88,17 +88,21 @@ func main() {
 
 	appURL := helper("APP_URL")
 
-	senderAPI := helper("SENDER_API")
-
 	helperConfig := func(name string, m map[string]string) {
 		t := helper(name)
 		m[name] = t
 	}
 
 	checkerConfig := make(map[string]string)
+
+	helperConfig("SENDER_API_PORT", checkerConfig)
+	helperConfig("SENDER_SERVICE", checkerConfig)
+
 	helperConfig("CHECKER_IMAGE", checkerConfig)
 
 	helperConfig("CHECKER_NAMESPACE", checkerConfig)
+
+	senderAPI := "http://" + checkerConfig["SENDER_SERVICE"] + "." + checkerConfig["CHECKER_NAMESPACE"] + ".svc.cluster.local:" + checkerConfig["SENDER_API_PORT"]
 
 	var clientset *kubernetes.Clientset
 	var config *rest.Config
@@ -110,10 +114,8 @@ func main() {
 	} else {
 		// Get more needed variables
 		helperConfig("SCREENSHOT_API_PORT", checkerConfig)
-		helperConfig("SENDER_API_PORT", checkerConfig)
 		helperConfig("COMPARATOR_API_PORT", checkerConfig)
 		helperConfig("SCREENSHOT_SERVICE", checkerConfig)
-		helperConfig("SENDER_SERVICE", checkerConfig)
 		helperConfig("COMPARATOR_SERVICE", checkerConfig)
 
 		config, err = rest.InClusterConfig()

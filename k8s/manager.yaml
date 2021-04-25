@@ -44,8 +44,6 @@ spec:
             secretKeyRef:
               name: secret-jwt
               key: jwt-secret
-        - name: SENDER_API
-          value: "http://sender.monitor-page.svc.cluster.local:8080"
         - name: DATABASE_TYPE
           value: "postgres"
         - name: DATABASE_USER
