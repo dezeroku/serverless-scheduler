@@ -71,10 +71,10 @@ spec:
         - name: COMPARATOR_SERVICE
           value: "comparator"
         - name: SCREENSHOT_API_PORT
-          value: 8080
+          value: "8080"
         - name: SENDER_API_PORT
-          value: 8080
+          value: "8080"
         - name: COMPARATOR_API_PORT
-          value: 8080
+          value: "8080"
       imagePullSecrets:
       - name: regcred
