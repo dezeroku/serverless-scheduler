@@ -33,6 +33,8 @@ spec:
           value: https://api.monitor.example.url
         - name: CHECKER_IMAGE
           value: registry.example.url/d0ku/monitor_page_checker
+        - name: CHECKER_NAMESPACE
+          value: monitor-page
         - name: FRONT_URL
           value: https://monitor.example.url
         - name: ALLOWED_ORIGIN
@@ -62,5 +64,17 @@ spec:
           value: "monitor-page-db.monitor-page.svc.cluster.local"
         - name: DATABASE_DB_NAME
           value: "monitor"
+        - name: SCREENSHOT_SERVICE
+          value: "screenshoter"
+        - name: SENDER_SERVICE
+          value: "sender"
+        - name: COMPARATOR_SERVICE
+          value: "comparator"
+        - name: SCREENSHOT_API_PORT
+          value: 8080
+        - name: SENDER_API_PORT
+          value: 8080
+        - name: COMPARATOR_API_PORT
+          value: 8080
       imagePullSecrets:
       - name: regcred

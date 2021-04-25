@@ -76,25 +76,29 @@ func main() {
 
 	defer db.Close()
 
-	jwtKey, ok := os.LookupEnv("JWT_KEY")
-	if !ok {
-		log.Fatalln("could not find JWT_KEY on environment variables")
+	helper := func(name string) string {
+		temp, ok := os.LookupEnv(name)
+		if !ok {
+			log.Fatalln("could not find " + name + " in environment variables")
+		}
+		return temp
 	}
 
-	appURL, ok := os.LookupEnv("APP_URL")
-	if !ok {
-		log.Fatalln("could not find APP_URL on environment variables")
+	jwtKey := helper("JWT_KEY")
+
+	appURL := helper("APP_URL")
+
+	senderAPI := helper("SENDER_API")
+
+	helperConfig := func(name string, m map[string]string) {
+		t := helper(name)
+		m[name] = t
 	}
 
-	senderAPI, ok := os.LookupEnv("SENDER_API")
-	if !ok {
-		log.Fatalln("could not find SENDER_API on environment variables")
-	}
+	checkerConfig := make(map[string]string)
+	helperConfig("CHECKER_IMAGE", checkerConfig)
 
-	checkerImage, ok := os.LookupEnv("CHECKER_IMAGE")
-	if !ok {
-		log.Fatalln("could not find CHECKER_IMAGE on environment variables")
-	}
+	helperConfig("CHECKER_NAMESPACE", checkerConfig)
 
 	var clientset *kubernetes.Clientset
 	var config *rest.Config
@@ -104,6 +108,14 @@ func main() {
 		config = nil
 		clientset = nil
 	} else {
+		// Get more needed variables
+		helperConfig("SCREENSHOT_API_PORT", checkerConfig)
+		helperConfig("SENDER_API_PORT", checkerConfig)
+		helperConfig("COMPARATOR_API_PORT", checkerConfig)
+		helperConfig("SCREENSHOT_SERVICE", checkerConfig)
+		helperConfig("SENDER_SERVICE", checkerConfig)
+		helperConfig("COMPARATOR_SERVICE", checkerConfig)
+
 		config, err = rest.InClusterConfig()
 		if err != nil {
 			panic(err.Error())
@@ -124,7 +136,7 @@ func main() {
 
 	mount(router, "/passwordless", auth.NewRouter(appURL, jwtKey, senderAPI, db))
 	mount(router, "/auth", testRouter)
-	apiRouter := swagger.NewRouter(db, jwtKey, clientset, checkerImage)
+	apiRouter := swagger.NewRouter(db, jwtKey, clientset, checkerConfig)
 	apiRouter.Use(authentication.Middleware)
 
 	mount(router, "/", apiRouter)

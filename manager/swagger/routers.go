@@ -37,7 +37,7 @@ type Routes []Route
 
 // NewRouter returns mux.Router that handles all the paths in module.
 // It requires open db handler and jwtKey to be provided.
-func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset, checkerImage string) *mux.Router {
+func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset, config map[string]string) *mux.Router {
 	db = dbIn
 	jwtKey = jwtKeyIn
 	clientset = clientsetIn
@@ -72,14 +72,14 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 			"ItemCreate",
 			strings.ToUpper("Post"),
 			"/v1/item/create",
-			ItemCreateWrap(checkerImage),
+			ItemCreateWrap(config),
 		},
 
 		Route{
 			"ItemDelete",
 			strings.ToUpper("Delete"),
 			"/v1/item/delete/{id}",
-			ItemDelete,
+			ItemDeleteWrap(config),
 		},
 
 		Route{
@@ -93,7 +93,7 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 			"ItemUpdate",
 			strings.ToUpper("Put"),
 			"/v1/item/update/{id}",
-			ItemUpdate,
+			ItemUpdateWrap(config),
 		},
 
 		Route{

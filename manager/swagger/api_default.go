@@ -53,7 +53,7 @@ func validateJSON(item *Item, w http.ResponseWriter) bool {
 	return true
 }
 
-func ItemCreateWrap(checkerImage string) func(http.ResponseWriter, *http.Request) {
+func ItemCreateWrap(config map[string]string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var item *Item
@@ -89,36 +89,38 @@ func ItemCreateWrap(checkerImage string) func(http.ResponseWriter, *http.Request
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(createdItem)
 
-		createDeployment(*item, checkerImage)
+		createDeployment(*item, config)
 	}
 }
 
-func ItemDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	ctx := r.Context()
-	authUserEmail := ctx.Value(auth.KeyAuthUserEmail)
+func ItemDeleteWrap(config map[string]string) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		ctx := r.Context()
+		authUserEmail := ctx.Value(auth.KeyAuthUserEmail)
 
-	var item Item
-	if db.Find(&item, "id = ?", vars["id"]).RecordNotFound() {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
+		var item Item
+		if db.Find(&item, "id = ?", vars["id"]).RecordNotFound() {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		if authUserEmail != item.Owner {
+			log.Printf("Email %s tried to delete %s's item.", authUserEmail, item.Owner)
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+
+			return
+		}
+
+		err := db.Delete(&item).Error
+		if err != nil {
+			common.RespondInternalError(w, fmt.Errorf("could not delete item: %v", err))
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+
+		deleteDeployment(item, config)
 	}
-
-	if authUserEmail != item.Owner {
-		log.Printf("Email %s tried to delete %s's item.", authUserEmail, item.Owner)
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-
-		return
-	}
-
-	err := db.Delete(&item).Error
-	if err != nil {
-		common.RespondInternalError(w, fmt.Errorf("could not delete item: %v", err))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-
-	deleteDeployment(item)
 }
 
 func ItemGet(w http.ResponseWriter, r *http.Request) {
@@ -150,63 +152,65 @@ func ItemGet(w http.ResponseWriter, r *http.Request) {
 	w.Write(bytes.NewBuffer(val).Bytes())
 }
 
-func ItemUpdate(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	decoder := json.NewDecoder(r.Body)
-	var item *Item
-	err := decoder.Decode(&item)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+func ItemUpdateWrap(config map[string]string) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		decoder := json.NewDecoder(r.Body)
+		var item *Item
+		err := decoder.Decode(&item)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if !validateJSON(item, w) {
+			return
+		}
+
+		ctx := r.Context()
+		authUserEmail := ctx.Value(auth.KeyAuthUserEmail)
+
+		var itemDB Item
+		if db.First(&itemDB, "id = ?", vars["id"]).RecordNotFound() {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		if item.ID != itemDB.ID {
+			http.Error(w, http.StatusText(http.StatusUnprocessableEntity)+": incorrect item id", http.StatusUnprocessableEntity)
+			return
+		}
+
+		if item.URL != itemDB.URL {
+			http.Error(w, http.StatusText(http.StatusUnprocessableEntity)+": changing URL is not allowed on update", http.StatusUnprocessableEntity)
+			return
+		}
+
+		if authUserEmail != item.Owner {
+			log.Printf("Email %s tried to create %s's item.", authUserEmail, item.Owner)
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
+		}
+
+		// Get necessary data from DB.
+		//item.CreatedAt = itemDB.CreatedAt
+
+		//err = db.Save(&item).Error
+
+		var createdItem Item
+		err = db.Save(&item).Scan(&createdItem).Error
+
+		if err != nil {
+			common.RespondInternalError(w, fmt.Errorf("could not update in DB: %v", err))
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		//deleteDeployment(itemDB)
+		//createDeployment(*item)
+		updateDeployment(createdItem, config)
 	}
-
-	if !validateJSON(item, w) {
-		return
-	}
-
-	ctx := r.Context()
-	authUserEmail := ctx.Value(auth.KeyAuthUserEmail)
-
-	var itemDB Item
-	if db.First(&itemDB, "id = ?", vars["id"]).RecordNotFound() {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
-	}
-
-	if item.ID != itemDB.ID {
-		http.Error(w, http.StatusText(http.StatusUnprocessableEntity)+": incorrect item id", http.StatusUnprocessableEntity)
-		return
-	}
-
-	if item.URL != itemDB.URL {
-		http.Error(w, http.StatusText(http.StatusUnprocessableEntity)+": changing URL is not allowed on update", http.StatusUnprocessableEntity)
-		return
-	}
-
-	if authUserEmail != item.Owner {
-		log.Printf("Email %s tried to create %s's item.", authUserEmail, item.Owner)
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
-	// Get necessary data from DB.
-	//item.CreatedAt = itemDB.CreatedAt
-
-	//err = db.Save(&item).Error
-
-	var createdItem Item
-	err = db.Save(&item).Scan(&createdItem).Error
-
-	if err != nil {
-		common.RespondInternalError(w, fmt.Errorf("could not update in DB: %v", err))
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-
-	//deleteDeployment(itemDB)
-	//createDeployment(*item)
-	updateDeployment(createdItem)
 }
 
 func ItemsGet(w http.ResponseWriter, r *http.Request) {
@@ -246,19 +250,21 @@ func booltoBoolPtr(i bool) *bool {
 	return &i
 }
 
-func createDeployment(item Item, checkerImage string) {
+func createDeployment(item Item, config map[string]string) {
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {
 		fmt.Println("DEV: Deployment created")
 		return
 	}
 
-	deploymentsClient := clientset.AppsV1().Deployments("monitor-page")
+	namespace := config["CHECKER_NAMESPACE"]
+
+	deploymentsClient := clientset.AppsV1().Deployments(namespace)
 
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      item.GetDeploymentName(),
-			Namespace: "monitor-page",
+			Namespace: namespace,
 			Labels: map[string]string{
 				"app": "checker",
 			},
@@ -280,7 +286,7 @@ func createDeployment(item Item, checkerImage string) {
 					Containers: []apiv1.Container{
 						{
 							Name:  "main",
-							Image: checkerImage,
+							Image: config["CHECKER_IMAGE"],
 							Resources: apiv1.ResourceRequirements{
 								Requests: apiv1.ResourceList{
 									apiv1.ResourceCPU:    resource.MustParse("20m"),
@@ -325,15 +331,15 @@ func createDeployment(item Item, checkerImage string) {
 								// TODO: get these from environment.
 								{
 									Name:  "SCREENSHOT_API",
-									Value: "http://screenshoter.monitor-page.svc.cluster.local:8080",
+									Value: "http://" + config["SCREENSHOT_SERVICE"] + "." + namespace + ".svc.cluster.local:" + config["SCREENSHOT_API_PORT"],
 								},
 								{
 									Name:  "COMPARATOR_API",
-									Value: "http://comparator.monitor-page.svc.cluster.local:8080",
+									Value: "http://" + config["COMPARATOR_SERVICE"] + "." + namespace + ".svc.cluster.local:" + config["COMPARATOR_API_PORT"],
 								},
 								{
 									Name:  "SENDER_API",
-									Value: "http://sender.monitor-page.svc.cluster.local:8080",
+									Value: "http://" + config["SENDER_SERVICE"] + "." + namespace + ".svc.cluster.local:" + config["SENDER_API_PORT"],
 								},
 							},
 						},
@@ -358,7 +364,7 @@ func createDeployment(item Item, checkerImage string) {
 
 }
 
-func deleteDeployment(item Item) {
+func deleteDeployment(item Item, config map[string]string) {
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {
 		fmt.Println("DEV: Deployment deleted")
@@ -366,7 +372,7 @@ func deleteDeployment(item Item) {
 	}
 
 	// TODO: get it from environment
-	deploymentsClient := clientset.AppsV1().Deployments("monitor-page")
+	deploymentsClient := clientset.AppsV1().Deployments(config["CHECKER_NAMESPACE"])
 	deletePolicy := metav1.DeletePropagationForeground
 	if err := deploymentsClient.Delete(item.GetDeploymentName(), &metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
@@ -376,14 +382,14 @@ func deleteDeployment(item Item) {
 	fmt.Println("Deleted deployment.")
 }
 
-func updateDeployment(item Item) {
+func updateDeployment(item Item, config map[string]string) {
 	_, ok := os.LookupEnv("DEVELOP_MODE")
 	if ok {
 		fmt.Println("DEV: Deployment updated")
 		return
 	}
 
-	deploymentsClient := clientset.AppsV1().Deployments("monitor-page")
+	deploymentsClient := clientset.AppsV1().Deployments(config["CHECKER_NAMESPACE"])
 	retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		// Retrieve the latest version of Deployment before attempting update
 		// RetryOnConflict uses exponential backoff to avoid exhausting the apiserver
