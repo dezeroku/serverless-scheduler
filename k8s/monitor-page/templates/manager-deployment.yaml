@@ -42,6 +42,8 @@ spec:
             value: "{{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}"
           - name: CHECKER_IMAGE
             value: "{{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/d0ku/monitor_page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}"
+          - name: CHECKER_NAMESPACE
+            value: "{{ .Values.namespace }}"
           - name: FRONT_URL
             value: "{{ .Values.manager.env.FRONT_URL | default (printf "https://%s" .Values.baseUrl) }}"
           - name: ALLOWED_ORIGIN
@@ -72,6 +74,19 @@ spec:
             value: "{{ (printf "http://%s-db.%s.svc.cluster.local:8080"  (include "monitor_page.fullname" .) (.Values.db.namespace | default .Values.namespace)) }}"
           - name: DATABASE_DB_NAME
             value: "{{ .Values.db.dbName }}"
+          - name: SCREENSHOT_SERVICE
+            value: "{{ include "monitor_page.fullname" . }}-screenshoter"
+          - name: SENDER_SERVICE
+            value: "{{ include "monitor_page.fullname" . }}-sender"
+          - name: COMPARATOR_SERVICE
+            value: "{{ include "monitor_page.fullname" . }}-comparator"
+          - name: SCREENSHOT_API_PORT
+            value: "{{ .Values.screenshoter.service.port }}"
+          - name: SENDER_API_PORT
+            value: "{{ .Values.sender.service.port }}"
+          - name: COMPARATOR_API_PORT
+            value: "{{ .Values.comparator.service.port }}"
+
       {{- with .Values.manager.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
