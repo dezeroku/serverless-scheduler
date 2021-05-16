@@ -1,4 +1,4 @@
-name: Publish docker images
+name: Publish docker images and helm chart
 
 on:
   push:
@@ -87,6 +87,12 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
       -
+        name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.4
+
+      -
         # Temp fix
         # https://github.com/docker/build-push-action/issues/252
         # https://github.com/moby/buildkit/issues/1896
@@ -94,3 +100,23 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  chart-publish:
+    runs-on: ubuntu-latest
+    needs: docker-publish
+    steps:
+      - uses: actions/checkout@v2
+
+      -
+        name: Build Helm chart
+        run: |
+          cd k8s/monitor-page
+          make
+          helm package ./
+
+      -
+        name: Upload the Helm chart
+        uses: actions/upload-artifact@v2
+        with:
+          name: monitor-page-chart
+          path: k8s/monitor-page/*.tgz

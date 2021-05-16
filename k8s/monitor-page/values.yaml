@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 baseUrl: "monitor.example.url"
-baseRegistry: "registry.example.url"
+baseRegistry: "registry.url"
 
 # THESE HAVE TO BE CHANGED IN PRODUCTION
 # This can be just a random string
