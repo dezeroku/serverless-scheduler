@@ -62,44 +62,37 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 
 	var routes = Routes{
 		Route{
-			"Index",
-			"GET",
-			"/v1",
-			Index,
-		},
-
-		Route{
 			"ItemCreate",
 			strings.ToUpper("Post"),
-			"/v1/item/create",
+			"/item/create",
 			ItemCreateWrap(config),
 		},
 
 		Route{
 			"ItemDelete",
 			strings.ToUpper("Delete"),
-			"/v1/item/delete/{id}",
+			"/item/delete/{id}",
 			ItemDeleteWrap(config),
 		},
 
 		Route{
 			"ItemGet",
 			strings.ToUpper("Get"),
-			"/v1/item/{id}",
+			"/item/{id}",
 			ItemGet,
 		},
 
 		Route{
 			"ItemUpdate",
 			strings.ToUpper("Put"),
-			"/v1/item/update/{id}",
+			"/item/update/{id}",
 			ItemUpdateWrap(config),
 		},
 
 		Route{
 			"ItemsGet",
 			strings.ToUpper("Get"),
-			"/v1/items/{email}",
+			"/items/{email}",
 			ItemsGet,
 		},
 	}
@@ -119,6 +112,43 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 	return router
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+func HealthRouter() *mux.Router {
+	router := mux.NewRouter().StrictSlash(true)
+
+	var routes = Routes{
+		Route{
+			"Live",
+			"GET",
+			"/live",
+			Live,
+		},
+		Route{
+			"Ready",
+			"GET",
+			"/ready",
+			Ready,
+		},
+	}
+
+	for _, route := range routes {
+		var handler http.Handler
+		handler = route.HandlerFunc
+		handler = Logger(handler, route.Name)
+
+		router.
+			Methods(route.Method).
+			Path(route.Pattern).
+			Name(route.Name).
+			Handler(handler)
+	}
+
+	return router
+}
+
+func Live(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Ok")
+}
+
+func Ready(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Ok")
 }

@@ -141,7 +141,8 @@ func main() {
 	apiRouter := swagger.NewRouter(db, jwtKey, clientset, checkerConfig)
 	apiRouter.Use(authentication.Middleware)
 
-	mount(router, "/", apiRouter)
+	mount(router, "/v1", apiRouter)
+	mount(router, "/", swagger.HealthRouter())
 
 	corsHost, ok := os.LookupEnv("ALLOWED_ORIGIN")
 	if !ok {

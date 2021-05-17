@@ -57,7 +57,6 @@ func withAuth(next http.HandlerFunc) http.HandlerFunc {
 		a := r.Header.Get("Authorization")
 		hasToken := strings.HasPrefix(a, "Bearer ")
 		if !hasToken {
-			fmt.Println("I AM HERE")
 			next(w, r)
 			return
 		}
