@@ -35,6 +35,24 @@ paths:
         400:
           description: bad input parameters
       x-openapi-router-controller: swagger_server.controllers.default_controller
+  /live:
+    get:
+      tags: [Liveness]
+      summary: Liveness Check
+      operationId: live
+      responses:
+        '200':
+          description: Status message from server describing current liveness
+      x-openapi-router-controller: swagger_server.controllers.health_controller
+  /ready:
+    get:
+      tags: [Readiness]
+      summary: Readiness Check
+      operationId: ready
+      responses:
+        '200':
+          description: Status message from server describing current liveness
+      x-openapi-router-controller: swagger_server.controllers.health_controller
 components:
   schemas:
     Screenshot:
