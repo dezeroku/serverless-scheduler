@@ -84,6 +84,21 @@ jobs:
             ${{ env.IMAGE_ID }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
+        if: matrix.component != 'checker' && matrix.component != 'sender'
+
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./${{ matrix.component }}
+          platforms: linux/amd64, linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_ID }}:${{ env.VERSION }}
+            ${{ env.IMAGE_ID }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+        if: matrix.component == 'checker' || matrix.component == 'sender'
 
       -
         name: Install Helm
