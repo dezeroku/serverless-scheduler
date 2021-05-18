@@ -22,6 +22,7 @@ If the component exposes API, there is a swagger file describing it in the appro
 | front        | allows user to login based on supported emails and one-time passwords, contacts API, reads DB | front                    | exposed            | React   |
 | db           | postgres at the moment, handled with postgres-operator on k8s, stores data                    | DB                       | internal           | N/A     |
 
+
 ## Usage
 The manifests which are ready to be deployed on k8s are stored in the `k8s` directory.
 The `checker` manifest should not be deployed, it's there just for a reference.
