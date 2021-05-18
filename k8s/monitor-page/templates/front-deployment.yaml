@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "monitor_page.fullname" . }}-front
-  namespace: {{ .Values.front.namespace }}
 spec:
   selector:
     matchLabels:

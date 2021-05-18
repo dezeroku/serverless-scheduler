@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "monitor_page.fullname" . }}-manager
-  namespace: {{ .Values.manager.namespace }}
 spec:
   selector:
     matchLabels:
@@ -39,11 +38,11 @@ spec:
             {{- toYaml .Values.manager.resources | nindent 12 }}
           env:
           - name: APP_URL
-            value: "{{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}"
+            value: {{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}
           - name: CHECKER_IMAGE
-            value: "{{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/d0ku/monitor_page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}"
+            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/d0ku/monitor_page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
           - name: CHECKER_NAMESPACE
-            value: "{{ .Values.namespace }}"
+            value: {{ .Values.checkerNamespace | default .Release.Namespace }}
           - name: FRONT_URL
             value: "{{ .Values.manager.env.FRONT_URL | default (printf "https://%s" .Values.baseUrl) }}"
           - name: ALLOWED_ORIGIN
@@ -69,7 +68,7 @@ spec:
           - name: DATABASE_PORT
             value: "{{ .Values.db.dbPort }}"
           - name: DATABASE_HOST
-            value: "{{ (printf "%s-db.%s.svc.cluster.local"  (include "monitor_page.fullname" .) (.Values.db.namespace | default .Values.namespace)) }}"
+            value: "{{ (printf "%s-db.%s.svc.cluster.local"  (include "monitor_page.fullname" .) .Release.Namespace) }}"
           - name: DATABASE_DB_NAME
             value: "{{ .Values.db.dbName }}"
           - name: SCREENSHOT_SERVICE

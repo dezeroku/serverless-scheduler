@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "monitor_page.fullname" . }}-comparator
-  namespace: {{ .Values.comparator.namespace }}
 spec:
   selector:
     matchLabels:

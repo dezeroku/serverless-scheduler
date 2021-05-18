@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "monitor_page.fullname" . }}-screenshoter
-  namespace: {{ .Values.screenshoter.namespace }}
 spec:
   selector:
     matchLabels:

@@ -2,7 +2,6 @@ apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: {{ include "monitor_page.fullname" . }}-db
-  namespace: {{ .Values.db.namespace }}
 spec:
   teamId: "{{ .Values.db.teamId }}"
   volume:

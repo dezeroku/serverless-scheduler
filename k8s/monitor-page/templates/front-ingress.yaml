@@ -9,7 +9,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ include "monitor_page.fullname" . }}-front-api
-  namespace: {{ .Values.front.namespace }}
   {{- with .Values.front.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

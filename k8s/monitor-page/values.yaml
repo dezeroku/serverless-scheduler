@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 baseUrl: "monitor.example.url"
-baseRegistry: "registry.url"
+baseRegistry: "ghcr.io"
 
 # THESE HAVE TO BE CHANGED IN PRODUCTION
 # This can be just a random string
@@ -13,18 +13,17 @@ sendgridAPIKey: "nokey"
 
 # Postgres DB setup requires `postgres-operator` to be available in the cluster
 
-# This really isn't good according to the best practices, but I don't see a better way to call in-namespace services
-# without being aware of its name.
-# TODO: to be solved properly
-namespace: "monitor-page"
+# That's the name of the namespace that new checkers should be deployed to
+# It's set to the same namespace as the one for the whole deployment if empty.
+# If set, user has to make sure that the namespace exists
+checkerNamespace: ""
 
-# Also custom namespaces per component are probably not supported yet. At least checkers and rbac stuff should be in the same namespace.
+# Custom namespaces per component are not supported.
+# There is a single namespace for the main components + possiblity of specifying another one for checkers.
+
 # TODO: imagePullSecret regcred should not be needed when we go public, remove references to it then
 
 manager:
-  # Overrides the namespace whose default is listed on top of the file.
-  namespace: ""
-
   replicaCount: 1
   
   image:
@@ -109,8 +108,6 @@ manager:
   affinity: {}
 
 screenshoter:
-  # Overrides the namespace whose default is listed on top of the file.
-  namespace: ""
   replicaCount: 1
   
   image:
@@ -157,8 +154,6 @@ screenshoter:
   affinity: {}
 
 sender:
-  # Overrides the namespace whose default is listed on top of the file.
-  namespace: ""
   replicaCount: 2
 
   mailSender: "monitor@example.url"
@@ -206,8 +201,6 @@ sender:
   affinity: {}
 
 comparator:
-  # Overrides the namespace whose default is listed on top of the file.
-  namespace: ""
   replicaCount: 2
 
   image:
@@ -254,8 +247,6 @@ comparator:
   affinity: {}
 
 front:
-  # Overrides the namespace whose default is listed on top of the file.
-  namespace: ""
   replicaCount: 1
 
   image:
@@ -323,8 +314,6 @@ front:
           - monitor.example.url
 
 db:
-  # Overrides the namespace whose default is listed on top of the file.
-  namespace: ""
   replicaCount: 1
 
   dbType: "postgres"
