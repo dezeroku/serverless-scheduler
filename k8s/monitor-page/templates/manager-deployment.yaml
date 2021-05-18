@@ -58,17 +58,17 @@ spec:
           - name: DATABASE_USER
             valueFrom:
               secretKeyRef:
-                name: "{{ (printf "%s.%s-db.credentials" .Values.db.dbOwner (include "monitor_page.fullname" .))}}"
+                name: "{{ (printf "%s.%s-%s-db.credentials" .Values.db.dbOwner .Values.db.teamId (include "monitor_page.fullname" .))}}"
                 key: username
           - name: DATABASE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: "{{ (printf "%s.%s-db.credentials" .Values.db.dbOwner (include "monitor_page.fullname" .))}}"
+                name: "{{ (printf "%s.%s-%s-db.credentials" .Values.db.dbOwner .Values.db.teamId (include "monitor_page.fullname" .))}}"
                 key: password
           - name: DATABASE_PORT
             value: "{{ .Values.db.dbPort }}"
           - name: DATABASE_HOST
-            value: "{{ (printf "%s-db.%s.svc.cluster.local"  (include "monitor_page.fullname" .) .Release.Namespace) }}"
+            value: "{{ (printf "%s-%s-db.%s.svc.cluster.local"  .Values.db.teamId (include "monitor_page.fullname" .) .Release.Namespace) }}"
           - name: DATABASE_DB_NAME
             value: "{{ .Values.db.dbName }}"
           - name: SCREENSHOT_SERVICE

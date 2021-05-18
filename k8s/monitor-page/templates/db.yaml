@@ -1,9 +1,9 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: {{ include "monitor_page.fullname" . }}-db
+  name: {{ .Values.db.teamId }}-{{ include "monitor_page.fullname" . }}-db
 spec:
-  teamId: "{{ .Values.db.teamId }}"
+  teamId: {{ .Values.db.teamId }}-{{ include "monitor_page.fullname" . }}
   volume:
     size: 1Gi
     storageClass: "{{ .Values.db.storageClass }}"
@@ -16,3 +16,11 @@ spec:
     monitor: "{{ .Values.db.dbOwner }}"
   postgresql:
     version: "11"
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/arch
+            operator: In
+            values:
+              - amd64
