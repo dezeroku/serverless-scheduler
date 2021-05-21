@@ -299,16 +299,6 @@ func createDeployment(item Item, config map[string]string) {
 							},
 							Env: []apiv1.EnvVar{
 								{
-									Name: "SENDGRID_API_KEY",
-									ValueFrom: &apiv1.EnvVarSource{
-										SecretKeyRef: &apiv1.SecretKeySelector{
-											LocalObjectReference: apiv1.LocalObjectReference{Name: "secret-sendgrid"},
-											Key:                  "api-key",
-											Optional:             booltoBoolPtr(false),
-										},
-									},
-								},
-								{
 									Name:  "URL_TO_CHECK",
 									Value: item.URL,
 								},
@@ -328,7 +318,6 @@ func createDeployment(item Item, config map[string]string) {
 									Name:  "STARTED_MAIL",
 									Value: "0",
 								},
-								// TODO: get these from environment.
 								{
 									Name:  "SCREENSHOT_API",
 									Value: "http://" + config["SCREENSHOT_SERVICE"] + "." + namespace + ".svc.cluster.local:" + config["SCREENSHOT_API_PORT"],
