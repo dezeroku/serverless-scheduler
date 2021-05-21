@@ -1,5 +1,5 @@
 {{- if .Values.manager.ingress.enabled -}}
-{{- $fullName := (printf "%s-manager" (include "monitor_page.fullname" .))}}
+{{- $fullName := (printf "%s-%s" (include "monitor_page.fullname" .) .Values.manager.service.name) }}
 {{- $svcPort := .Values.manager.service.port -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1

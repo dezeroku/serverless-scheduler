@@ -66,6 +66,7 @@ manager:
     ALLOWED_ORIGIN: "*"
 
   service:
+    name: manager
     port: 80
 
   ingress:
@@ -78,7 +79,7 @@ manager:
         paths:
         - path: /
           backend:
-            serviceName: chart-example.local
+            serviceName: manager
             servicePort: 80
     tls:
       - secretName: api-monitor-base-tls
@@ -267,6 +268,7 @@ front:
   securityContext: {}
 
   service:
+    name: front
     port: 80
 
   resources:
@@ -302,7 +304,7 @@ front:
       kubernetes.io/ingress.class: "nginx"
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
     hosts:
-      - host: api.monitor.example.url
+      - host: monitor.example.url
         paths:
         - path: /
           backend:
