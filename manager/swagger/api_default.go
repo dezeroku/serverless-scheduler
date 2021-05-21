@@ -344,11 +344,6 @@ func createDeployment(item Item, config map[string]string) {
 							},
 						},
 					},
-					ImagePullSecrets: []apiv1.LocalObjectReference{
-						{
-							Name: "regcred",
-						},
-					},
 				},
 			},
 		},
