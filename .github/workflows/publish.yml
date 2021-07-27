@@ -86,7 +86,7 @@ jobs:
             ${{ env.IMAGE_ID }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
-        if: matrix.component != 'checker' && matrix.component != 'sender'
+        if: matrix.component != 'checker' && matrix.component != 'sender' && matrix.component != 'manager'
 
       -
         name: Build and push
