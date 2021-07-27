@@ -86,7 +86,7 @@ func main() {
 	}
 
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatal(err)
 	}
 
 	defer db.Close()
