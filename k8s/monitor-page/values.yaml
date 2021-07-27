@@ -30,6 +30,8 @@ manager:
 
   # Only used in sqlite3 case
   dbLocation: "/data/manager.db"
+  dbMount: "/data/"
+  dbStorageClass: "local-path"
 
   image:
     # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_manager" .Values.baseUrl) }}"

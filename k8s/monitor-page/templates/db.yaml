@@ -1,3 +1,4 @@
+{{- if ne .Values.db.replicaCount 0.0 }}
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
@@ -24,3 +25,4 @@ spec:
             operator: In
             values:
               - amd64
+{{- end }}

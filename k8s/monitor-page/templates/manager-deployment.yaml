@@ -36,6 +36,13 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.manager.resources | nindent 12 }}
+
+          {{- if eq .Values.manager.dbType "sqlite3" }}
+          volumeMounts:
+          - mountPath: "{{ .Values.manager.dbMount }}"
+            name: db-mount
+          {{- end }}
+
           env:
           - name: APP_URL
             value: {{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}
@@ -105,3 +112,27 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      {{- if eq .Values.manager.dbType "sqlite3" }}
+      volumes:
+      - name: db-mount
+        persistentVolumeClaim:
+          claimName: {{ include "monitor_page.fullname" . }}-manager-db
+      {{- end }}
+
+
+---
+{{- if eq .Values.manager.dbType "sqlite3" }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "monitor_page.fullname" . }}-manager-db
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "{{ .Values.manager.dbStorageClass }}"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+{{- end }}
