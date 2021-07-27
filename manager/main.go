@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/d0ku/monitor_page/manager/v2/auth"
-	"github.com/d0ku/monitor_page/manager/v2/common"
 	"github.com/d0ku/monitor_page/manager/v2/swagger"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -43,31 +42,47 @@ func main() {
 		db, err = gorm.Open("sqlite3", "test.db")
 		log.Println("No DATABASE_URL in environment, using sqlite3.")
 	} else {
-		databaseUser, ok := os.LookupEnv("DATABASE_USER")
+		databaseType, ok := os.LookupEnv("DATABASE_TYPE")
 		if !ok {
-			panic("No DATABASE_USER provided.")
-		}
-		databasePassword, ok := os.LookupEnv("DATABASE_PASSWORD")
-		if !ok {
-			panic("No DATABASE_PASSWORD provided.")
-		}
-		databasePort, ok := os.LookupEnv("DATABASE_PORT")
-		if !ok {
-			panic("No DATABASE_PORT provided.")
-		}
-		databaseHost, ok := os.LookupEnv("DATABASE_HOST")
-		if !ok {
-			panic("No DATABASE_HOST provided.")
-		}
-		databaseDBName, ok := os.LookupEnv("DATABASE_DB_NAME")
-		if !ok {
-			panic("No DATABASE_DB_NAME provided.")
+			panic("No DATABASE_TYPE provided.")
 		}
 
-		databaseConnString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", databaseHost, databasePort, databaseUser, databasePassword, databaseDBName)
+		if databaseType != "sqlite3" {
+			log.Println("Non-sqlite3 DB used")
+			databaseUser, ok := os.LookupEnv("DATABASE_USER")
+			if !ok {
+				panic("No DATABASE_USER provided.")
+			}
+			databasePassword, ok := os.LookupEnv("DATABASE_PASSWORD")
+			if !ok {
+				panic("No DATABASE_PASSWORD provided.")
+			}
+			databasePort, ok := os.LookupEnv("DATABASE_PORT")
+			if !ok {
+				panic("No DATABASE_PORT provided.")
+			}
+			databaseHost, ok := os.LookupEnv("DATABASE_HOST")
+			if !ok {
+				panic("No DATABASE_HOST provided.")
+			}
+			databaseDBName, ok := os.LookupEnv("DATABASE_DB_NAME")
+			if !ok {
+				panic("No DATABASE_DB_NAME provided.")
+			}
 
-		databaseType := common.Env("DATABASE_TYPE", "postgres")
-		db, err = gorm.Open(databaseType, databaseConnString)
+			databaseConnString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", databaseHost, databasePort, databaseUser, databasePassword, databaseDBName)
+
+			db, err = gorm.Open(databaseType, databaseConnString)
+
+		} else {
+			log.Println("sqlite3 DB used")
+
+			databaseLocation, ok := os.LookupEnv("DATABASE_LOCATION")
+			if !ok {
+				panic("No DATABASE_LOCATION provided.")
+			}
+			db, err = gorm.Open("sqlite3", databaseLocation)
+		}
 	}
 
 	if err != nil {

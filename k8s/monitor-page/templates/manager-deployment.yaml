@@ -54,7 +54,14 @@ spec:
                 name: "{{ (printf "%s-secret-jwt" (include "monitor_page.fullname" .)) }}"
                 key: jwt-secret
           - name: DATABASE_TYPE
-            value: "{{ .Values.db.dbType }}"
+            value: "{{ .Values.manager.dbType }}"
+
+          {{- if eq .Values.manager.dbType "sqlite3" }}
+          - name: DATABASE_LOCATION
+            value: "{{ .Values.manager.dbLocation }}"
+          {{- end }}
+
+          {{- if ne .Values.manager.dbType "sqlite3" }}
           - name: DATABASE_USER
             valueFrom:
               secretKeyRef:
@@ -71,6 +78,8 @@ spec:
             value: "{{ (printf "%s-%s-db.%s.svc.cluster.local"  .Values.db.teamId (include "monitor_page.fullname" .) .Release.Namespace) }}"
           - name: DATABASE_DB_NAME
             value: "{{ .Values.db.dbName }}"
+          {{- end }}
+
           - name: SCREENSHOT_SERVICE
             value: "{{ include "monitor_page.fullname" . }}-screenshoter"
           - name: SENDER_SERVICE

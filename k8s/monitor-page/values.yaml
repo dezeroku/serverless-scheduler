@@ -26,6 +26,11 @@ checkerNamespace: ""
 manager:
   replicaCount: 1
   
+  dbType: "postgres"
+
+  # Only used in sqlite3 case
+  dbLocation: "/data/manager.db"
+
   image:
     # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_manager" .Values.baseUrl) }}"
     repository: ""
