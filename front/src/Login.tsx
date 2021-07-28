@@ -1,5 +1,5 @@
 import React from "react";
-import "./Login.scss";
+import "./Login.css";
 import {API_URL} from "./Config";
 
 import "bootstrap/dist/css/bootstrap.min.css";

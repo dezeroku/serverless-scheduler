@@ -1,5 +1,4 @@
 import React from "react";
-//import "./Login.scss";
 
 import {Route, Redirect} from "react-router-dom";
 import {Button, Navbar, Nav, Form} from "react-bootstrap";
