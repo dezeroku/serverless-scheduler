@@ -1,11 +1,11 @@
-FROM node:12.9.1-alpine as react-build
+FROM node:16.5.0-alpine as react-build
 WORKDIR /app
 COPY ./package.json ./package-lock.json ./
 RUN npm install
 COPY . ./
 RUN npm run build
 
-FROM nginx:1.17-alpine
+FROM nginx:1.21-alpine
 RUN apk add --no-cache bash
 COPY --from=react-build /app/build /usr/share/nginx/html
 

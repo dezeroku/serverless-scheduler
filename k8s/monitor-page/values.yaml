@@ -293,7 +293,6 @@ front:
     # targetMemoryUtilizationPercentage: 80
 
   nodeSelector:
-    kubernetes.io/arch: amd64
     workHorse: "yes"
 
   tolerations: []

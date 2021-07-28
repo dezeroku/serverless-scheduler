@@ -4,7 +4,7 @@ help:
 	echo "make mock_api_stop: stop the mock_api (no check)"
 
 dev:
-	docker run -it -p 3000:3000 -v $$PWD:/dev_mount node:12.9.1-alpine /bin/sh -c "cd /dev_mount; /bin/sh"
+	docker run -it -p 3000:3000 -v $$PWD:/dev_mount node:16.5.0-alpine /bin/sh -c "cd /dev_mount; /bin/sh"
 
 mock_api: .mock_api_container_id
 
