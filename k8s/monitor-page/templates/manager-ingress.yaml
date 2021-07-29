@@ -1,11 +1,15 @@
 {{- if .Values.manager.ingress.enabled -}}
 {{- $fullName := (printf "%s-%s" (include "monitor-page.fullname" .) .Values.manager.service.name) }}
 {{- $svcPort := .Values.manager.service.port -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
+{{- else }}
 apiVersion: extensions/v1beta1
 {{- end }}
+
 kind: Ingress
 metadata:
   name: {{ include "monitor-page.fullname" . }}-manager-api
@@ -24,7 +28,27 @@ spec:
       secretName: {{ .secretName }}
     {{- end }}
   {{- end }}
+
   rules:
+    {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+
+    {{- range .Values.manager.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+          {{- end }}
+    {{- end }}
+
+    {{- else }}
+
     {{- range .Values.manager.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
@@ -35,5 +59,7 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
           {{- end }}
+    {{- end }}
+
     {{- end }}
   {{- end }}
