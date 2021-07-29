@@ -39,3 +39,4 @@ Requires `postgres-operator` to be installed on k8s and configured for the targe
 * Allow checking for specific string/regex appearance (basically different checker types)
 * Support IMAGE_BASED_CHECKING in the manager/frontend
 * Switch all python modules to uwsgi based (proper timeouts for probes needed)
+* Convert manager to a k8s operator (active checking for state)
