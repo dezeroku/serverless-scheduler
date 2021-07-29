@@ -12,8 +12,7 @@ on:
       - v*
   pull_request:
     branches:
-      - master
-      - dev
+      - '*'
 jobs:
   # Push images to GHCR.
   docker-publish:
