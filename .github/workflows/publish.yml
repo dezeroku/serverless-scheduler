@@ -11,10 +11,9 @@ on:
     tags:
       - v*
   pull_request:
-
-env:
-  CONTEXT: front
-
+    branches:
+      - master
+      - dev
 jobs:
   # Push images to GHCR.
   docker-publish:
