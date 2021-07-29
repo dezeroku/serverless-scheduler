@@ -20,7 +20,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.manager.securityContext | nindent 12 }}
-          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor-page_manager" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor-page-manager" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
           ports:
             - name: http
