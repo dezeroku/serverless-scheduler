@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/d0ku/monitor-page/manager/v2/common"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/nu7hatch/gouuid"
