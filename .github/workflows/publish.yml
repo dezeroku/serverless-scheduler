@@ -11,10 +11,7 @@ on:
     tags:
       - v*
   pull_request:
-
-env:
-  CONTEXT: front
-
+    types: [opened, synchronize, reopened, ready_for_review]
 jobs:
   # Push images to GHCR.
   docker-publish:
@@ -24,8 +21,6 @@ jobs:
     strategy:
       matrix:
         component: ["front", "manager", "sender", "checker", "screenshoter", "comparator"]
-
-    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
