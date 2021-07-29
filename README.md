@@ -26,3 +26,5 @@ If the component exposes API, there is a swagger file describing it in the appro
 ## Usage
 The manifests which are ready to be deployed on k8s (helm package) are stored in the `k8s/monitor-page` directory.
 Requires `postgres-operator` or `local-path-provisioner` to be installed on k8s and configured for the target namespace.
+
+You can run `helm package` in the `k8s/monitor-page` directory to create the package or get it from the "Actions" page from the specific commit.
