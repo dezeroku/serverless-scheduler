@@ -1,4 +1,4 @@
-# Default values for monitor_page.
+# Default values for monitor-page.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -34,7 +34,7 @@ manager:
   dbStorageClass: "local-path"
 
   image:
-    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_manager" .Values.baseUrl) }}"
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor-page_manager" .Values.baseUrl) }}"
     repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -118,7 +118,7 @@ screenshoter:
   replicaCount: 1
   
   image:
-    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_screenshoter" .Values.baseUrl) }}"
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor-page_screenshoter" .Values.baseUrl) }}"
     repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -166,7 +166,7 @@ sender:
   mailSender: "monitor@example.url"
   
   image:
-    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_sender" .Values.baseUrl) }}"
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor-page_sender" .Values.baseUrl) }}"
     repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -211,7 +211,7 @@ comparator:
   replicaCount: 2
 
   image:
-    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_comparator" .Values.baseUrl) }}"
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor-page_comparator" .Values.baseUrl) }}"
     repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
@@ -257,7 +257,7 @@ front:
   replicaCount: 1
 
   image:
-    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor_page_front" .Values.baseUrl) }}"
+    # Overrides the repository whose default is "{{ printf( "%s/d0ku/monitor-page_front" .Values.baseUrl) }}"
     repository: ""
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.

@@ -1,4 +1,4 @@
-# Page Monitor (monitor_page)
+# Page Monitor (monitor-page)
 Self hosted k8s solution to monitor websites for changes in either HTML or screenshots of them.
 When such a change is detected user is notified via mail.
 

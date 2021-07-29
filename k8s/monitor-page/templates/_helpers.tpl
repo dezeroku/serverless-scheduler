@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "monitor_page.name" -}}
+{{- define "monitor-page.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "monitor_page.fullname" -}}
+{{- define "monitor-page.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "monitor_page.chart" -}}
+{{- define "monitor-page.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "monitor_page.labels" -}}
-helm.sh/chart: {{ include "monitor_page.chart" . }}
-{{ include "monitor_page.selectorLabels" . }}
+{{- define "monitor-page.labels" -}}
+helm.sh/chart: {{ include "monitor-page.chart" . }}
+{{ include "monitor-page.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "monitor_page.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "monitor_page.name" . }}
+{{- define "monitor-page.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "monitor-page.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "monitor_page.serviceAccountName" -}}
+{{- define "monitor-page.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "monitor_page.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "monitor-page.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

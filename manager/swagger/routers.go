@@ -16,7 +16,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/d0ku/monitor_page/manager/v2/auth"
+	"github.com/d0ku/monitor-page/manager/v2/auth"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"k8s.io/client-go/kubernetes"

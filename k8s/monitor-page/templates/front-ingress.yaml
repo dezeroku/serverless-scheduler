@@ -1,5 +1,5 @@
 {{- if .Values.front.ingress.enabled -}}
-{{- $fullName := (printf "%s-%s" (include "monitor_page.fullname" .) .Values.front.service.name) }}
+{{- $fullName := (printf "%s-%s" (include "monitor-page.fullname" .) .Values.front.service.name) }}
 {{- $svcPort := .Values.front.service.port -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
@@ -8,7 +8,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "monitor_page.fullname" . }}-front-api
+  name: {{ include "monitor-page.fullname" . }}-front-api
   {{- with .Values.front.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

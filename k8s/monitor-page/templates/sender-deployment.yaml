@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "monitor_page.fullname" . }}-sender
+  name: {{ include "monitor-page.fullname" . }}-sender
 spec:
   selector:
     matchLabels:
-      {{- include "monitor_page.selectorLabels" . | nindent 6 }}
+      {{- include "monitor-page.selectorLabels" . | nindent 6 }}
       app: sender
   {{- if not .Values.sender.autoscaling.enabled }}
   replicas: {{ .Values.sender.replicaCount }}
@@ -13,14 +13,14 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "monitor_page.selectorLabels" . | nindent 8 }}
+        {{- include "monitor-page.selectorLabels" . | nindent 8 }}
         app: sender
     spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.sender.securityContext | nindent 12 }}
-          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor_page_sender" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor-page_sender" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.sender.image.pullPolicy }}
           ports:
             - name: http
@@ -48,7 +48,7 @@ spec:
           - name: SENDGRID_API_KEY
             valueFrom:
               secretKeyRef:
-                name: "{{ (printf "%s-secret-sendgrid" (include "monitor_page.fullname" .)) }}"
+                name: "{{ (printf "%s-secret-sendgrid" (include "monitor-page.fullname" .)) }}"
                 key: api-key
           - name: MAIL_SENDER
             value: "{{ .Values.sender.mailSender }}"

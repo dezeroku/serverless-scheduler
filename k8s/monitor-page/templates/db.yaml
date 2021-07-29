@@ -2,9 +2,9 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: {{ .Values.db.teamId }}-{{ include "monitor_page.fullname" . }}-db
+  name: {{ .Values.db.teamId }}-{{ include "monitor-page.fullname" . }}-db
 spec:
-  teamId: {{ .Values.db.teamId }}-{{ include "monitor_page.fullname" . }}
+  teamId: {{ .Values.db.teamId }}-{{ include "monitor-page.fullname" . }}
   volume:
     size: 1Gi
     storageClass: "{{ .Values.db.storageClass }}"

@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "monitor_page.fullname" . }}-manager
+  name: {{ include "monitor-page.fullname" . }}-manager
 spec:
   selector:
     matchLabels:
-      {{- include "monitor_page.selectorLabels" . | nindent 6 }}
+      {{- include "monitor-page.selectorLabels" . | nindent 6 }}
       app: manager
   {{- if not .Values.manager.autoscaling.enabled }}
   replicas: {{ .Values.manager.replicaCount }}
@@ -13,14 +13,14 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "monitor_page.selectorLabels" . | nindent 8 }}
+        {{- include "monitor-page.selectorLabels" . | nindent 8 }}
         app: manager
     spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.manager.securityContext | nindent 12 }}
-          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor_page_manager" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor-page_manager" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
           ports:
             - name: http
@@ -47,7 +47,7 @@ spec:
           - name: APP_URL
             value: {{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}
           - name: CHECKER_IMAGE
-            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/d0ku/monitor_page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
+            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/d0ku/monitor-page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
           - name: CHECKER_NAMESPACE
             value: {{ .Values.checkerNamespace | default .Release.Namespace }}
           - name: FRONT_URL
@@ -58,7 +58,7 @@ spec:
           - name: JWT_KEY
             valueFrom:
               secretKeyRef:
-                name: "{{ (printf "%s-secret-jwt" (include "monitor_page.fullname" .)) }}"
+                name: "{{ (printf "%s-secret-jwt" (include "monitor-page.fullname" .)) }}"
                 key: jwt-secret
           - name: DATABASE_TYPE
             value: "{{ .Values.manager.dbType }}"
@@ -72,27 +72,27 @@ spec:
           - name: DATABASE_USER
             valueFrom:
               secretKeyRef:
-                name: "{{ (printf "%s.%s-%s-db.credentials" .Values.db.dbOwner .Values.db.teamId (include "monitor_page.fullname" .))}}"
+                name: "{{ (printf "%s.%s-%s-db.credentials" .Values.db.dbOwner .Values.db.teamId (include "monitor-page.fullname" .))}}"
                 key: username
           - name: DATABASE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: "{{ (printf "%s.%s-%s-db.credentials" .Values.db.dbOwner .Values.db.teamId (include "monitor_page.fullname" .))}}"
+                name: "{{ (printf "%s.%s-%s-db.credentials" .Values.db.dbOwner .Values.db.teamId (include "monitor-page.fullname" .))}}"
                 key: password
           - name: DATABASE_PORT
             value: "{{ .Values.db.dbPort }}"
           - name: DATABASE_HOST
-            value: "{{ (printf "%s-%s-db.%s.svc.cluster.local"  .Values.db.teamId (include "monitor_page.fullname" .) .Release.Namespace) }}"
+            value: "{{ (printf "%s-%s-db.%s.svc.cluster.local"  .Values.db.teamId (include "monitor-page.fullname" .) .Release.Namespace) }}"
           - name: DATABASE_DB_NAME
             value: "{{ .Values.db.dbName }}"
           {{- end }}
 
           - name: SCREENSHOT_SERVICE
-            value: "{{ include "monitor_page.fullname" . }}-screenshoter"
+            value: "{{ include "monitor-page.fullname" . }}-screenshoter"
           - name: SENDER_SERVICE
-            value: "{{ include "monitor_page.fullname" . }}-sender"
+            value: "{{ include "monitor-page.fullname" . }}-sender"
           - name: COMPARATOR_SERVICE
-            value: "{{ include "monitor_page.fullname" . }}-comparator"
+            value: "{{ include "monitor-page.fullname" . }}-comparator"
           - name: SCREENSHOT_API_PORT
             value: "{{ .Values.screenshoter.service.port }}"
           - name: SENDER_API_PORT
@@ -117,7 +117,7 @@ spec:
       volumes:
       - name: db-mount
         persistentVolumeClaim:
-          claimName: {{ include "monitor_page.fullname" . }}-manager-db
+          claimName: {{ include "monitor-page.fullname" . }}-manager-db
       {{- end }}
 
 
@@ -126,7 +126,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ include "monitor_page.fullname" . }}-manager-db
+  name: {{ include "monitor-page.fullname" . }}-manager-db
   annotations:
     volume.beta.kubernetes.io/storage-class: "{{ .Values.manager.dbStorageClass }}"
 spec:

@@ -15,7 +15,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/d0ku/monitor_page/manager/v2/common"
+	"github.com/d0ku/monitor-page/manager/v2/common"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name:  {{ include "monitor_page.fullname" . }}-comparator
+  name:  {{ include "monitor-page.fullname" . }}-comparator
   labels:
     app: comparator
 spec:

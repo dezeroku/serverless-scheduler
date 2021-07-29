@@ -42,7 +42,7 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          IMAGE_NAME="monitor_page_${{ matrix.component }}"
+          IMAGE_NAME="monitor-page-${{ matrix.component }}"
           IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
 
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
