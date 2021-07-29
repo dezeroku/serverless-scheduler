@@ -24,19 +24,5 @@ If the component exposes API, there is a swagger file describing it in the appro
 
 
 ## Usage
-The manifests which are ready to be deployed on k8s are stored in the `k8s` directory.
-The `checker` manifest should not be deployed, it's there just for a reference.
-Requires `postgres-operator` to be installed on k8s and configured for the target namespace.
-
-
-### TODOs
-* Add a script or different utility that would allow initial setup without directly changing the db entries to add the users (admin panel basically)
-* Write tests
-* Support for additional notification methods (SMS, messenger, application?)
-* Tiers/roles, allowing limiting users
-* LDAP support for authentication
-* Split development from production, mock front, cleanup manager
-* Allow checking for specific string/regex appearance (basically different checker types)
-* Support IMAGE_BASED_CHECKING in the manager/frontend
-* Switch all python modules to uwsgi based (proper timeouts for probes needed)
-* Convert manager to a k8s operator (active checking for state)
+The manifests which are ready to be deployed on k8s (helm package) are stored in the `k8s/monitor-page` directory.
+Requires `postgres-operator` or `local-path-provisioner` to be installed on k8s and configured for the target namespace.
