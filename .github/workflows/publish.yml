@@ -1,0 +1,133 @@
+name: Publish docker images and helm chart
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+      - dev
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+jobs:
+  # Push images to GHCR.
+  docker-publish:
+    runs-on: ubuntu-latest
+
+    # Smart way to publish images for all the components
+    strategy:
+      matrix:
+        component: ["front", "manager", "sender", "checker", "screenshoter", "comparator"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      -
+        name: Set up variables
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          IMAGE_NAME="monitor-page-${{ matrix.component }}"
+          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
+
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      -
+        name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-
+
+      -
+        name: Login to GHCR
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./${{ matrix.component }}
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.IMAGE_ID }}:${{ env.VERSION }}
+            ${{ env.IMAGE_ID }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+        if: matrix.component != 'checker' && matrix.component != 'sender' && matrix.component != 'manager' && matrix.component != 'front'
+
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./${{ matrix.component }}
+          platforms: linux/amd64, linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_ID }}:${{ env.VERSION }}
+            ${{ env.IMAGE_ID }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+        if: matrix.component == 'checker' || matrix.component == 'sender' || matrix.component == 'manager' || matrix.component == 'front'
+
+      -
+        name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.4
+
+      -
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  chart-publish:
+    runs-on: ubuntu-latest
+    needs: docker-publish
+    steps:
+      - uses: actions/checkout@v2
+
+      -
+        name: Build Helm chart
+        run: |
+          cd k8s/monitor-page
+          make
+          helm package ./
+
+      -
+        name: Upload the Helm chart
+        uses: actions/upload-artifact@v2
+        with:
+          name: monitor-page-chart
+          path: k8s/monitor-page/*.tgz
