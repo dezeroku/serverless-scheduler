@@ -29,7 +29,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        ref: ${{ github.event.inputs.repoRef }}
+        with:
+          ref: ${{ github.event.inputs.repoRef }}
 
       -
         name: Set up variables

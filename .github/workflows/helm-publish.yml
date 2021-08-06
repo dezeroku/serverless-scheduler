@@ -11,7 +11,8 @@ jobs:
     needs: docker-publish
     steps:
       - uses: actions/checkout@v2
-        ref: ${{ github.event.inputs.repoRef }}
+        with:
+          ref: ${{ github.event.inputs.repoRef }}
 
       -
         name: Install Helm
