@@ -113,12 +113,6 @@ jobs:
         if: matrix.component == 'checker' || matrix.component == 'sender' || matrix.component == 'manager' || matrix.component == 'front'
 
       -
-        name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.5.4
-
-      -
         # Temp fix
         # https://github.com/docker/build-push-action/issues/252
         # https://github.com/moby/buildkit/issues/1896
@@ -134,6 +128,12 @@ jobs:
       - uses: actions/checkout@v2
 
       -
+        name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.4
+
+      -
         name: Build Helm chart
         run: |
           cd k8s/monitor-page
@@ -146,3 +146,70 @@ jobs:
         with:
           name: monitor-page-chart
           path: k8s/monitor-page/*.tgz
+
+  k8s-deployment:
+    runs-on: ubuntu-latest
+    needs: chart-publish
+    env:
+      DEPLOY_NAMESPACE: monitor-page
+      RELEASE_NAME: monitor-page
+      CUSTOM_HELM_PARAMS: "--values helm-override.yaml"
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      -
+        name: Get the Helm chart
+        uses: actions/download-artifact@v2
+        with:
+          name: monitor-page-chart
+
+      -
+        name: Install Open VPN and jq
+        run: sudo apt-get install openvpn jq -y
+
+      -
+        run: 'echo "$VPN_CONFIG" > config.ovpn && echo "$VPN_PASSWORD" > pass-file'
+        shell: bash
+        env:
+          VPN_CONFIG: ${{ secrets.VPN_CONFIG }}
+          VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
+
+      -
+        name: Connect VPN
+        # This sleep 5 is rather ugly...
+        # How can we know that openvpn has successfully connected and we can keep it in the background?
+        run: |
+          sudo openvpn --config config.ovpn --daemon
+          sleep 5
+
+      -
+        name: Set k8s context using kubeconfig
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      -
+        run: 'echo "$HELM_OVERRIDE" > helm-override.yaml'
+        shell: bash
+        env:
+          HELM_OVERRIDE: ${{ secrets.HELM_OVERRIDE }}
+
+      -
+        name: Deploy the chart to k8s
+        run: |
+          RELEASES="$(helm list -n ${{ env.DEPLOY_NAMESPACE }} -o json | jq '.[].name' -r )"
+          if grep "${{ env.RELEASE_NAME }}" <<< ${RELEASES}; then
+            echo "Release already exists"
+            helm upgrade "${{ env.RELEASE_NAME }}" monitor-page*.tgz -n "${{ env.DEPLOY_NAMESPACE }}" ${{ env.CUSTOM_HELM_PARAMS }}
+          else
+            echo "Initial release needs to be done"
+            helm install "${{ env.RELEASE_NAME }}" monitor-page*.tgz -n "${{ env.DEPLOY_NAMESPACE }}" --create-namespace ${{ env.CUSTOM_HELM_PARAMS }}
+          fi
+
+      # Is this step really needed?
+      -
+        name: Clean up files
+        if: always()
+        run: |
+          rm -f config.ovpn pass-file ~/.kube/config.yaml
+          sudo killall openvpn
