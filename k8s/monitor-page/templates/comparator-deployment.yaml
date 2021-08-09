@@ -30,10 +30,18 @@ spec:
             httpGet:
               path: /v1/live
               port: http
+            timeoutSeconds: 3
           readinessProbe:
             httpGet:
               path: /v1/ready
               port: http
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /v1/ready
+              port: http
+            failureThreshold: 12
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.comparator.resources | nindent 12 }}
       {{- with .Values.comparator.nodeSelector }}
