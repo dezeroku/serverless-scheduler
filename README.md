@@ -28,3 +28,19 @@ The manifests which are ready to be deployed on k8s (helm package) are stored in
 Requires `postgres-operator` or `local-path-provisioner` to be installed on k8s and configured for the target namespace.
 
 You can run `helm package` in the `k8s/monitor-page` directory to create the package or get it from the "Actions" page from the specific commit.
+
+
+## Building
+Each of the components can be built via the provided Dockerfile.
+To get the production build:
+```
+# Skip the test stages with proper runner
+export DOCKER_BUILDKIT=1
+docker build -t production .
+```
+
+To run tests:
+```
+docker build -t test . --target test
+docker run -it test
+```
