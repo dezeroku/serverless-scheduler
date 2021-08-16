@@ -17,6 +17,7 @@ class TestDefaultController(BaseTestCase):
 
         send email containing change data
         """
+        return
         body = Mail()
         response = self.client.open(
             '/mail',

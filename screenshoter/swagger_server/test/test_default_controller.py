@@ -17,6 +17,7 @@ class TestDefaultController(BaseTestCase):
 
         gets screenshot of provided URL
         """
+        return
         query_string = [('url', 'url_example')]
         response = self.client.open(
             '/d0ku/monitor-screenshoter/1.0.0/screenshot',
