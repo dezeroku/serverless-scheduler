@@ -12,16 +12,20 @@ on:
       - v*
   pull_request:
 jobs:
-  # Push images to GHCR.
   docker-publish:
     runs-on: ubuntu-latest
     env:
       IMAGE_TAG_SHA: "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha ||  github.sha }}"
 
-    # Smart way to publish images for all the components
     strategy:
       matrix:
-        component: ["front", "manager", "sender", "checker", "screenshoter", "comparator"]
+        cfg:
+        - { component: front, platforms: [linux/amd64, linux/arm64] }
+        - { component: manager, platforms: [linux/amd64, linux/arm64] }
+        - { component: sender, platforms: [linux/amd64, linux/arm64] }
+        - { component: checker, platforms: [linux/amd64, linux/arm64] }
+        - { component: screenshoter, platforms: [linux/amd64] }
+        - { component: comparator, platforms: [linux/amd64] }
 
     steps:
       - uses: actions/checkout@v2
@@ -39,7 +43,7 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          IMAGE_NAME="monitor-page-${{ matrix.component }}"
+          IMAGE_NAME="monitor-page-${{ matrix.cfg.component }}"
           IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
 
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
@@ -52,7 +56,7 @@ jobs:
         run: |
           VERSION="${{ github.event.pull_request.head.ref }}"
 
-          IMAGE_NAME="monitor-page-${{ matrix.component }}"
+          IMAGE_NAME="monitor-page-${{ matrix.cfg.component }}"
           IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
 
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
@@ -88,29 +92,14 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./${{ matrix.component }}
-          platforms: linux/amd64
+          context: ./${{ matrix.cfg.component }}
+          platforms: ${{ join(matrix.cfg.platforms) }}
           push: true
           tags: |
             ${{ env.IMAGE_ID }}:${{ env.VERSION }}
             ${{ env.IMAGE_ID }}:${{ env.IMAGE_TAG_SHA }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
-        if: matrix.component != 'checker' && matrix.component != 'sender' && matrix.component != 'manager' && matrix.component != 'front'
-
-      -
-        name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./${{ matrix.component }}
-          platforms: linux/amd64, linux/arm64
-          push: true
-          tags: |
-            ${{ env.IMAGE_ID }}:${{ env.VERSION }}
-            ${{ env.IMAGE_ID }}:${{ env.IMAGE_TAG_SHA }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-        if: matrix.component == 'checker' || matrix.component == 'sender' || matrix.component == 'manager' || matrix.component == 'front'
 
       -
         # Temp fix
