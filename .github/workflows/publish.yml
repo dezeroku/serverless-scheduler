@@ -260,7 +260,7 @@ jobs:
           sleep 5
 
       - name: Set k8s context using kubeconfig
-        uses: azure/k8s-set-context@2f6bfda1e23e1a8cdfcfabc5c9e8894eec34734f # pin@v1
+        uses: azure/k8s-set-context@832ed668483ebed7801678c9d00fab851ea9d675 # pin@v1
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
