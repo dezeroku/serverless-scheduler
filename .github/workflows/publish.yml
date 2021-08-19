@@ -20,26 +20,43 @@ jobs:
 
     strategy:
       matrix:
+        # The lockfiles + dockerfile are a "real" cache hit, while hash of the whole directory
+        # provides an unique identifier
         cfg:
           - {
               component: front,
               platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles: [ 'front/package-lock.json', 'front/Dockerfile' ]
+              cacheHitFiles:
+                [
+                  'front/package-lock.json',
+                  'front/Dockerfile',
+                  'front/**'
+                ]
             }
           - {
               component: manager,
               platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles: [ 'manager/go.sum', 'manager/Dockerfile' ]
+              cacheHitFiles: [ 'manager/go.sum', 'manager/Dockerfile', 'manager/**' ]
             }
           - {
               component: sender,
               platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles: [ 'sender/*requirements*.txt', 'sender/Dockerfile' ]
+              cacheHitFiles:
+                [
+                  'sender/*requirements*.txt',
+                  'sender/Dockerfile',
+                  'sender/**'
+                ]
             }
           - {
               component: checker,
               platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles: [ 'checker/*requirements*.txt', 'checker/Dockerfile' ]
+              cacheHitFiles:
+                [
+                  'checker/*requirements*.txt',
+                  'checker/Dockerfile',
+                  'checker/**'
+                ]
             }
           - {
               component: screenshoter,
@@ -47,7 +64,8 @@ jobs:
               cacheHitFiles:
                 [
                   'screenshoter/*requirements*.txt',
-                  'screenshoter/Dockerfile'
+                  'screenshoter/Dockerfile',
+                  'screenshoter/**'
                 ]
             }
           - {
@@ -56,7 +74,8 @@ jobs:
               cacheHitFiles:
                 [
                   'comparator/*requirements*.txt',
-                  'comparator/Dockerfile'
+                  'comparator/Dockerfile',
+                  'comparator/**'
                 ]
             }
     steps:
@@ -107,7 +126,12 @@ jobs:
           path: /tmp/.buildx-cache
           key: "${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{
             hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[1]) }}"
+            hashFiles(matrix.cfg.cacheHitFiles[1]) }}-${{
+            hashFiles(matrix.cfg.cacheHitFiles[2]) }}"
+          restore-keys: |
+            "${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{ hashFiles(matrix.cfg.cacheHitFiles[1]) }}"
+            "${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}"
+            "${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}"
 
       - name: Login to GHCR
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9 # pin@v1
