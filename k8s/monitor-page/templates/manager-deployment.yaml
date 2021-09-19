@@ -20,7 +20,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.manager.securityContext | nindent 12 }}
-          image: "{{ .Values.manager.image.repository | default (printf "%s/d0ku/monitor-page-manager" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.manager.image.repository | default (printf "%s/dezeroku/monitor-page-manager" .Values.baseRegistry) }}:{{ .Values.manager.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
           ports:
             - name: http
@@ -47,7 +47,7 @@ spec:
           - name: APP_URL
             value: {{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}
           - name: CHECKER_IMAGE
-            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/d0ku/monitor-page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
+            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/dezeroku/monitor-page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
           - name: CHECKER_NAMESPACE
             value: {{ .Values.checkerNamespace | default .Release.Namespace }}
           - name: FRONT_URL
