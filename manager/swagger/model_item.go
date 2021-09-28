@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/d0ku/monitor-page/manager/v2/auth"
+	"github.com/dezeroku/monitor-page/manager/v2/auth"
 )
 
 // Item desribes single monitoring job.

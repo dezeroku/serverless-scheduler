@@ -10,7 +10,7 @@ info:
 servers:
 # Added by API Auto Mocking Plugin
 - description: SwaggerHub API Auto Mocking
-  url: https://virtserver.swaggerhub.com/d0ku/monitor-page-manager/1.0.0
+  url: https://virtserver.swaggerhub.com/dezeroku/monitor-page-manager/1.0.0
 - url: /v1
   description: first api version
 paths:

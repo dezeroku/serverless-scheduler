@@ -2,7 +2,7 @@ FROM golang:1.15.2-alpine as base
 
 RUN apk --no-cache add build-base
 
-WORKDIR /go/src/github.com/d0ku/monitor-page/manager
+WORKDIR /go/src/github.com/dezeroku/monitor-page/manager
 
 COPY go.mod go.sum ./
 RUN go mod download
@@ -20,6 +20,6 @@ FROM alpine:3.13 as production
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
-COPY --from=build /go/src/github.com/d0ku/monitor-page/manager/manager .
-COPY --from=build /go/src/github.com/d0ku/monitor-page/manager/templates ./templates
+COPY --from=build /go/src/github.com/dezeroku/monitor-page/manager/manager .
+COPY --from=build /go/src/github.com/dezeroku/monitor-page/manager/templates ./templates
 CMD ["./manager"]

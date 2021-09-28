@@ -1,4 +1,4 @@
-module github.com/d0ku/monitor-page/manager/v2
+module github.com/dezeroku/monitor-page/manager/v2
 
 go 1.13
 

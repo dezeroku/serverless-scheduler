@@ -1,6 +1,6 @@
 """Screenshoter (Chrome)
 Screenshot provided URL with Chrome.
-d0ku 2019"""
+dezeroku 2019"""
 
 import time
 

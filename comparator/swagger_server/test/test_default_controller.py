@@ -21,7 +21,7 @@ class TestDefaultController(BaseTestCase):
         return
         body = CompareRequest()
         response = self.client.open(
-            '/d0ku/monitor-page-comparator/1.0.0/compare',
+            '/dezeroku/monitor-page-comparator/1.0.0/compare',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')

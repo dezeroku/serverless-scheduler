@@ -16,7 +16,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/d0ku/monitor-page/manager/v2/auth"
+	"github.com/dezeroku/monitor-page/manager/v2/auth"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	"k8s.io/client-go/kubernetes"
@@ -54,7 +54,7 @@ func NewRouter(dbIn *gorm.DB, jwtKeyIn string, clientsetIn *kubernetes.Clientset
 		db.Save(&Item{RealOwner: user, URL: "http://test.example", SleepTime: 13, MakeScreenshots: true})
 
 		var userTwo auth.User
-		db.First(&userTwo, "email = ?", "d0ku@example.url")
+		db.First(&userTwo, "email = ?", "dezeroku@example.url")
 		db.Save(&Item{RealOwner: userTwo, URL: "http://testtwo.example", SleepTime: 13, MakeScreenshots: true})
 	}
 

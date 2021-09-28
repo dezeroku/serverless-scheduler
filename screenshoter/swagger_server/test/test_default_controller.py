@@ -20,7 +20,7 @@ class TestDefaultController(BaseTestCase):
         return
         query_string = [('url', 'url_example')]
         response = self.client.open(
-            '/d0ku/monitor-screenshoter/1.0.0/screenshot',
+            '/dezeroku/monitor-screenshoter/1.0.0/screenshot',
             method='GET',
             query_string=query_string)
         self.assert200(response,
