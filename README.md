@@ -29,8 +29,13 @@ Requires `postgres-operator` or `local-path-provisioner` to be installed on k8s 
 
 You can run `helm package` in the `k8s/monitor-page` directory to create the package or get it from the "Actions" page from the specific commit.
 
+The `k8s/monitor-page/override-example.yaml` contains minimal configuration to be used on the end user's side.
+Values in that file have are specific for basically every other deployment.
+
 
 ## Building
+All of the images are provided under the ghcr.io/dezeroku namespace and are automatically rebuilt on every change in the `master` branch of the repo.
+
 Each of the components can be built via the provided Dockerfile.
 To get the production build:
 ```

@@ -1,0 +1,46 @@
+# This is a minimal example configuration of overrides to be set.
+# It takes care of setting the proper API key for sendgrid, jwt secret
+# and properly sets up the ingresses for your domain
+
+baseUrl: "monitor.<your_domain>"
+baseRegistry: "ghcr.io"
+
+# THESE HAVE TO BE CHANGED IN PRODUCTION !!!
+# This can be just a random string
+jwtSecret: "<generate a random string of suitable length, about 20 characters long should be enough>"
+# This one requires Sendgrid account and API key with permissions for sending mails
+sendgridAPIKey: "<API_KEY>"
+
+sender:
+  mailSender: "monitor@<your_domain>"
+
+manager:
+  ingress:
+    hosts:
+      - host: api.monitor.<your_domain>
+        paths:
+        - path: /
+          backend:
+            serviceName: manager
+            servicePort: 80
+    tls:
+      - secretName: api-monitor-base-tls
+        hosts:
+          - api.monitor.<your_domain>
+  dbType: "sqlite3"
+
+front:
+  ingress:
+    hosts:
+      - host: monitor.<your_domain>
+        paths:
+        - path: /
+          backend:
+            serviceName: front
+            servicePort: 80
+    tls:
+      - secretName: front-monitor-base-tls
+        hosts:
+          - monitor.<your_domain>
+db:
+  replicaCount: 0
