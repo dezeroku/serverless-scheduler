@@ -47,7 +47,7 @@ spec:
           - name: APP_URL
             value: {{ .Values.manager.env.APP_URL | default (printf "https://api.%s" .Values.baseUrl) }}
           - name: CHECKER_IMAGE
-            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/dezeroku/monitor-page_checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
+            value: {{ .Values.manager.env.CHECKER_IMAGE | default (printf "%s/dezeroku/monitor-page-checker:%s" .Values.baseRegistry .Chart.AppVersion) }}
           - name: CHECKER_NAMESPACE
             value: {{ .Values.checkerNamespace | default .Release.Namespace }}
           - name: FRONT_URL

@@ -1,15 +1,9 @@
 help:
-	@echo "make requirements.txt: get dependencies based on requirements.in content"
-	@echo "make requirements_test.txt: get dependencies based on requirements_test.in content"
+	@echo "make dev: start the development environment in docker"
 
-requirements.txt: deps_docker_image requirements.in
-	docker run -v $$PWD:/workdir deps-image-docker
+dev:
+	docker build -t screenshoter-dev . --target dev && \
+	docker run -it --security-opt seccomp=chromium.json -p 8080:8080 -v $$PWD:/dev_mount screenshoter-dev /bin/sh -c "cd /dev_mount; /bin/sh"
 
-requirements_test.txt: deps_test_docker_image requirements_test.in requirements.txt
-	docker run -v $$PWD:/workdir deps-test-image-docker
-
-deps_docker_image: Dockerfile.deps
-	docker build -t deps-image-docker -f ./Dockerfile.deps .
-
-deps_test_docker_image: Dockerfile_test.deps
-	docker build -t deps-test-image-docker -f ./Dockerfile_test.deps .
+test_case:
+	curl 'localhost:8080/v1/screenshot?url=http:%2F%2Fexample.com' | jq ".image" -r | base64 -d | display

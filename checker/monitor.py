@@ -27,7 +27,10 @@ def screenshot_url(url, filename):
                 f.write(decoded)
                 f.close()
     else:
-        print("Screenshoter HTTP code: {0}".format(r.status_code))
+        if r.status_code == 500:
+            print("Screenshoter HTTP code: {0}, {1}".format(r.status_code, r.json()['message']))
+        else:
+            print("Screenshoter HTTP code: {0}".format(r.status_code))
         sys.exit(1)
 
 def mark_diff_images(first, second, output):
