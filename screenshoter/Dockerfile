@@ -1,54 +1,39 @@
-FROM python:3.7 as base
+FROM node:17.0.1-alpine as base
 
-# Install chromium (version 78) and matching chromedriver.
-ARG CHROMIUM_REVISION=693954
-WORKDIR /root
-RUN wget -O chrome-linux.zip https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/$CHROMIUM_REVISION/chrome-linux.zip
-RUN pwd && ls && unzip chrome-linux.zip && mv chrome-linux/* /usr/bin
+# Installs latest Chromium (92) package.
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont
 
-RUN wget -O chromedriver.zip http://chromedriver.storage.googleapis.com/78.0.3904.70/chromedriver_linux64.zip
-RUN unzip chromedriver.zip
-RUN mv chromedriver /usr/bin/chromedriver && \
-    chown root:root /usr/bin/chromedriver && \
-    chmod +x /usr/bin/chromedriver
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-RUN apt-get update && \
-    apt-get install -y curl \
-    unzip \
-    xvfb \
-    libxi6 \
-    libgconf-2-4 \
-    libxcomposite-dev \
-    libxcursor-dev \
-    libxtst-dev \
-    libnss3-dev \
-    libcups2 \
-    libxrandr-dev \
-    libasound-dev \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libgtk-3-dev
+WORKDIR /app
+USER node
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+FROM base as dev
+# Development stage
 
-COPY requirements.txt /usr/src/app/
-RUN pip3 install --no-cache-dir -r requirements.txt
+FROM base as production-base
+USER root
+COPY ./package.json ./package-lock.json ./
+RUN chown -R node:node /app
 
-FROM base as test-base
-COPY requirements_test.txt /usr/src/app/
-RUN pip3 install --no-cache-dir -r requirements_test.txt
+USER node
+RUN npm install
 
-FROM base as build
-COPY . /usr/src/app
+COPY . ./
+USER root
+RUN chown -R node:node /app
+USER node
 
-FROM test-base as test
-COPY --from=build /usr/src/* ./
-RUN python3 -m pytest
+FROM production-base as test
+# TODO: To run tests in the future
 
-FROM build as production
-EXPOSE 8080
-
-ENTRYPOINT ["python3"]
-
-CMD ["-m", "swagger_server"]
+FROM production-base as production
+CMD ["node", "index.js"]
