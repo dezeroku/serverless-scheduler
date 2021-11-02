@@ -15,9 +15,8 @@ FROM test-base as test
 COPY --from=build /app/* ./
 RUN python3 -m pytest
 
-FROM base as production
+FROM build as production
 ENV PYTHONUNBUFFERED=1
 ENV SLEEP_TIME=600
-
 
 ENTRYPOINT ["python3", "monitor.py"]
