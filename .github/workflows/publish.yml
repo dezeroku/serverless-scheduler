@@ -180,7 +180,7 @@ jobs:
         with:
           context: ./${{ matrix.cfg.component }}
           platforms: ${{ join(matrix.cfg.platforms) }}
-          push: true
+          push: "${{ github.actor == github.repository_owner && true || false }}"
           target: production
           tags: |
             ${{ env.IMAGE_ID }}:${{ env.VERSION }}
