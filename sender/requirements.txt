@@ -22,8 +22,6 @@ flask==1.1.2
     # via connexion
 idna==2.9
     # via requests
-importlib-metadata==4.0.1
-    # via jsonschema
 inflection==0.4.0
     # via connexion
 itsdangerous==1.1.0
@@ -46,7 +44,7 @@ python-dateutil==2.8.1
     # via -r requirements.in
 python-http-client==3.2.7
     # via sendgrid
-pyyaml==5.3.1
+pyyaml==5.4
     # via
     #   clickclick
     #   connexion
@@ -63,14 +61,10 @@ six==1.14.0
     #   python-dateutil
 swagger-ui-bundle==0.0.6
     # via connexion
-typing-extensions==3.7.4.3
-    # via importlib-metadata
 urllib3==1.25.9
     # via requests
 werkzeug==1.0.1
     # via flask
-zipp==3.4.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
