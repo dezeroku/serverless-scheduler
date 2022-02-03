@@ -1,6 +1,7 @@
 import React from "react";
 import "./Login.css";
-import {API_URL} from "./Config";
+
+import {startPasswordlessRaw} from "./API";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
@@ -12,7 +13,6 @@ import {
     Modal
 } from "react-bootstrap";
 
-import axios from "axios";
 import ClipLoader from 'react-spinners/ClipLoader';
 
 const Login: React.FC = () => {
@@ -24,14 +24,13 @@ const Login: React.FC = () => {
     
     function handleSubmit(e: any) {
         e.preventDefault();
-        let config = {timeout: 10000}
         let data = {
 	        email: email,
 	        redirectUri: window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/login/parser/"
         }
         
         setLoading(true);
-        axios.post(API_URL + "/passwordless/start", data, config)
+        startPasswordlessRaw(data)
 	        .then((response) => {
 	            if (response.status !== 204) {
 		            // Something went wrong on server side.
