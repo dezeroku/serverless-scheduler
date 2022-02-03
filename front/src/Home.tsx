@@ -2,13 +2,11 @@ import React from "react";
 
 import {Route, Redirect} from "react-router-dom";
 import {Button, Navbar, Nav, Form} from "react-bootstrap";
-import {logOut, userMail, getToken} from "./Login";
-import {handleUpdate, handleCreate, handleDelete} from "./API";
-import {API_URL} from "./Config";
+import {logOut} from "./Login";
+import {handleUpdate, handleCreate, handleDelete, getItemsRaw} from "./API";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import axios from "axios";
 import ClipLoader from 'react-spinners/ClipLoader';
 
 import ItemProps from './Item';
@@ -39,32 +37,26 @@ class Home extends React.Component<HomeProps, HomeState> {
     
     async updateTasks() {
 	    this.setState({loading: true});
-	    let config = {
-            headers: {
-                Authorization: "Bearer " + getToken()
+
+	    return getItemsRaw().then((response) => {
+	        if (response.status !== 200) {
+                // Something went wrong on server side.
+		        console.log(response);
+	        } else {
+		        this.setState({items: response.data});
+		        // Everything is good.
+	        }
+            this.setState({loading: false});
+        }).catch((error) => {
+            console.log(error);
+		    // Something went wrong with sending.
+		    this.setState({loading: false});
+
+            if (error.response.status === 401) {
+                //alert("Your session timed out!");
+		        this.handleLogout();
             }
-        }
-        
-	    return axios.get(API_URL + "/v1/items/" + userMail(), config)
-	        .then((response) => {
-	            if (response.status !== 200) {
-                    // Something went wrong on server side.
-		            console.log(response);
-	            } else {
-		            this.setState({items: response.data});
-		            // Everything is good.
-	            }
-                this.setState({loading: false});
-            }).catch((error) => {
-                console.log(error);
-		        // Something went wrong with sending.
-		        this.setState({loading: false});
-                
-                if (error.response.status === 401) {
-                    //alert("Your session timed out!");
-		            this.handleLogout();
-                }
-	        });
+	    });
     }
     
     handleLogout() {

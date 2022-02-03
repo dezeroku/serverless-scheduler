@@ -2,9 +2,6 @@ import React from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-//import axios from "axios";
-//import ClipLoader from 'react-spinners/ClipLoader';
-
 type ItemProps = {
     id : number;
     url : string;

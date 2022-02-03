@@ -7,7 +7,25 @@ import {API_URL} from "./Config";
 // Ensuring that proper types are used.
 import ItemProps from "./Item";
 
+type PasswordlessRawData = {
+    email: string;
+    redirectUri: string;
+}
 
+export async function startPasswordlessRaw(data: PasswordlessRawData) {
+    let config = {timeout: 10000}
+    return axios.post(API_URL + "/passwordless/start", data, config)
+}
+
+export async function getItemsRaw() {
+	let config = {
+        headers: {
+            Authorization: "Bearer " + getToken()
+        }
+    }
+
+    return axios.get(API_URL + "/v1/items/" + userMail(), config)
+}
 
 export async function handleCreate(json : ItemProps["props"]) {
     console.log(json);
