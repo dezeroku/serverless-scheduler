@@ -26,3 +26,7 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### Development
+
+`front/mock-api/jwt` contains short code that can be pasted into the console to obtain access to the mocked API using dummy JWT.
