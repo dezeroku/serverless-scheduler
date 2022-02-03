@@ -29,85 +29,85 @@ class Home extends React.Component<HomeProps, HomeState> {
     state: HomeState = {
         loggedOut: false,
         loading: true,
-	items: Array(0).fill(null),
-	showCreateModal : false
+	    items: Array(0).fill(null),
+	    showCreateModal : false
     }
-
+    
     componentDidMount() {
-	this.updateTasks()
+	    this.updateTasks()
     }
-
+    
     async updateTasks() {
-	this.setState({loading: true});
-	let config = {
+	    this.setState({loading: true});
+	    let config = {
             headers: {
                 Authorization: "Bearer " + getToken()
             }
         }
-
-	return axios.get(API_URL + "/v1/items/" + userMail(), config)
-	    .then((response) => {
-	      if (response.status !== 200) {
-                  // Something went wrong on server side.
-		  console.log(response);
-	      } else {
-		this.setState({items: response.data});
-		  // Everything is good.
-	      }
-               this.setState({loading: false});
+        
+	    return axios.get(API_URL + "/v1/items/" + userMail(), config)
+	        .then((response) => {
+	            if (response.status !== 200) {
+                    // Something went wrong on server side.
+		            console.log(response);
+	            } else {
+		            this.setState({items: response.data});
+		            // Everything is good.
+	            }
+                this.setState({loading: false});
             }).catch((error) => {
                 console.log(error);
-		// Something went wrong with sending.
-		this.setState({loading: false});
-
+		        // Something went wrong with sending.
+		        this.setState({loading: false});
+                
                 if (error.response.status === 401) {
                     //alert("Your session timed out!");
-		    this.handleLogout();
+		            this.handleLogout();
                 }
-	  });
+	        });
     }
-
+    
     handleLogout() {
     	logOut();
-	this.setState({loggedOut: true});
+	    this.setState({loggedOut: true});
     }
-
+    
     openCreateModal() {
-	this.setState({showCreateModal: true});
+	    this.setState({showCreateModal: true});
     }
-
+    
     closeCreateModal() {
-	this.setState({showCreateModal: false});
+	    this.setState({showCreateModal: false});
     }
-
+    
     // TODO: that's ugly hack which should be solved by proper architecture usage
     refresh() {
-	this.updateTasks();
+	    this.updateTasks();
     }
-
+    
     render () {
-  return (
-      <div className="container-fluid">
-	      <Navbar className="bg-light">
-	          <Navbar.Brand>Page Monitor</Navbar.Brand>
-	          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-	          <Navbar.Collapse id="basic-navbar-nav">
-	              <Nav className="mr-auto">
-	              </Nav>
-	              <Form inline>
-	                  <Button variant="success" onClick={() => this.openCreateModal()} className="mr-2">Create</Button>
-	                  <Button variant="outline-primary" onClick={() => this.handleLogout()}>Log Out</Button>
-	              </Form>
-	          </Navbar.Collapse>
-	      </Navbar>
-          {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} handleUpdate={handleUpdate} handleDelete={handleDelete} refresh={() => this.refresh()}/>}
-	      <EditModal show={this.state.showCreateModal} handleTask={handleCreate} onHide={() => this.setState({showCreateModal: false})} item={null} editMode={false} handleDelete={handleDelete} closeModal={() => this.closeCreateModal()} refresh={() => this.refresh()}/>
-
-	      <Route exact path="/">
-	          {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}
-	      </Route>
-      </div>
-  );
+        return (
+            <div className="container-fluid">
+	            <Navbar className="bg-light">
+	                <Navbar.Brand>Page Monitor</Navbar.Brand>
+	                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+	                <Navbar.Collapse id="basic-navbar-nav">
+	                    <Nav className="mr-auto">
+	                    </Nav>
+	                    <Form inline>
+	                        <Button variant="success" onClick={() => this.openCreateModal()} className="mr-2">Create</Button>
+	                        <Button variant="outline-primary" onClick={() => this.handleLogout()}>Log Out</Button>
+	                    </Form>
+	                </Navbar.Collapse>
+	            </Navbar>
+                {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} handleUpdate={handleUpdate} handleDelete={handleDelete} refresh={() => this.refresh()}/>}
+	            <EditModal show={this.state.showCreateModal} handleTask={handleCreate} onHide={() => this.setState({showCreateModal: false})} item={null} editMode={false} handleDelete={handleDelete} closeModal={() => this.closeCreateModal()} refresh={() => this.refresh()}/>
+                
+	            <Route exact path="/">
+	                {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}
+	            </Route>
+            </div>
+        );
     }
 };
 

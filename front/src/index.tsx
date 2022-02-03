@@ -9,44 +9,44 @@ import queryString from "query-string";
 
 ReactDOM.render((
     <Router>
-      <Switch>
-	    <Route path="/login/parser" component={LoginParser}>
-	    </Route>
+        <Switch>
+	        <Route path="/login/parser" component={LoginParser}>
+	        </Route>
             <Route path="/login">
-              <Login />
+                <Login />
             </Route>
-	    <PrivateRoute path="/">
-	      <Home />
-	    </PrivateRoute>
+	        <PrivateRoute path="/">
+	            <Home />
+	        </PrivateRoute>
         </Switch>
     </Router>), document.getElementById('root'));
 
 function LoginParser(props : any) {
     let responseData = queryString.parse(props.location.hash);
     if (typeof responseData.jwt === "string") {
-       setToken(responseData.jwt);
+        setToken(responseData.jwt);
     }
     return <Redirect to="/" />;
 }
 
 function PrivateRoute({ children, ...rest } : any) {
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        getToken() ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
+    return (
+        <Route
+            {...rest}
+            render={({ location }) =>
+                getToken() ? (
+                    children
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: { from: location }
+                        }}
+                    />
+                )
+            }
+        />
+    );
 }
 
 // If you want your app to work offline and load faster, you can change
