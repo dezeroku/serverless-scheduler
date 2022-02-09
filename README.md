@@ -37,16 +37,31 @@ and few optional ones:
 Most of the modules are accessible via the REST API (except for front and db, these are special).
 
 ### High level overview
-The entry point for a system is `front` + `manager` underneath.
-These are responsible for seeding the AWS SQS queue with initial messages.
-The messages in queue are given delay based on the user input (kept in `db` stored in S3).
+The entry point for a system is `front` + `manager` underneath (manager also in Lambda).
+These are responsible for seeding the AWS SQS queue with initial messages + adding entry for these in DynamoDB.
+The messages in queue are given delay based on the user input.
 When the time comes to process a message, it triggers a Lambda function that:
 1. consumes the message from queue
 2. obtains a fresh HTML of the website that's being monitored
-3. checks if there is a previous entry for the checker
+3. checks if there is a previous entry for the checker (this is done via call to DynamoDB)
 4. if there is, compares it with the freshly obtained copy. Depending on the result, mail gets sent to the user or not
-5. saves the fresh HTML as previous entry
-6. pushes the fresh message with the original delay back to the queue (effectively creating the infinite loop of checking)
+5. saves the fresh HTML as previous entry (DynamoDB)
+6. pushes the fresh message with the original delay to the "manager" queue (effectively creating the infinite loop of checking, which is stopped
+   if the manager sees that the underlying entry does not exist anymore). Can this be done better? Empty the queue from messages on demand?
+
+TODO: authentication via Cognito
+
+So:
+1. DynamoDB for storing user defined websites to monitor and details
+2. DynamoDB (or maybe S3?) for "session" storage of HTML (and screenshots, this definitely sounds like S3)
+3. SQS for messages "to be checked" to be worked by checkers (in batches)
+4. SQS for messages "to be confirmed" to be worked by orchestrator (if the request is still valid, it gets to the "to be checked" queue) in batches. Can this be simplified?
+   This is something new, it was part of the `manager` in original approach.
+5. Cognito for authorisation
+6. still sendgrid for mails for now?
+7. Manager has to be "lambdadized"
+
+We don't really have to care about being in sync here (potential issues with front displaying proper state?).
 
 In the overview above, screenshots can also be taken and kept alongside the HTML code, although it significantly affects the running time.
 
