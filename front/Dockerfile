@@ -1,4 +1,4 @@
-FROM node:16.5.0-alpine as base
+FROM node:16.5.0 as base
 WORKDIR /app
 COPY ./package.json ./package-lock.json ./
 RUN npm install
