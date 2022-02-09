@@ -1,0 +1,12 @@
+{
+  "name": "monitor-page",
+  "version": "1.0.0",
+  "description": "HTML changes monitoring application",
+  "author": "dezeroku",
+  "license": "MIT",
+  "devDependencies": {
+    "@boundstate/serverless-finch": "^2.8.2",
+    "serverless-lift": "^1.1.2",
+    "serverless-python-requirements": "^5.3.1"
+  }
+}

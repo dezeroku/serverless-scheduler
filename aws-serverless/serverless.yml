@@ -1,0 +1,46 @@
+service: aws-serverless
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  region: eu-central-1
+  runtime: python3.9
+
+constructs:
+  jobs:
+    type: queue
+    worker:
+      handler: handler.consumer
+
+functions:
+  producer:
+    handler: handler.producer
+    events:
+      - httpApi:
+          method: post
+          path: /produce
+    environment:
+      QUEUE_URL: ${construct:jobs.queueUrl}
+
+plugins:
+  - serverless-lift
+  - serverless-python-requirements
+  - '@boundstate/serverless-finch'
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!lambda_venv/**'
+    - '!resources/**'
+
+custom:
+  # Where to keep front data
+  frontBucketName: front-bucket-${sls:stage}
+  client:
+    bucketName: ${self:custom.frontBucketName}
+    distributionFolder: ../front/build
+  pythonRequirements:
+    dockerizePip: true
+
+resources:
+  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/s3-front-bucket.yml)}
