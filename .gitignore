@@ -1,2 +1,5 @@
 *~
 .mypy_cache
+node_modules
+lambda_venv
+__pycache__
