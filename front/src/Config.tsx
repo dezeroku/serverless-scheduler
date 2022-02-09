@@ -19,7 +19,7 @@ function getAPIURL() : string {
         }
     }
     // Try to automagically generate it based on the domain
-    return 'api.' + window.location.hostname;
+    return 'https://api.' + window.location.hostname;
 }
 
 export const API_URL: string = getAPIURL();
