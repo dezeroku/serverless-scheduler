@@ -43,4 +43,3 @@ custom:
 
 resources:
   - ${file(resources/cognito-user-pool.yml)}
-  - ${file(resources/s3-front-bucket.yml)}
