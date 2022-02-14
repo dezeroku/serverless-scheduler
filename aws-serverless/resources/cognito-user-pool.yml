@@ -7,13 +7,15 @@ Resources:
       # Set email as an alias
       UsernameAttributes:
         - email
+      # Don't require verification for email
       AutoVerifiedAttributes:
         - email
       # Disable the user sign-up option
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: true
-      #PasswordPolicy:
-      #  RequireSymbols: false
+#      Policies:
+#        PasswordPolicy:
+#          RequireSymbols: false
 
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -22,8 +24,6 @@ Resources:
       ClientName: ${sls:stage}-user-pool-client
       UserPoolId:
         Ref: CognitoUserPool
-      ExplicitAuthFlows:
-        - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
 
 # Print out the Id of the User Pool that is created

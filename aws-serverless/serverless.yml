@@ -5,6 +5,21 @@ provider:
   name: aws
   region: eu-central-1
   runtime: python3.9
+  httpApi:
+    # We have a domain anyway
+    disableDefaultEndpoint: true
+    authorizers:
+      serviceAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+          - ''
+          - - 'https://cognito-idp.'
+            - '${opt:region, self:provider.region}'
+            - '.amazonaws.com/'
+            - Ref: CognitoUserPool
+        audience:
+          - Ref: CognitoUserPoolClient
 
 constructs:
   jobs:
@@ -19,6 +34,8 @@ functions:
       - httpApi:
           method: post
           path: /produce
+          authorizer: serviceAuthorizer
+
     environment:
       QUEUE_URL: ${construct:jobs.queueUrl}
 
@@ -26,6 +43,7 @@ plugins:
   - serverless-lift
   - serverless-python-requirements
   - '@boundstate/serverless-finch'
+  - serverless-domain-manager
 package:
   patterns:
     - '!node_modules/**'
@@ -40,6 +58,20 @@ custom:
     distributionFolder: ../front/build
   pythonRequirements:
     dockerizePip: true
+  customDomain:
+    # This requires the certificate for domain to be provided
+    domainName: ${env:apiDomain}
+
+    basePath:
+    stage: ${sls:stage}
+    createRoute53Record: true
+    endpointType: regional
+    # Run as part of the `deploy`
+    #autoDomain: true
+    apiType: http
 
 resources:
   - ${file(resources/cognito-user-pool.yml)}
+#  - ${file(resources/api-gateway-authorizer.yml)}
+#  - HttpApi:
+#      DependsOn: serviceUserPool
