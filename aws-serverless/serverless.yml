@@ -45,7 +45,6 @@ plugins:
   - serverless-domain-manager
   - serverless-certificate-creator
   - serverless-s3-sync
-  - serverless-s3-cleaner
 package:
   patterns:
     - '!node_modules/**'
@@ -55,14 +54,10 @@ package:
 custom:
   userConfig: ${file(user-config.yml)}
 
-  serverless-s3-cleaner:
-    buckets:
-      - Ref: FrontBucket
-
   s3Sync:
     # A simple configuration for copying static assets
-    - bucketName:
-        Ref: FrontBucket
+    # It also takes care of cleaning up the S3 buckets in 'remove' step
+    - bucketNameKey: FrontBucketId
       localDir: ../front/build
 
   pythonRequirements:
@@ -70,7 +65,7 @@ custom:
   customDomain:
     # This requires the certificate for domain to be provided
     domainName: ${self:custom.userConfig.apiDomain}
-    basePath: ''
+    basePath: 'v1'
     stage: ${sls:stage}
     createRoute53Record: true
     endpointType: regional
@@ -92,6 +87,5 @@ resources:
   - ${file(resources/front-bucket.yml)}
   - ${file(resources/cognito-user-pool.yml)}
   #- ${file(resources/cloudfront.yml)}
-#  - ${file(resources/api-gateway-authorizer.yml)}
 #  - HttpApi:
 #      DependsOn: serviceUserPool

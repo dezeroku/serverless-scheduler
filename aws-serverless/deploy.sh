@@ -14,8 +14,5 @@ function build_front() {
 serverless create-cert
 
 sls create_domain
-# Deploy files
-serverless client deploy --no-confirm
 
-# Deploy an actual app
 serverless deploy

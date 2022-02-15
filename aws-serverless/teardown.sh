@@ -2,10 +2,8 @@
 
 set -e
 
-serverless remove-cert
+serverless remove
 
 sls delete_domain
 
-serverless client remove --no-confirm
-
-serverless remove
+serverless remove-cert

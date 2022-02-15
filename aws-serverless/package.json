@@ -10,7 +10,6 @@
     "serverless-domain-manager": "^6.0.2",
     "serverless-lift": "^1.1.2",
     "serverless-python-requirements": "^5.3.1",
-    "serverless-s3-cleaner": "^2.0.0",
     "serverless-s3-sync": "^2.0.0"
   }
 }
