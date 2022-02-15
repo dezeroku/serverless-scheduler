@@ -26,6 +26,11 @@ constructs:
     type: queue
     worker:
       handler: handler.consumer
+  react:
+    type: static-website
+    path: ../front/build
+    domain: ${self:custom.userConfig.frontDomain}
+    certificate: ${certificate(${self:custom.customCertificate.certificateName}):CertificateArn}
 
 functions:
   producer:
@@ -44,7 +49,7 @@ plugins:
   - serverless-python-requirements
   - serverless-domain-manager
   - serverless-certificate-creator
-  - serverless-s3-sync
+  #- serverless-s3-sync
 package:
   patterns:
     - '!node_modules/**'
@@ -54,11 +59,11 @@ package:
 custom:
   userConfig: ${file(user-config.yml)}
 
-  s3Sync:
-    # A simple configuration for copying static assets
-    # It also takes care of cleaning up the S3 buckets in 'remove' step
-    - bucketNameKey: FrontBucketId
-      localDir: ../front/build
+  #s3Sync:
+  #  # A simple configuration for copying static assets
+  #  # It also takes care of cleaning up the S3 buckets in 'remove' step
+  #  - bucketNameKey: FrontBucketId
+  #    localDir: ../front/build
 
   pythonRequirements:
     dockerizePip: true
@@ -84,8 +89,8 @@ custom:
     rewriteRecords: false
 
 resources:
-  - ${file(resources/front-bucket.yml)}
+  #- ${file(resources/front-bucket.yml)}
   - ${file(resources/cognito-user-pool.yml)}
-  #- ${file(resources/cloudfront.yml)}
+  - ${file(resources/front-route53.yml)}
 #  - HttpApi:
 #      DependsOn: serviceUserPool
