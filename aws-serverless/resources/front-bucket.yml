@@ -1,0 +1,7 @@
+Resources:
+  FrontBucket:
+    Type: AWS::S3::Bucket
+Outputs:
+  FrontBucketId:
+    Value:
+      Ref: FrontBucket

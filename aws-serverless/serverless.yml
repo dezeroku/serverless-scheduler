@@ -42,8 +42,10 @@ functions:
 plugins:
   - serverless-lift
   - serverless-python-requirements
-  - '@boundstate/serverless-finch'
   - serverless-domain-manager
+  - serverless-certificate-creator
+  - serverless-s3-sync
+  - serverless-s3-cleaner
 package:
   patterns:
     - '!node_modules/**'
@@ -51,27 +53,45 @@ package:
     - '!resources/**'
 
 custom:
-  # Where to keep front data
-  frontBucketName: front-bucket-${sls:stage}
-  client:
-    bucketName: ${self:custom.frontBucketName}
-    distributionFolder: ../front/build
+  userConfig: ${file(user-config.yml)}
+
+  serverless-s3-cleaner:
+    buckets:
+      - Ref: FrontBucket
+
+  s3Sync:
+    # A simple configuration for copying static assets
+    - bucketName:
+        Ref: FrontBucket
+      localDir: ../front/build
+
   pythonRequirements:
     dockerizePip: true
   customDomain:
     # This requires the certificate for domain to be provided
-    domainName: ${env:apiDomain}
-
-    basePath:
+    domainName: ${self:custom.userConfig.apiDomain}
+    basePath: ''
     stage: ${sls:stage}
     createRoute53Record: true
     endpointType: regional
     # Run as part of the `deploy`
     #autoDomain: true
     apiType: http
+  customCertificate:
+    certificateName: ${self:custom.userConfig.apiDomain}
+    hostedZoneNames: ${self:custom.userConfig.baseDomain}.
+    subjectAlternativeNames:
+      #- "www.${self:custom.userConfig.apiDomain}"
+      #- "www.${self:custom.userConfig.frontDomain}"
+      - ${self:custom.userConfig.frontDomain}
+    region: ${self:provider.region}
+    enabled: true
+    rewriteRecords: false
 
 resources:
+  - ${file(resources/front-bucket.yml)}
   - ${file(resources/cognito-user-pool.yml)}
+  #- ${file(resources/cloudfront.yml)}
 #  - ${file(resources/api-gateway-authorizer.yml)}
 #  - HttpApi:
 #      DependsOn: serviceUserPool
