@@ -2,16 +2,18 @@
 
 set -e
 
-# Build the actual static front delivery
-pushd ../front
-make build
-popd
+function build_front() {
+    ## Build the actual static front delivery
+    pushd ../front
+    make build
+    popd
+}
 
-# Configure domain (the env variable is needed)
-[ -z "${apiDomain}" ] && apiDomain=example.com
-export apiDomain
+[[ -n "$1" ]] && [[ "$1" == "build_front" ]] && build_front
+
+serverless create-cert
+
 sls create_domain
-
 # Deploy files
 serverless client deploy --no-confirm
 
