@@ -1,1 +1,2 @@
 requests
+lambda_decorators==0.6.0

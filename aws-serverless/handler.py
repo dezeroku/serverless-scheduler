@@ -5,12 +5,16 @@ import os
 import requests
 import boto3
 
+from lambda_decorators import cors_headers
+
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 QUEUE_URL = os.getenv('QUEUE_URL')
 SQS = boto3.client('sqs')
 
+
+@cors_headers
 def producer(event, context):
     status_code = 200
     message = ''

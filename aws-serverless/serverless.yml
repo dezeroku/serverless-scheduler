@@ -6,10 +6,11 @@ provider:
   # TODO: make it region independent (certificate to be created in us-east-1)
   #region: eu-central-1
   region: us-east-1
-  runtime: python3.9
+  runtime: python3.8
   httpApi:
     # We have a domain anyway
     disableDefaultEndpoint: true
+    cors: true
     authorizers:
       serviceAuthorizer:
         identitySource: $request.header.Authorization
