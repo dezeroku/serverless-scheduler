@@ -3,7 +3,9 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  region: eu-central-1
+  # TODO: make it region independent (certificate to be created in us-east-1)
+  #region: eu-central-1
+  region: us-east-1
   runtime: python3.9
   httpApi:
     # We have a domain anyway
@@ -26,11 +28,14 @@ constructs:
     type: queue
     worker:
       handler: handler.consumer
-  react:
-    type: static-website
-    path: ../front/build
-    domain: ${self:custom.userConfig.frontDomain}
-    certificate: ${certificate(${self:custom.customCertificate.certificateName}):CertificateArn}
+  # The front webpage configuration can also be handled like that (+ route53 via cloudformation)
+  # But this requires the project to be deployed in us-east-1
+  # The big advantage here is automatic cloudfront cache invalidation
+#  react:
+#    type: static-website
+#    path: ../front/build
+#    domain: ${self:custom.userConfig.frontDomain}
+#    certificate: ${certificate(${self:custom.customCertificate.certificateName}):CertificateArn}
 
 functions:
   producer:
@@ -49,7 +54,7 @@ plugins:
   - serverless-python-requirements
   - serverless-domain-manager
   - serverless-certificate-creator
-  #- serverless-s3-sync
+  - serverless-s3-sync
 package:
   patterns:
     - '!node_modules/**'
@@ -59,11 +64,11 @@ package:
 custom:
   userConfig: ${file(user-config.yml)}
 
-  #s3Sync:
-  #  # A simple configuration for copying static assets
-  #  # It also takes care of cleaning up the S3 buckets in 'remove' step
-  #  - bucketNameKey: FrontBucketId
-  #    localDir: ../front/build
+  s3Sync:
+    # A simple configuration for copying static assets
+    # It also takes care of cleaning up the S3 buckets in 'remove' step
+    - bucketNameKey: FrontBucketId
+      localDir: ../front/build
 
   pythonRequirements:
     dockerizePip: true
@@ -89,8 +94,6 @@ custom:
     rewriteRecords: false
 
 resources:
-  #- ${file(resources/front-bucket.yml)}
+  - ${file(resources/front-bucket.yml)}
   - ${file(resources/cognito-user-pool.yml)}
-  - ${file(resources/front-route53.yml)}
-#  - HttpApi:
-#      DependsOn: serviceUserPool
+  - ${file(resources/cloudfront.yml)}
