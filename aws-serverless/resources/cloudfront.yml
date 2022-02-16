@@ -5,20 +5,50 @@ Resources:
       - FrontBucket
     Properties:
       DistributionConfig:
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
         Enabled: true
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          # CachingOptimized - https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          Compress: true
+          #FunctionAssocications:
+          TargetOriginId: thisisatestid
+          ViewerProtocolPolicy: redirect-to-https
+        Origins:
+          -
+            #CustomOriginConfig:
+            #  OriginProtocolPolicy: http-only
+            #  OriginSSLProtocols:
+            #    - TLSv1.2
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginIdentity}'
+            DomainName: !Sub '${FrontBucket}.s3.${AWS::Region}.amazonaws.com'
+            # TODO: change this name?
+            Id: thisisatestid
+        DefaultRootObject: index.html
+        HttpVersion: http2
+        IPV6Enabled: true
         Aliases:
           - ${self:custom.userConfig.frontDomain}
         ViewerCertificate:
           AcmCertificateArn: ${certificate(${self:custom.customCertificate.certificateName}):CertificateArn}
+          MinimumProtocolVersion: TLSv1.2_2019
           SslSupportMethod: sni-only
   WebsiteDNSName:
     Type: AWS::Route53::RecordSetGroup
     Properties:
       HostedZoneName: ${self:custom.userConfig.baseDomain}.
       RecordSets:
-        - Name: 'www.example.com'
+        - Name: ${self:custom.userConfig.frontDomain}
           Type: A
           AliasTarget:
             HostedZoneId: Z2FDTNDATAQYW2 # This is just a hardcode for CloudFront
             DNSName: !GetAtt [WebAppCloudFrontDistribution, DomainName]
-            EvaluateTargetHealth: false
+            #EvaluateTargetHealth: false
