@@ -90,6 +90,7 @@ custom:
       #- "www.${self:custom.userConfig.apiDomain}"
       #- "www.${self:custom.userConfig.frontDomain}"
       - ${self:custom.userConfig.frontDomain}
+      - auth.${self:custom.userConfig.frontDomain}
     region: ${self:provider.region}
     enabled: true
     rewriteRecords: false
