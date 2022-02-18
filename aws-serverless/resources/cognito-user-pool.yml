@@ -40,10 +40,10 @@ Resources:
         Ref: CognitoUserPool
       GenerateSecret: false
       CallbackURLs:
-        - https://${self:custom.userConfig.frontDomain}
+        - https://${self:custom.userConfig.frontDomain}/login/cognito-parser
       LogoutURLs:
         - https://${self:custom.userConfig.frontDomain}
-      DefaultRedirectURI: https://${self:custom.userConfig.frontDomain}
+      DefaultRedirectURI: https://${self:custom.userConfig.frontDomain}/login/cognito-parser
 
   CognitoUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain

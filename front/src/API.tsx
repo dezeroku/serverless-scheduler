@@ -7,14 +7,17 @@ import {API_URL} from "./Config";
 // Ensuring that proper types are used.
 import ItemProps from "./Item";
 
-type PasswordlessRawData = {
-    email: string;
-    redirectUri: string;
-}
+export const loginURL = API_URL + "/v1/login/cognito-login";
+export const logoutURL = API_URL + "/v1/login/cognito-logout";
 
-export async function startPasswordlessRaw(data: PasswordlessRawData) {
-    let config = {timeout: 10000}
-    return axios.post(API_URL + "/passwordless/start", data, config)
+export async function handleLogout() {
+	let config = {
+        headers: {
+            Authorization: "Bearer " + getToken()
+        }
+    }
+
+    return axios.get(logoutURL, config)
 }
 
 export async function getItemsRaw() {

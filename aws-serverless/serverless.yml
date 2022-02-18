@@ -49,6 +49,29 @@ functions:
 
     environment:
       QUEUE_URL: ${construct:jobs.queueUrl}
+  login-login:
+    handler: login.login
+    events:
+      - httpApi:
+          method: get
+          path: /login/cognito-login
+
+    environment:
+      FRONT_DOMAIN: ${self:custom.userConfig.frontDomain}
+      CLIENT_POOL_ID:
+        Ref: CognitoUserPoolClient
+
+  login-logout:
+    handler: login.logout
+    events:
+      - httpApi:
+          method: get
+          path: /login/cognito-logout
+
+    environment:
+      FRONT_DOMAIN: ${self:custom.userConfig.frontDomain}
+      CLIENT_POOL_ID:
+        Ref: CognitoUserPoolClient
 
 plugins:
   - serverless-lift

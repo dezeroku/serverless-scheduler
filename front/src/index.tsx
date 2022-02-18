@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import './index.css';
-import Login, {getToken, setToken} from './Login';
+import {getToken, setToken} from './Login';
+import {loginURL} from "./API";
 import Home from './Home';
 import * as serviceWorker from './serviceWorker';
 import queryString from "query-string";
@@ -10,11 +11,13 @@ import queryString from "query-string";
 ReactDOM.render((
     <Router>
         <Switch>
-	        <Route path="/login/parser" component={LoginParser}>
+	        <Route path="/login/cognito-parser" component={LoginParser}>
 	        </Route>
-            <Route path="/login">
-                <Login />
-            </Route>
+            <Route path='/login' component={() => {
+                       // Just redirect to Cognito
+                       window.location.href = loginURL;
+                       return null;
+                   }}/>
 	        <PrivateRoute path="/">
 	            <Home />
 	        </PrivateRoute>
@@ -22,9 +25,12 @@ ReactDOM.render((
     </Router>), document.getElementById('root'));
 
 function LoginParser(props : any) {
+    // TODO: also properly handle the access time, what to do when it expires?
     let responseData = queryString.parse(props.location.hash);
-    if (typeof responseData.jwt === "string") {
-        setToken(responseData.jwt);
+    if (typeof responseData.access_token === "string") {
+        setToken(responseData.access_token as string);
+    } else {
+        alert('Seems that this page was accessed without a token!');
     }
     return <Redirect to="/" />;
 }
