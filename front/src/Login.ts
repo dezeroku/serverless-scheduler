@@ -1,4 +1,4 @@
-import {handleLogout} from "./API";
+import history from './history';
 
 const token_session_name = "auth_token";
 
@@ -35,17 +35,8 @@ export function parseJwt (token : string) {
 };
 
 export function logOut() {
-    handleLogout().then((response) => {
-	    if (response.status !== 200) {
-            alert('Could not log out, try again');
-		    console.log(response);
-	    } else {
-            setToken("");
-	    }
-    }).catch((error) => {
-        console.log(error);
-        alert('Could not request logout, try again');
-	});
-
+    // The /logout endpoint (that we'll be redirected to from Cognito) will take care of resetting token
+    // TODO: Is this correct approach? Doesn't seem really mockable.
+    history.push('/logout-internal');
     return null;
 }

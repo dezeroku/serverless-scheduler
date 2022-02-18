@@ -10,16 +10,6 @@ import ItemProps from "./Item";
 export const loginURL = API_URL + "/v1/login/cognito-login";
 export const logoutURL = API_URL + "/v1/login/cognito-logout";
 
-export async function handleLogout() {
-	let config = {
-        headers: {
-            Authorization: "Bearer " + getToken()
-        }
-    }
-
-    return axios.get(logoutURL, config)
-}
-
 export async function getItemsRaw() {
 	let config = {
         headers: {

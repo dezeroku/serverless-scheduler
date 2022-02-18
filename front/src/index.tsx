@@ -1,21 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { Router, Switch, Route, Redirect } from 'react-router-dom';
 import './index.css';
 import {getToken, setToken} from './Login';
-import {loginURL} from "./API";
+import {loginURL, logoutURL} from "./API";
 import Home from './Home';
 import * as serviceWorker from './serviceWorker';
 import queryString from "query-string";
+import history from './history';
 
 ReactDOM.render((
-    <Router>
+    <Router history={history}>
         <Switch>
 	        <Route path="/login/cognito-parser" component={LoginParser}>
 	        </Route>
             <Route path='/login' component={() => {
                        // Just redirect to Cognito
                        window.location.href = loginURL;
+                       return null;
+                   }}/>
+            <Route path='/logout-internal' component={() => {
+                       // Go to Cognito to invalidate the session
+                       window.location.href = logoutURL;
+                       return null;
+                   }}/>
+            <Route path='/logout' component={() => {
+                       // We came here from Cognito
+                       setToken('');
+                       history.push('/');
                        return null;
                    }}/>
 	        <PrivateRoute path="/">
