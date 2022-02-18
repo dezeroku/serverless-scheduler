@@ -39,7 +39,7 @@ def logout(event, context):
         "/logout?client_id=" + \
         os.getenv('CLIENT_POOL_ID') + \
         "&logout_uri=" + \
-        "https://" + os.getenv('FRONT_DOMAIN')
+        "https://" + os.getenv('FRONT_DOMAIN') + "/logout"
     except Exception as e:
         logger.exception(e)
 

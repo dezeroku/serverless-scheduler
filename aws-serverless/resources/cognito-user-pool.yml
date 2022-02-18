@@ -42,7 +42,7 @@ Resources:
       CallbackURLs:
         - https://${self:custom.userConfig.frontDomain}/login/cognito-parser
       LogoutURLs:
-        - https://${self:custom.userConfig.frontDomain}
+        - https://${self:custom.userConfig.frontDomain}/logout
       DefaultRedirectURI: https://${self:custom.userConfig.frontDomain}/login/cognito-parser
 
   CognitoUserPoolDomain:
