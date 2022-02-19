@@ -40,7 +40,7 @@ Resources:
         Aliases:
           - ${self:custom.userConfig.frontDomain}
         ViewerCertificate:
-          AcmCertificateArn: ${certificate(${self:custom.customCertificate.1.certificateName}, 1):CertificateArn}
+          AcmCertificateArn: ${certificate(${self:custom.customCertificate.1.certificateName}, '1'):CertificateArn}
           MinimumProtocolVersion: TLSv1.2_2019
           SslSupportMethod: sni-only
   WebsiteDNSName:

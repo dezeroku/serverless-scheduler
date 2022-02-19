@@ -105,6 +105,7 @@ custom:
     #autoDomain: true
     apiType: http
   customCertificate:
+    # First cert is for the domain-manager
     -
       certificateName: ${self:custom.userConfig.apiDomain}
       hostedZoneNames: ${self:custom.userConfig.baseDomain}.
@@ -120,6 +121,13 @@ custom:
       region: us-east-1
       enabled: true
       rewriteRecords: false
+    -
+      certificateName: auth.${self:custom.userConfig.frontDomain}
+      hostedZoneNames: ${self:custom.userConfig.baseDomain}.
+      region: ${self:provider.region}
+      enabled: true
+      rewriteRecords: false
+
 
 resources:
   - ${file(resources/front-bucket.yml)}
