@@ -51,7 +51,7 @@ Resources:
       - WebsiteDNSName
     Properties:
       CustomDomainConfig:
-        CertificateArn: ${certificate(${self:custom.customCertificate.certificateName}):CertificateArn}
+        CertificateArn: ${certificate(${self:custom.customCertificate.1.certificateName}, 1):CertificateArn}
       Domain: !Sub "auth.${self:custom.userConfig.frontDomain}"
       UserPoolId:
         Ref: CognitoUserPool

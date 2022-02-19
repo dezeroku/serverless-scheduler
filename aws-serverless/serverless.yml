@@ -3,9 +3,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  # TODO: make it region independent (certificate to be created in us-east-1)
-  #region: eu-central-1
-  region: us-east-1
+  region: eu-central-1
   runtime: python3.8
   httpApi:
     # We have a domain anyway
@@ -107,16 +105,21 @@ custom:
     #autoDomain: true
     apiType: http
   customCertificate:
-    certificateName: ${self:custom.userConfig.apiDomain}
-    hostedZoneNames: ${self:custom.userConfig.baseDomain}.
-    subjectAlternativeNames:
-      #- "www.${self:custom.userConfig.apiDomain}"
-      #- "www.${self:custom.userConfig.frontDomain}"
-      - ${self:custom.userConfig.frontDomain}
-      - auth.${self:custom.userConfig.frontDomain}
-    region: ${self:provider.region}
-    enabled: true
-    rewriteRecords: false
+    -
+      certificateName: ${self:custom.userConfig.apiDomain}
+      hostedZoneNames: ${self:custom.userConfig.baseDomain}.
+      region: ${self:provider.region}
+      enabled: true
+      rewriteRecords: false
+    -
+      certificateName: ${self:custom.userConfig.frontDomain}
+      hostedZoneNames: ${self:custom.userConfig.baseDomain}.
+      subjectAlternativeNames:
+        - auth.${self:custom.userConfig.frontDomain}
+      # This is a cert for CloudFront, so it has to be in us-east-1
+      region: us-east-1
+      enabled: true
+      rewriteRecords: false
 
 resources:
   - ${file(resources/front-bucket.yml)}
