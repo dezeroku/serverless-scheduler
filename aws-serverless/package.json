@@ -6,7 +6,7 @@
   "license": "MIT",
   "devDependencies": {
     "@boundstate/serverless-finch": "^2.8.2",
-    "serverless-certificate-creator": "^1.6.0",
+    "@dezeroku/serverless-certificate-creator": "^1.6.0",
     "serverless-domain-manager": "^6.0.2",
     "serverless-lift": "^1.1.2",
     "serverless-python-requirements": "^5.3.1",
