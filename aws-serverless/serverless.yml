@@ -75,8 +75,8 @@ plugins:
   - serverless-lift
   - serverless-python-requirements
   - serverless-domain-manager
-  - serverless-certificate-creator
   - serverless-s3-sync
+  - '@dezeroku/serverless-certificate-creator'
 package:
   patterns:
     - '!node_modules/**'
@@ -105,26 +105,25 @@ custom:
     #autoDomain: true
     apiType: http
   customCertificate:
-    # First cert is for the domain-manager
+    # This is a cert for domain-manager, local apigateway, region cert is fine
     -
       certificateName: ${self:custom.userConfig.apiDomain}
       hostedZoneNames: ${self:custom.userConfig.baseDomain}.
       region: ${self:provider.region}
       enabled: true
       rewriteRecords: false
+    # This is a cert for CloudFront, so it has to be in us-east-1
     -
       certificateName: ${self:custom.userConfig.frontDomain}
       hostedZoneNames: ${self:custom.userConfig.baseDomain}.
-      subjectAlternativeNames:
-        - auth.${self:custom.userConfig.frontDomain}
-      # This is a cert for CloudFront, so it has to be in us-east-1
       region: us-east-1
       enabled: true
       rewriteRecords: false
+    # This is a cert for Cognito Domain, has to be in us-east-1
     -
       certificateName: auth.${self:custom.userConfig.frontDomain}
       hostedZoneNames: ${self:custom.userConfig.baseDomain}.
-      region: ${self:provider.region}
+      region: us-east-1
       enabled: true
       rewriteRecords: false
 
