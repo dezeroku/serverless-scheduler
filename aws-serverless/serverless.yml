@@ -47,6 +47,15 @@ functions:
 
     environment:
       QUEUE_URL: ${construct:jobs.queueUrl}
+
+  items-get:
+    handler: items.get
+    events:
+      - httpApi:
+          method: get
+          path: /items/{user_id}
+          authorizer: serviceAuthorizer
+
   login-login:
     handler: login.login
     events:
