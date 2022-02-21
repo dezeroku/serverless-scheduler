@@ -49,6 +49,7 @@ functions:
       QUEUE_URL: ${construct:jobs.queueUrl}
 
   items-get:
+    module: items
     handler: items.get
     events:
       - httpApi:
@@ -57,6 +58,7 @@ functions:
           authorizer: serviceAuthorizer
 
   login-login:
+    module: login
     handler: login.login
     events:
       - httpApi:
@@ -69,6 +71,7 @@ functions:
         Ref: CognitoUserPoolClient
 
   login-logout:
+    module: login
     handler: login.logout
     events:
       - httpApi:
@@ -87,6 +90,7 @@ plugins:
   - serverless-s3-sync
   - '@dezeroku/serverless-certificate-creator'
 package:
+  individually: true
   patterns:
     - '!node_modules/**'
     - '!lambda_venv/**'
