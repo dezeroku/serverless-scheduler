@@ -17,7 +17,7 @@ export function setToken(token : string) {
     window.sessionStorage.setItem(token_session_name, token);
 }
 
-export function userMail() {
+export function userId() {
     let token = getToken();
     
     if (token !== null) {

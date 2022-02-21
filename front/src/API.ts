@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // It is used to get access token.
-import {userMail, getToken} from "./Login";
+import {userId, getToken} from "./Login";
 import {API_URL} from "./Config";
 
 // Ensuring that proper types are used.
@@ -29,7 +29,7 @@ export async function handleCreate(json : ItemProps["props"]) {
             Authorization: "Bearer " + getToken()
         }
     }
-    let data : any = { ...json, ...{owner: userMail()}}
+    let data : any = { ...json, ...{owner: userId()}}
     data["sleepTime"] *= 60;
     
     return axios.post(API_URL + "/v1/item/create", data, config)
@@ -100,7 +100,7 @@ export async function handleUpdate(json : ItemProps["props"]) {
             Authorization: "Bearer " + getToken()
         }
     }
-    let data : any = { ...json, ...{owner: userMail()}}
+    let data : any = { ...json, ...{owner: userId()}}
     data["sleepTime"] *= 60;
     
     return axios.put(API_URL + "/v1/item/update/" + json.id, data, config)
