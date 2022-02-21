@@ -43,6 +43,7 @@ Resources:
           AcmCertificateArn: ${certificate(${self:custom.customCertificate.1.certificateName}, '1'):CertificateArn}
           MinimumProtocolVersion: TLSv1.2_2019
           SslSupportMethod: sni-only
+        PriceClass: PriceClass_100
   WebsiteDNSName:
     Type: AWS::Route53::RecordSetGroup
     Properties:
