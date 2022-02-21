@@ -54,7 +54,7 @@ functions:
     events:
       - httpApi:
           method: get
-          path: /items/{user_id}
+          path: /items
           authorizer: serviceAuthorizer
 
   login-login:

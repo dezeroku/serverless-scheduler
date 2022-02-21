@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  title: Items
+  description: Main entry point. Allows get currents monitors, create new ones or modify the existing ones
+  contact:
+    email: dezeroku@gmail.com
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+- url: /v1
+  description: first api version
+paths:
+  /items:
+    get:
+      security: 
+      - bearerAuth: []
+      operationId: items_get
+      description: return all items that are monitored by specified user
+      responses:
+        200:
+          description: list of all monitoring jobs that are assigned to an user_id (obtained via bearerAuth)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemWithId'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id of the job
+      security: 
+      - bearerAuth: []
+      operationId: item_get
+      description: get a job from provided id
+      responses:
+        200:
+          description: a job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/update/{id}:
+    put:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id of the job
+      security: 
+      - bearerAuth: []
+      operationId: item_update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      description: update a job under provided ID
+      responses:
+        200:
+          description: successfully updated job
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/delete/{id}:
+    delete:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id of the job
+      security: 
+      - bearerAuth: []
+      operationId: item_delete
+      description: delete a job under provided ID
+      responses:
+        200:
+          description: successfully deleted job
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+  /item/create:
+    post:
+      security: 
+      - bearerAuth: []
+      operationId: item_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      description: create a job, and return it with id
+      responses:
+        200:
+          description: successfully created job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemWithId'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          description: bad input parameters
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  schemas:
+    ItemWithId:
+      allOf:
+      - $ref: '#/components/schemas/Item'
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
+    Item:
+      description: Single monitoring job
+      required:
+        - ownerId
+        - url
+        - sleepTime
+        - makeScreenshots
+      type: object
+      properties:
+        url: 
+          type: string
+        sleepTime:
+          type: integer
+        makeScreenshots:
+          type: boolean
+        ownerId:
+          type: string
