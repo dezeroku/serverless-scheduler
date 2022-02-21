@@ -1,8 +1,15 @@
 import history from './history';
+import {isDev} from './Base';
 
 const token_session_name = "auth_token";
 
 export function getToken() {
+    if (isDev()) {
+        let devToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUudXJsIiwibmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNTE2MjM5MDIyfQ.FqZJO19KHW7EQoAf8LIVRu31nruBFLm4LrUBBSs_TQE'
+        if (window.sessionStorage.getItem(token_session_name) == null) {
+            return devToken;
+        }
+    }
     return window.sessionStorage.getItem(token_session_name);
 }
 
