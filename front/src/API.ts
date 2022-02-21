@@ -17,7 +17,7 @@ export async function getItemsRaw() {
         }
     }
 
-    return axios.get(API_URL + "/v1/items/" + userMail(), config)
+    return axios.get(API_URL + "/v1/items", config)
 }
 
 export async function handleCreate(json : ItemProps["props"]) {
