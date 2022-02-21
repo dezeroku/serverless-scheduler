@@ -52,10 +52,11 @@ class Home extends React.Component<HomeProps, HomeState> {
 		    // Something went wrong with sending.
 		    this.setState({loading: false});
 
-            if (error.response.status === 401) {
-                //alert("Your session timed out!");
-		        this.handleLogout();
-            }
+            alert('Something went wrong!');
+            //if (error.response.status === 401) {
+            //    //alert("Your session timed out!");
+		    //    this.handleLogout();
+            //}
 	    });
     }
     
