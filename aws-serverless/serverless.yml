@@ -21,6 +21,22 @@ provider:
             - Ref: CognitoUserPool
         audience:
           - Ref: CognitoUserPoolClient
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            Fn::Join:
+              - ''
+              - - arn:aws:dynamodb:${self:provider.region}:*:table/
+                - Ref: DynamoDB
 
 constructs:
   jobs:
@@ -56,6 +72,9 @@ functions:
           method: get
           path: /items
           authorizer: serviceAuthorizer
+    environment:
+      DYNAMO_DB:
+        Ref: DynamoDB
 
   login-login:
     module: login
@@ -140,8 +159,8 @@ custom:
       enabled: true
       rewriteRecords: false
 
-
 resources:
   - ${file(resources/front-bucket.yml)}
   - ${file(resources/cognito-user-pool.yml)}
   - ${file(resources/cloudfront.yml)}
+  - ${file(resources/dynamodb.yml)}
