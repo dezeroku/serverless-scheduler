@@ -67,7 +67,7 @@ functions:
 
   items-get:
     module: items
-    handler: items.get
+    handler: get.get
     events:
       - httpApi:
           method: get
