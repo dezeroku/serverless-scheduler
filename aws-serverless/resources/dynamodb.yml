@@ -4,11 +4,11 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: id
+          AttributeName: user_id
           AttributeType: S
       KeySchema:
         -
-          AttributeName: id
+          AttributeName: user_id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 

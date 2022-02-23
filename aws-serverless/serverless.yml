@@ -76,6 +76,19 @@ functions:
       DYNAMO_DB:
         Ref: DynamoDB
 
+#  cognito-signup:
+#    module: cognito
+#    handler: cognito.signup
+#    events:
+#      - cognitoUserPool:
+#          pool:
+#            Ref: CognitoUserPool
+#          trigger: PreSignUp
+#          existing: true
+#    environment:
+#      DYNAMO_DB:
+#        Ref: DynamoDB
+
   login-login:
     module: login
     handler: login.login
