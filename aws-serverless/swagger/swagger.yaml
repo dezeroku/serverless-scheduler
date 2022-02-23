@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Items
+  title: Monitors
   description: Main entry point. Allows get currents monitors, create new ones or modify the existing ones
   contact:
     email: dezeroku@gmail.com
@@ -25,7 +25,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ItemWithId'
+                  $ref: '#/components/schemas/itemWithId'
         401:
           $ref: '#/components/responses/UnauthorizedError'
         400:
@@ -49,7 +49,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
+                $ref: '#/components/schemas/item'
         401:
           $ref: '#/components/responses/UnauthorizedError'
         400:
@@ -70,7 +70,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Item'
+              $ref: '#/components/schemas/item'
       description: update a job under provided ID
       responses:
         200:
@@ -108,7 +108,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Item'
+              $ref: '#/components/schemas/item'
       description: create a job, and return it with id
       responses:
         200:
@@ -116,7 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ItemWithId'
+                $ref: '#/components/schemas/itemWithId'
         401:
           $ref: '#/components/responses/UnauthorizedError'
         400:
@@ -131,16 +131,7 @@ components:
     UnauthorizedError:
       description: Access token is missing or invalid
   schemas:
-    ItemWithId:
-      allOf:
-      - $ref: '#/components/schemas/Item'
-      - type: object
-        required:
-          - id
-        properties:
-          id:
-            type: integer
-    Item:
+    item:
       description: Single monitoring job
       required:
         - ownerId
@@ -157,3 +148,12 @@ components:
           type: boolean
         ownerId:
           type: string
+    itemWithId:
+      allOf:
+      - $ref: '#/components/schemas/item'
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
