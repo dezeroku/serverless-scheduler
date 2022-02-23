@@ -1,1 +1,2 @@
 lambda_decorators==0.6.0
+jsonschema==3.0.2

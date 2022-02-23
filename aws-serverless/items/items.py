@@ -2,13 +2,12 @@ import json
 import logging
 import os
 
-from lambda_decorators import cors_headers, json_http_resp
+from lambda_decorators import cors_headers, json_http_resp, json_schema_validator
 import boto3
 dynamodb = boto3.resource('dynamodb')
 
 from common import cognito
 
-# To be used later on with schemas
 from common.schemas import itemwithid_schema
 
 logger = logging.getLogger()
@@ -16,6 +15,7 @@ logger.setLevel(logging.DEBUG)
 
 @cors_headers
 @json_http_resp
+@json_schema_validator(response_schema={'type': 'array', 'items': itemwithid_schema})
 def get(event, context):
     table = dynamodb.Table(os.environ['DYNAMO_DB'])
 
