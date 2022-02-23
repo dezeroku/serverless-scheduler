@@ -5,6 +5,7 @@ provider:
   name: aws
   region: eu-central-1
   runtime: python3.8
+  memorySize: 128
   httpApi:
     # We have a domain anyway
     disableDefaultEndpoint: true
