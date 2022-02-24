@@ -16,9 +16,6 @@ item_schema = {
         "makeScreenshots": {
             "type": "boolean"
         },
-        "ownerId": {
-            "type": "string"
-        },
         "sleepTime": {
             "type": "integer"
         },
@@ -27,7 +24,6 @@ item_schema = {
         }
     },
     "required": [
-        "ownerId",
         "url",
         "sleepTime",
         "makeScreenshots"
@@ -45,9 +41,6 @@ itemwithid_schema = {
                 "makeScreenshots": {
                     "type": "boolean"
                 },
-                "ownerId": {
-                    "type": "string"
-                },
                 "sleepTime": {
                     "type": "integer"
                 },
@@ -56,7 +49,6 @@ itemwithid_schema = {
                 }
             },
             "required": [
-                "ownerId",
                 "url",
                 "sleepTime",
                 "makeScreenshots"

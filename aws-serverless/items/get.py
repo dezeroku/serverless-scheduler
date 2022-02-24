@@ -8,6 +8,7 @@ dynamodb = boto3.resource('dynamodb')
 from common import cognito
 
 from common.schemas import itemwithid_schema
+from common.utils import replace_decimals
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -49,4 +50,4 @@ def get(event, context):
             }
         )
 
-    return result['Item']['monitors']
+    return replace_decimals(result['Item']['monitors'])

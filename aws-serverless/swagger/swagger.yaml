@@ -134,7 +134,6 @@ components:
     item:
       description: Single monitoring job
       required:
-        - ownerId
         - url
         - sleepTime
         - makeScreenshots
@@ -146,8 +145,6 @@ components:
           type: integer
         makeScreenshots:
           type: boolean
-        ownerId:
-          type: string
     itemWithId:
       allOf:
       - $ref: '#/components/schemas/item'
