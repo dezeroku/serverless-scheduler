@@ -2,6 +2,7 @@ service: aws-serverless
 frameworkVersion: '3'
 
 provider:
+  versionFunctions: false
   name: aws
   region: eu-central-1
   runtime: python3.8
@@ -72,6 +73,18 @@ functions:
       - httpApi:
           method: get
           path: /items
+          authorizer: serviceAuthorizer
+    environment:
+      DYNAMO_DB:
+        Ref: DynamoDB
+
+  item-create:
+    module: items
+    handler: create.create
+    events:
+      - httpApi:
+          method: post
+          path: /item/create
           authorizer: serviceAuthorizer
     environment:
       DYNAMO_DB:
