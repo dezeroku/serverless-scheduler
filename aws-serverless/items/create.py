@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 
 from lambda_decorators import cors_headers, json_http_resp, json_schema_validator, load_json_body
 import boto3
@@ -13,18 +14,18 @@ from common.schemas import item_schema, itemwithid_schema
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+# TODO: get through these decorators properly, they don't seem to run from the bottom-up?
 @cors_headers
 @json_http_resp
-#@json_schema_validator(request_schema={'type': 'object', 'properties':
-#                                       {'body': item_schema}},
-#                       response_schema=itemwithid_schema)
 @load_json_body
+@json_schema_validator(request_schema={'type': 'object', 'properties':
+                                       {'body': item_schema}},
+                       response_schema=itemwithid_schema)
 def create(event, context):
     table = dynamodb.Table(os.environ['DYNAMO_DB'])
 
     user = cognito.get_username(event)
 
-    # Actually getting the data from a row:
     result = table.get_item(
         Key={
             'user_id': user
