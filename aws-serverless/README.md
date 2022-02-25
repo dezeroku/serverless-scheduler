@@ -8,7 +8,6 @@ I've written it for myself and use it for monitoring couple pages, but the main 
 ## How does it look?
 Couple screenshots from the `front` provided UI.
 
-![Login](docs/pictures/login.png?raw=true "Login")
 ![Home Page (empty)](docs/pictures/home.png?raw=true "Home Page (empty)")
 ![Task Creation](docs/pictures/create.png?raw=true "Task Creation")
 ![Home Page](docs/pictures/added.png?raw=true "Home Page")
