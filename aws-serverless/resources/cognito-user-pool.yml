@@ -27,7 +27,6 @@ Resources:
       AllowedOAuthFlows:
         - implicit
         - code
-      # TODO: What does it do exactly?
       AllowedOAuthScopes:
         - phone
         - email
