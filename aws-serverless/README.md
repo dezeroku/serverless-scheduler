@@ -1,81 +1,128 @@
-<!--
-title: 'Serverless Framework Python SQS Producer-Consumer on AWS'
-description: 'This template demonstrates how to develop and deploy a simple SQS-based producer-consumer service running on AWS Lambda using the traditional Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: Python
-priority: 2
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Page Monitor
+AWS based serverless solution to monitor websites for changes in HTML.
+When such a change is detected user is notified via mail.
 
-# Serverless Framework Python SQS Producer-Consumer on AWS
+## Why?
+I've written it for myself and use it for monitoring couple pages, but the main idea behind it was to get a practical grasp on the microservices and cloud (AWS in this case).
 
-This template demonstrates how to develop and deploy a simple SQS-based producer-consumer service running on AWS Lambda using the Serverless Framework and the [Lift](https://github.com/getlift/lift) plugin. It allows to accept messages, for which computation might be time or resource intensive, and offload their processing to an asynchronous background process for a faster and more resilient system.
+## How does it look?
+Couple screenshots from the `front` provided UI.
 
-## Anatomy of the template
+![Login](docs/pictures/login.png?raw=true "Login")
+![Home Page (empty)](docs/pictures/home.png?raw=true "Home Page (empty)")
+![Task Creation](docs/pictures/create.png?raw=true "Task Creation")
+![Home Page](docs/pictures/added.png?raw=true "Home Page")
+![Modify Modal](docs/pictures/modify.png?raw=true "Modify Modal")
 
-This template defines one function `producer` and one Lift construct - `jobs`. The producer function is triggered by `http` event type, accepts JSON payloads and sends it to a SQS queue for asynchronous processing. The SQS queue is created by the `jobs` queue construct of the Lift plugin. The queue is set up with a "dead-letter queue" (to receive failed messages) and a `worker` Lambda function that processes the SQS messages.
+## Structure (AWS refactored)
 
-To learn more:
+Let me shed some light on the general design and describe the more important ones.
+Each of the modules listed below is stored in a separate directory with its own README listing possible configuration options.
+If the component exposes an API, there is a swagger file describing it in the appropriate directory.
+The only components that are meant to be exposed to the outside world at any point are `manager` and `front`.
 
-- about `http` event configuration options, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/)
-- about the `queue` construct, refer to [the `queue` documentation in Lift](https://github.com/getlift/lift/blob/master/docs/queue.md)
-- about the Lift plugin in general, refer to [the Lift project](https://github.com/getlift/lift)
-- about SQS processing with AWS Lambda, please refer to the official [AWS documentation](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
+At the moment, the whole deployment consists of few modules that are required, such as:
+* manager
+* sender
 
-### Deployment
+and few optional ones:
+* front
+* db (this is a rather special case in terms of "being optional", you are still going to have the DB if you reject this, but it's going to be sqlite3 local one)
+* screenshoter
+* comparator
 
-Install dependencies with:
+Most of the modules are accessible via the REST API (except for front and db, these are special).
 
+### High level overview
+The entry point for a system is `front` + `manager` underneath (manager also in Lambda).
+These are responsible for seeding the AWS SQS queue with initial messages + adding entry for these in DynamoDB.
+The messages in queue are given delay based on the user input.
+When the time comes to process a message, it triggers a Lambda function that:
+1. consumes the message from queue
+2. obtains a fresh HTML of the website that's being monitored
+3. checks if there is a previous entry for the checker (this is done via call to DynamoDB)
+4. if there is, compares it with the freshly obtained copy. Depending on the result, mail gets sent to the user or not
+5. saves the fresh HTML as previous entry (DynamoDB)
+6. pushes the fresh message with the original delay to the "manager" queue (effectively creating the infinite loop of checking, which is stopped
+   if the manager sees that the underlying entry does not exist anymore). Can this be done better? Empty the queue from messages on demand?
+
+TODO: authentication via Cognito
+
+So:
+1. DynamoDB for storing user defined websites to monitor and details
+2. DynamoDB (or maybe S3?) for "session" storage of HTML (and screenshots, this definitely sounds like S3)
+3. SQS for messages "to be checked" to be worked by checkers (in batches)
+4. SQS for messages "to be confirmed" to be worked by orchestrator (if the request is still valid, it gets to the "to be checked" queue) in batches. Can this be simplified?
+   This is something new, it was part of the `manager` in original approach.
+5. Cognito for authorisation
+6. still sendgrid for mails for now?
+7. Manager has to be "lambdadized"
+
+We don't really have to care about being in sync here (potential issues with front displaying proper state?).
+
+In the overview above, screenshots can also be taken and kept alongside the HTML code, although it significantly affects the running time.
+
+So to sumarize:
+* Adding the website to the monitored list, seeds the queue with initial message
+* Removing the website from monitored list, removes all the related messages from the queue
+
+This should eliminate the need of sanity checking the queue (what about possible race conditions though?).
+
+### Manager
+That's the core part of the system.
+It's meant to keep the user list and control (spin up and terminate) the `checker` queue.
+It's possible to use it with the local `sqlite3` db or connect to `postgres` (the so-called `db` module).
+
+### Sender
+Responsible for contacting with the outside world.
+For now only one API call that matters (`mail`), that uses the `sendgrid` API under the hood.
+
+### Front
+UI that contacts with the `manager` over the API.
+That's the entry point, if you don't want to use the API directly.
+
+### Screenshoter
+Takes a screenshot of the provided URL.
+Under the hood it's using `puppeteer`.
+
+### Comparator
+Provided with two images it calculates the structural similarity (basically a diff value) between these two.
+It's used to mark the borders of what changed between the checks.
+
+### Checker
+Shouldn't be used directly at any point.
+It's the smallest component actually responsible for calling the other services.
+It's given a single URL to check and periodically compares an HTML diff between the previous and current content.
+In case of any difference, it sends out a mail informing about the change.
+
+
+## Deployment
+TBA
+
+
+## Building
+TBA for the Lambda case
+
+All of the images are provided under the `ghcr.io/dezeroku` namespace and are automatically rebuilt on every change in the `master` branch of the repo.
+
+Each of the components can be built via the provided Dockerfile.
+To get the production build:
 ```
-npm install
+# Skip the test stages with proper runner
+export DOCKER_BUILDKIT=1
+docker build -t production .
 ```
 
-Then deploy:
-
+To run tests:
 ```
-serverless deploy
-```
-
-After running deploy, you should see output similar to:
-
-```bash
-Deploying aws-python-sqs-worker-project to stage dev (us-east-1)
-
-✔ Service deployed to stack aws-python-sqs-worker-project-dev (175s)
-
-endpoint: POST - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/produce
-functions:
-  producer: aws-python-sqs-worker-project-dev-producer (167 kB)
-  jobsWorker: aws-python-sqs-worker-project-dev-jobsWorker (167 kB)
-jobs: https://sqs.us-east-1.amazonaws.com/000000000000/aws-python-sqs-worker-project-dev-jobs
+docker build -t test . --target test
+docker run -it test
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
+## Utilities
+The `utils` directory contains few useful scripts that can be used in CI or just to speed-up the development.
 
-### Invocation
-
-After successful deployment, you can now call the created API endpoint with `POST` request to invoke `producer` function:
-
-```bash
-curl --request POST 'https://xxxxxx.execute-api.us-east-1.amazonaws.com/produce' --header 'Content-Type: application/json' --data-raw '{"name": "John"}'
-```
-
-In response, you should see output similar to:
-
-```bash
-{"message": "Message accepted!"}
-```
-
-### Bundling dependencies
-
-In case you would like to include 3rd party dependencies, you will need to use a plugin called `serverless-python-requirements`. You can set it up by running the following command:
-
-```bash
-serverless plugin install -n serverless-python-requirements
-```
-
-Running the above will automatically add `serverless-python-requirements` to `plugins` section in your `serverless.yml` file and add it as a `devDependency` to `package.json` file. The `package.json` file will be automatically created if it doesn't exist beforehand. Now you will be able to add your dependencies to `requirements.txt` file (`Pipfile` and `pyproject.toml` is also supported but requires additional configuration) and they will be automatically injected to Lambda package during build process. For more details about the plugin's configuration, please refer to [official documentation](https://github.com/UnitedIncome/serverless-python-requirements).
+* `create_schemas.sh` -> generates `common/schemas.py` (contain JSON schemas) based on the `swagger/swagger.yaml`. The schemas are used later on in handler to validate requests/responses
+* `deploy.sh` -> small wrapper, does the necessary calls to deploy whole application to AWS
+* `teardown.sh` -> small wrapper, does the necessary calls to remove whole application from AWS
+* `json2py.py` -> utility for `create_schemas.sh`, converts .json files to .py file, which has a single variable inside and its value is the original .json content
