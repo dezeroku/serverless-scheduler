@@ -102,6 +102,18 @@ functions:
       DYNAMO_DB:
         Ref: DynamoDB
 
+  item-update:
+    module: items
+    handler: update.update
+    events:
+      - httpApi:
+          method: put
+          path: /item/update/{item_id}
+          authorizer: serviceAuthorizer
+    environment:
+      DYNAMO_DB:
+        Ref: DynamoDB
+
 #  cognito-signup:
 #    module: cognito
 #    handler: cognito.signup
