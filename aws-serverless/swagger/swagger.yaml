@@ -13,7 +13,7 @@ servers:
 paths:
   /items:
     get:
-      security: 
+      security:
       - bearerAuth: []
       operationId: items_get
       description: return all items that are monitored by specified user
@@ -30,30 +30,30 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         400:
           description: bad input parameters
-  /item/{id}:
-    get:
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: id of the job
-      security: 
-      - bearerAuth: []
-      operationId: item_get
-      description: get a job from provided id
-      responses:
-        200:
-          description: a job
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/item'
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        400:
-          description: bad input parameters
+  #/item/{id}:
+  #  get:
+  #    parameters:
+  #      - in: path
+  #        name: id
+  #        schema:
+  #          type: integer
+  #        required: true
+  #        description: id of the job
+  #    security:
+  #    - bearerAuth: []
+  #    operationId: item_get
+  #    description: get a job from provided id
+  #    responses:
+  #      200:
+  #        description: a job
+  #        content:
+  #          application/json:
+  #            schema:
+  #              $ref: '#/components/schemas/item'
+  #      401:
+  #        $ref: '#/components/responses/UnauthorizedError'
+  #      400:
+  #        description: bad input parameters
   /item/update/{id}:
     put:
       parameters:
@@ -88,7 +88,7 @@ paths:
             type: integer
           required: true
           description: id of the job
-      security: 
+      security:
       - bearerAuth: []
       operationId: item_delete
       description: delete a job under provided ID
@@ -101,7 +101,7 @@ paths:
           description: bad input parameters
   /item/create:
     post:
-      security: 
+      security:
       - bearerAuth: []
       operationId: item_create
       requestBody:
