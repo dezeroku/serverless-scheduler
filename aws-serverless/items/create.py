@@ -1,14 +1,9 @@
 import logging
-import os
-import json
 
 from lambda_decorators import cors_headers, json_http_resp, json_schema_validator, load_json_body
-import boto3
-dynamodb = boto3.resource('dynamodb')
 
 from common import cognito
-from common.utils import replace_decimals
-
+from common import utils
 from common.schemas import item_schema, itemwithid_schema
 
 logger = logging.getLogger()
@@ -22,7 +17,7 @@ logger.setLevel(logging.DEBUG)
                                        {'body': item_schema}},
                        response_schema=itemwithid_schema)
 def create(event, context):
-    table = dynamodb.Table(os.environ['DYNAMO_DB'])
+    table = utils.get_dynamo_table()
 
     user = cognito.get_username(event)
 
@@ -44,4 +39,4 @@ def create(event, context):
 
     response = table.put_item(Item=result)
 
-    return replace_decimals(to_add)
+    return utils.replace_decimals(to_add)
