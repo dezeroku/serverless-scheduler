@@ -21,7 +21,7 @@ Resources:
           CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
           Compress: true
           #FunctionAssocications:
-          TargetOriginId: thisisatestid
+          TargetOriginId: front-s3
           ViewerProtocolPolicy: redirect-to-https
         Origins:
           -
@@ -32,8 +32,8 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginIdentity}'
             DomainName: !Sub '${FrontBucket}.s3.${AWS::Region}.amazonaws.com'
-            # TODO: change this name?
-            Id: thisisatestid
+            # This only has to be unique per distribution, so we are fine
+            Id: front-s3
         DefaultRootObject: index.html
         HttpVersion: http2
         IPV6Enabled: true
