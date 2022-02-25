@@ -90,6 +90,18 @@ functions:
       DYNAMO_DB:
         Ref: DynamoDB
 
+  item-delete:
+    module: items
+    handler: delete.delete
+    events:
+      - httpApi:
+          method: delete
+          path: /item/delete/{item_id}
+          authorizer: serviceAuthorizer
+    environment:
+      DYNAMO_DB:
+        Ref: DynamoDB
+
 #  cognito-signup:
 #    module: cognito
 #    handler: cognito.signup
