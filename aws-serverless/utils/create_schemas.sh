@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+RUNDIR="$(readlink -f $(dirname "$0"))"
+
 set -e
 function create_schemas() {
     # Generate the .jsons
@@ -15,7 +17,7 @@ function create_schemas() {
         var_name="${x%%.json}"
         var_name="${var_name##./}_schema"
         out_name="${x%%.json}.py"
-        ../../json2py.py $x $out_name $var_name
+        "${RUNDIR}/json2py.py" $x $out_name $var_name
     done
 
     popd
