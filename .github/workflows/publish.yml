@@ -154,7 +154,7 @@ jobs:
 
 
       - name: Login to GHCR
-        uses: docker/login-action@42d299face0c5c43a0487c477f595ac9cf22f1a7 # pin@v1
+        uses: docker/login-action@bb984efc561711aaa26e433c32c3521176eae55b # pin@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
