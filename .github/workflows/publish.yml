@@ -1,290 +1,290 @@
-name: Publish docker images and helm chart
-
-on:
-  push:
-    # Publish `master` as Docker `latest` image.
-    branches:
-      - master
-      - dev
-      - aws-poc
-
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-  pull_request: null
-jobs:
-  docker-publish:
-    runs-on: ubuntu-latest
-    env:
-      IMAGE_TAG_SHA: "${{ github.event_name == 'pull_request' &&
-        github.event.pull_request.head.sha ||  github.sha }}"
-
-    strategy:
-      matrix:
-        # The lockfiles + dockerfile are a "real" cache hit, while hash of the whole directory
-        # provides an unique identifier
-        cfg:
-          - {
-              component: front,
-              platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles:
-                [
-                  'front/package-lock.json',
-                  'front/Dockerfile',
-                  'front/**'
-                ]
-            }
-          - {
-              component: manager,
-              platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles: [ 'manager/go.sum', 'manager/Dockerfile', 'manager/**' ]
-            }
-          - {
-              component: sender,
-              platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles:
-                [
-                  'sender/*requirements*.txt',
-                  'sender/Dockerfile',
-                  'sender/**'
-                ]
-            }
-          - {
-              component: checker,
-              platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles:
-                [
-                  'checker/*requirements*.txt',
-                  'checker/Dockerfile',
-                  'checker/**'
-                ]
-            }
-          - {
-              component: screenshoter,
-              platforms: [ linux/amd64, linux/arm64 ],
-              cacheHitFiles:
-                [
-                  'screenshoter/*requirements*.txt',
-                  'screenshoter/Dockerfile',
-                  'screenshoter/**'
-                ]
-            }
-          - {
-              component: comparator,
-              platforms: [ linux/amd64 ],
-              cacheHitFiles:
-                [
-                  'comparator/*requirements*.txt',
-                  'comparator/Dockerfile',
-                  'comparator/**'
-                ]
-            }
-    steps:
-      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
-
-      - name: Set up variables (production)
-        if: github.event_name != 'pull_request'
-        run: |
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | tr '/' '-' | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          IMAGE_NAME="monitor-page-${{ matrix.cfg.component }}"
-          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
-
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Set up variables (PR)
-        if: github.event_name == 'pull_request'
-        run: |
-          VERSION=$(echo "${{ github.event.pull_request.head.ref }}" | tr '/' '-' | sed -e 's,.*/\(.*\),\1,')
-
-          IMAGE_NAME="monitor-page-${{ matrix.cfg.component }}"
-          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
-
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480 # pin@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@94ab11c41e45d028884a99163086648e898eed25 # pin@v1
-
-      # Cache has to be split per image target, same issue as in https://github.com/docker/build-push-action/issues/153
-      # Keeping two caches in a single location causes one of these to get overriden
-      # Probably switching to `gha` storage type would be better in the long run
-
-      # cacheHitFiles usage here is just ugly... (and hardcodes only two entries support),
-      # but hashFiles does not seem to support nested 'join' call, commas in strings don't work
-      - name: Cache Docker layers (production)
-        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
-        with:
-          path: /tmp/.buildx-production-cache
-          key: "production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[1]) }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[2]) }}"
-          restore-keys: |
-            production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{ hashFiles(matrix.cfg.cacheHitFiles[1]) }}
-            production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}
-            production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}
-
-      # cacheHitFiles usage here is just ugly... (and hardcodes only two entries support),
-      # but hashFiles does not seem to support nested 'join' call, commas in strings don't work
-      - name: Cache Docker layers (test)
-        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
-        with:
-          path: /tmp/.buildx-test-cache
-          key: "test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[1]) }}-${{
-            hashFiles(matrix.cfg.cacheHitFiles[2]) }}"
-          restore-keys: |
-            test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{ hashFiles(matrix.cfg.cacheHitFiles[1]) }}
-            test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}
-            test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}
-
-
-      - name: Login to GHCR
-        uses: docker/login-action@42d299face0c5c43a0487c477f595ac9cf22f1a7 # pin@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      -
-        name: Run tests
-        uses: docker/build-push-action@7f9d37fa544684fb73bfe4835ed7214c255ce02b # pin@v2
-        with:
-          context: ./${{ matrix.cfg.component }}
-          # Use a single arch for tests for now
-          platforms: linux/amd64
-          push: false
-          target: test
-          tags: |
-            ${{ matrix.cfg.component }}:test
-          cache-from: type=local,src=/tmp/.buildx-test-cache
-          cache-to: type=local,dest=/tmp/.buildx-test-cache-new,mode=max
-
-      -
-        name: Build and push
-        uses: docker/build-push-action@7f9d37fa544684fb73bfe4835ed7214c255ce02b # pin@v2
-        with:
-          context: ./${{ matrix.cfg.component }}
-          platforms: ${{ join(matrix.cfg.platforms) }}
-          push: "${{ github.actor == github.repository_owner && true || false }}"
-          target: production
-          tags: |
-            ${{ env.IMAGE_ID }}:${{ env.VERSION }}
-            ${{ env.IMAGE_ID }}:${{ env.IMAGE_TAG_SHA }}
-          cache-from: type=local,src=/tmp/.buildx-production-cache
-          cache-to: type=local,dest=/tmp/.buildx-production-cache-new,mode=max
-
-      # Temp fix
-      # https://github.com/docker/build-push-action/issues/252
-      # https://github.com/moby/buildkit/issues/1896
-      - name: Move cache (production)
-        run: |
-          rm -rf /tmp/.buildx-production-cache
-          mv /tmp/.buildx-production-cache-new /tmp/.buildx-production-cache
-
-      # Temp fix
-      # https://github.com/docker/build-push-action/issues/252
-      # https://github.com/moby/buildkit/issues/1896
-      - name: Move cache (test)
-        run: |
-          rm -rf /tmp/.buildx-test-cache
-          mv /tmp/.buildx-test-cache-new /tmp/.buildx-test-cache
-  chart-publish:
-    runs-on: ubuntu-latest
-    needs: docker-publish
-    env:
-      MONITOR_CHART_GIT_HASH: "${{ github.event_name == 'pull_request' &&
-        github.event.pull_request.head.sha || github.sha }}"
-    steps:
-      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
-
-      - name: Install Helm
-        uses: azure/setup-helm@18bc76811624f360dbd7f18c2d4ecb32c7b87bab # pin@v1
-        with:
-          version: v3.5.4
-
-      - name: Build Helm chart
-        run: |
-          cd k8s/monitor-page
-          make
-          helm package ./
-
-      - name: Upload the Helm chart
-        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # pin@v2
-        with:
-          name: monitor-page-chart
-          path: k8s/monitor-page/*.tgz
-
-  k8s-deployment:
-    runs-on: ubuntu-latest
-    needs: chart-publish
-    env:
-      DEPLOY_NAMESPACE: monitor-page
-      RELEASE_NAME: monitor-page
-      CUSTOM_HELM_PARAMS: "--values helm-override.yaml"
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    steps:
-      - name: Get the Helm chart
-        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # pin@v2
-        with:
-          name: monitor-page-chart
-
-      - name: Install Open VPN and jq
-        run: sudo apt-get install openvpn jq -y
-
-      - run: 'echo "$VPN_CONFIG" > config.ovpn && echo "$VPN_PASSWORD" > pass-file'
-        shell: bash
-        env:
-          VPN_CONFIG: ${{ secrets.VPN_CONFIG }}
-          VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
-
-      - name: Connect VPN
-        # This sleep 5 is rather ugly...
-        # How can we know that openvpn has successfully connected and we can keep it in the background?
-        run: |
-          sudo openvpn --config config.ovpn --daemon
-          sleep 5
-
-      - name: Set k8s context using kubeconfig
-        uses: azure/k8s-set-context@832ed668483ebed7801678c9d00fab851ea9d675 # pin@v1
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-
-      - run: 'echo "$HELM_OVERRIDE" > helm-override.yaml'
-        shell: bash
-        env:
-          HELM_OVERRIDE: ${{ secrets.HELM_OVERRIDE }}
-
-      - name: Deploy the chart to k8s
-        run: |
-          RELEASES="$(helm list -n ${{ env.DEPLOY_NAMESPACE }} -o json | jq '.[].name' -r )"
-          if grep "${{ env.RELEASE_NAME }}" <<< ${RELEASES}; then
-            echo "Release already exists"
-            helm upgrade "${{ env.RELEASE_NAME }}" monitor-page*.tgz -n "${{ env.DEPLOY_NAMESPACE }}" ${{ env.CUSTOM_HELM_PARAMS }}
-          else
-            echo "Initial release needs to be done"
-            helm install "${{ env.RELEASE_NAME }}" monitor-page*.tgz -n "${{ env.DEPLOY_NAMESPACE }}" --create-namespace ${{ env.CUSTOM_HELM_PARAMS }}
-          fi
-
-      # Is this step really needed?
-      - name: Clean up files
-        if: always()
-        run: |
-          rm -f config.ovpn pass-file ~/.kube/config.yaml
-          sudo killall openvpn
+#name: Publish docker images and helm chart
+#
+#on:
+#  push:
+#    # Publish `master` as Docker `latest` image.
+#    branches:
+#      - master
+#      - dev
+#      - aws-poc
+#
+#    # Publish `v1.2.3` tags as releases.
+#    tags:
+#      - v*
+#  pull_request: null
+#jobs:
+#  docker-publish:
+#    runs-on: ubuntu-latest
+#    env:
+#      IMAGE_TAG_SHA: "${{ github.event_name == 'pull_request' &&
+#        github.event.pull_request.head.sha ||  github.sha }}"
+#
+#    strategy:
+#      matrix:
+#        # The lockfiles + dockerfile are a "real" cache hit, while hash of the whole directory
+#        # provides an unique identifier
+#        cfg:
+#          - {
+#              component: front,
+#              platforms: [ linux/amd64, linux/arm64 ],
+#              cacheHitFiles:
+#                [
+#                  'front/package-lock.json',
+#                  'front/Dockerfile',
+#                  'front/**'
+#                ]
+#            }
+#          - {
+#              component: manager,
+#              platforms: [ linux/amd64, linux/arm64 ],
+#              cacheHitFiles: [ 'manager/go.sum', 'manager/Dockerfile', 'manager/**' ]
+#            }
+#          - {
+#              component: sender,
+#              platforms: [ linux/amd64, linux/arm64 ],
+#              cacheHitFiles:
+#                [
+#                  'sender/*requirements*.txt',
+#                  'sender/Dockerfile',
+#                  'sender/**'
+#                ]
+#            }
+#          - {
+#              component: checker,
+#              platforms: [ linux/amd64, linux/arm64 ],
+#              cacheHitFiles:
+#                [
+#                  'checker/*requirements*.txt',
+#                  'checker/Dockerfile',
+#                  'checker/**'
+#                ]
+#            }
+#          - {
+#              component: screenshoter,
+#              platforms: [ linux/amd64, linux/arm64 ],
+#              cacheHitFiles:
+#                [
+#                  'screenshoter/*requirements*.txt',
+#                  'screenshoter/Dockerfile',
+#                  'screenshoter/**'
+#                ]
+#            }
+#          - {
+#              component: comparator,
+#              platforms: [ linux/amd64 ],
+#              cacheHitFiles:
+#                [
+#                  'comparator/*requirements*.txt',
+#                  'comparator/Dockerfile',
+#                  'comparator/**'
+#                ]
+#            }
+#    steps:
+#      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+#
+#      - name: Set up variables (production)
+#        if: github.event_name != 'pull_request'
+#        run: |
+#          # Strip git ref prefix from version
+#          VERSION=$(echo "${{ github.ref }}" | tr '/' '-' | sed -e 's,.*/\(.*\),\1,')
+#
+#          # Strip "v" prefix from tag name
+#          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+#
+#          # Use Docker `latest` tag convention
+#          [ "$VERSION" == "master" ] && VERSION=latest
+#
+#          IMAGE_NAME="monitor-page-${{ matrix.cfg.component }}"
+#          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
+#
+#          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+#          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+#          echo "VERSION=$VERSION" >> $GITHUB_ENV
+#
+#      - name: Set up variables (PR)
+#        if: github.event_name == 'pull_request'
+#        run: |
+#          VERSION=$(echo "${{ github.event.pull_request.head.ref }}" | tr '/' '-' | sed -e 's,.*/\(.*\),\1,')
+#
+#          IMAGE_NAME="monitor-page-${{ matrix.cfg.component }}"
+#          IMAGE_ID=$(echo "ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME" | tr '[A-Z]' '[a-z]')
+#
+#          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+#          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+#          echo "VERSION=$VERSION" >> $GITHUB_ENV
+#
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480 # pin@v1
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@94ab11c41e45d028884a99163086648e898eed25 # pin@v1
+#
+#      # Cache has to be split per image target, same issue as in https://github.com/docker/build-push-action/issues/153
+#      # Keeping two caches in a single location causes one of these to get overriden
+#      # Probably switching to `gha` storage type would be better in the long run
+#
+#      # cacheHitFiles usage here is just ugly... (and hardcodes only two entries support),
+#      # but hashFiles does not seem to support nested 'join' call, commas in strings don't work
+#      - name: Cache Docker layers (production)
+#        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
+#        with:
+#          path: /tmp/.buildx-production-cache
+#          key: "production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{
+#            hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{
+#            hashFiles(matrix.cfg.cacheHitFiles[1]) }}-${{
+#            hashFiles(matrix.cfg.cacheHitFiles[2]) }}"
+#          restore-keys: |
+#            production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{ hashFiles(matrix.cfg.cacheHitFiles[1]) }}
+#            production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}
+#            production-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}
+#
+#      # cacheHitFiles usage here is just ugly... (and hardcodes only two entries support),
+#      # but hashFiles does not seem to support nested 'join' call, commas in strings don't work
+#      - name: Cache Docker layers (test)
+#        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
+#        with:
+#          path: /tmp/.buildx-test-cache
+#          key: "test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{
+#            hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{
+#            hashFiles(matrix.cfg.cacheHitFiles[1]) }}-${{
+#            hashFiles(matrix.cfg.cacheHitFiles[2]) }}"
+#          restore-keys: |
+#            test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}-${{ hashFiles(matrix.cfg.cacheHitFiles[1]) }}
+#            test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}-${{ hashFiles(matrix.cfg.cacheHitFiles[0]) }}
+#            test-${{ runner.os }}-buildx-${{ env.IMAGE_NAME }}
+#
+#
+#      - name: Login to GHCR
+#        uses: docker/login-action@42d299face0c5c43a0487c477f595ac9cf22f1a7 # pin@v1
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#
+#      -
+#        name: Run tests
+#        uses: docker/build-push-action@7f9d37fa544684fb73bfe4835ed7214c255ce02b # pin@v2
+#        with:
+#          context: ./${{ matrix.cfg.component }}
+#          # Use a single arch for tests for now
+#          platforms: linux/amd64
+#          push: false
+#          target: test
+#          tags: |
+#            ${{ matrix.cfg.component }}:test
+#          cache-from: type=local,src=/tmp/.buildx-test-cache
+#          cache-to: type=local,dest=/tmp/.buildx-test-cache-new,mode=max
+#
+#      -
+#        name: Build and push
+#        uses: docker/build-push-action@7f9d37fa544684fb73bfe4835ed7214c255ce02b # pin@v2
+#        with:
+#          context: ./${{ matrix.cfg.component }}
+#          platforms: ${{ join(matrix.cfg.platforms) }}
+#          push: "${{ github.actor == github.repository_owner && true || false }}"
+#          target: production
+#          tags: |
+#            ${{ env.IMAGE_ID }}:${{ env.VERSION }}
+#            ${{ env.IMAGE_ID }}:${{ env.IMAGE_TAG_SHA }}
+#          cache-from: type=local,src=/tmp/.buildx-production-cache
+#          cache-to: type=local,dest=/tmp/.buildx-production-cache-new,mode=max
+#
+#      # Temp fix
+#      # https://github.com/docker/build-push-action/issues/252
+#      # https://github.com/moby/buildkit/issues/1896
+#      - name: Move cache (production)
+#        run: |
+#          rm -rf /tmp/.buildx-production-cache
+#          mv /tmp/.buildx-production-cache-new /tmp/.buildx-production-cache
+#
+#      # Temp fix
+#      # https://github.com/docker/build-push-action/issues/252
+#      # https://github.com/moby/buildkit/issues/1896
+#      - name: Move cache (test)
+#        run: |
+#          rm -rf /tmp/.buildx-test-cache
+#          mv /tmp/.buildx-test-cache-new /tmp/.buildx-test-cache
+#  chart-publish:
+#    runs-on: ubuntu-latest
+#    needs: docker-publish
+#    env:
+#      MONITOR_CHART_GIT_HASH: "${{ github.event_name == 'pull_request' &&
+#        github.event.pull_request.head.sha || github.sha }}"
+#    steps:
+#      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+#
+#      - name: Install Helm
+#        uses: azure/setup-helm@18bc76811624f360dbd7f18c2d4ecb32c7b87bab # pin@v1
+#        with:
+#          version: v3.5.4
+#
+#      - name: Build Helm chart
+#        run: |
+#          cd k8s/monitor-page
+#          make
+#          helm package ./
+#
+#      - name: Upload the Helm chart
+#        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # pin@v2
+#        with:
+#          name: monitor-page-chart
+#          path: k8s/monitor-page/*.tgz
+#
+#  k8s-deployment:
+#    runs-on: ubuntu-latest
+#    needs: chart-publish
+#    env:
+#      DEPLOY_NAMESPACE: monitor-page
+#      RELEASE_NAME: monitor-page
+#      CUSTOM_HELM_PARAMS: "--values helm-override.yaml"
+#    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+#    steps:
+#      - name: Get the Helm chart
+#        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # pin@v2
+#        with:
+#          name: monitor-page-chart
+#
+#      - name: Install Open VPN and jq
+#        run: sudo apt-get install openvpn jq -y
+#
+#      - run: 'echo "$VPN_CONFIG" > config.ovpn && echo "$VPN_PASSWORD" > pass-file'
+#        shell: bash
+#        env:
+#          VPN_CONFIG: ${{ secrets.VPN_CONFIG }}
+#          VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
+#
+#      - name: Connect VPN
+#        # This sleep 5 is rather ugly...
+#        # How can we know that openvpn has successfully connected and we can keep it in the background?
+#        run: |
+#          sudo openvpn --config config.ovpn --daemon
+#          sleep 5
+#
+#      - name: Set k8s context using kubeconfig
+#        uses: azure/k8s-set-context@832ed668483ebed7801678c9d00fab851ea9d675 # pin@v1
+#        with:
+#          method: kubeconfig
+#          kubeconfig: ${{ secrets.KUBECONFIG }}
+#
+#      - run: 'echo "$HELM_OVERRIDE" > helm-override.yaml'
+#        shell: bash
+#        env:
+#          HELM_OVERRIDE: ${{ secrets.HELM_OVERRIDE }}
+#
+#      - name: Deploy the chart to k8s
+#        run: |
+#          RELEASES="$(helm list -n ${{ env.DEPLOY_NAMESPACE }} -o json | jq '.[].name' -r )"
+#          if grep "${{ env.RELEASE_NAME }}" <<< ${RELEASES}; then
+#            echo "Release already exists"
+#            helm upgrade "${{ env.RELEASE_NAME }}" monitor-page*.tgz -n "${{ env.DEPLOY_NAMESPACE }}" ${{ env.CUSTOM_HELM_PARAMS }}
+#          else
+#            echo "Initial release needs to be done"
+#            helm install "${{ env.RELEASE_NAME }}" monitor-page*.tgz -n "${{ env.DEPLOY_NAMESPACE }}" --create-namespace ${{ env.CUSTOM_HELM_PARAMS }}
+#          fi
+#
+#      # Is this step really needed?
+#      - name: Clean up files
+#        if: always()
+#        run: |
+#          rm -f config.ovpn pass-file ~/.kube/config.yaml
+#          sudo killall openvpn
