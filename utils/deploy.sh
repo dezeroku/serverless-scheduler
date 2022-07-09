@@ -4,7 +4,7 @@ set -e
 
 function build_front() {
     ## Build the actual static front delivery
-    pushd ../../front
+    pushd ./front
     make build
     popd
 }
