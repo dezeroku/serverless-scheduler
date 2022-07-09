@@ -3,14 +3,15 @@
 import json
 import sys
 
+
 def convert(filename_in, filename_out, var_name):
-    with open(filename_in, 'r') as temp:
+    with open(filename_in, "r") as temp:
         content = json.loads(temp.read())
 
-    with open(filename_out, 'w') as temp:
-        temp.write(f'{var_name} = ')
+    with open(filename_out, "w") as temp:
+        temp.write(f"{var_name} = ")
         temp.write(json.dumps(content, indent=4, sort_keys=True))
-        temp.write('\n\n')
+        temp.write("\n\n")
 
 
 def main():

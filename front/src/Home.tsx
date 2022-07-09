@@ -30,11 +30,11 @@ class Home extends React.Component<HomeProps, HomeState> {
 	    items: Array(0).fill(null),
 	    showCreateModal : false
     }
-    
+
     componentDidMount() {
 	    this.updateTasks()
     }
-    
+
     async updateTasks() {
 	    this.setState({loading: true});
 
@@ -59,25 +59,25 @@ class Home extends React.Component<HomeProps, HomeState> {
             //}
 	    });
     }
-    
+
     handleLogout() {
     	logOut();
 	    this.setState({loggedOut: true});
     }
-    
+
     openCreateModal() {
 	    this.setState({showCreateModal: true});
     }
-    
+
     closeCreateModal() {
 	    this.setState({showCreateModal: false});
     }
-    
+
     // TODO: that's ugly hack which should be solved by proper architecture usage
     refresh() {
 	    this.updateTasks();
     }
-    
+
     render () {
         return (
             <div className="container-fluid">
@@ -95,7 +95,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 	            </Navbar>
                 {this.state.loading ? <ClipLoader size={150} /> : <ItemList items={this.state.items} visibleCount={5} handleUpdate={handleUpdate} handleDelete={handleDelete} refresh={() => this.refresh()}/>}
 	            <EditModal show={this.state.showCreateModal} handleTask={handleCreate} onHide={() => this.setState({showCreateModal: false})} item={null} editMode={false} handleDelete={handleDelete} closeModal={() => this.closeCreateModal()} refresh={() => this.refresh()}/>
-                
+
 	            <Route exact path="/">
 	                {this.state.loggedOut ? <Redirect to="/login" /> : <div></div>}
 	            </Route>

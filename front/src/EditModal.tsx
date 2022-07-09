@@ -14,22 +14,22 @@ import ItemProps from "./Item";
 type EditModalProps = {show: boolean; onHide: any; item: ItemProps["props"] | null; handleTask: any; handleDelete: any; editMode: boolean; closeModal: any; refresh: any}
 
 function EditModal (props : EditModalProps) {
-    
+
     const [loading, setLoading] = React.useState(false);
-    
+
     const handleTaskLocal = async (event : any) => {
 	    // Get data to json form and send it to higher level handler.
 	    const form = event.currentTarget;
 	    event.preventDefault();
 	    event.stopPropagation();
-        
+
 	    let json : ItemProps["props"] = {
 	        id: parseInt(form.id.value),
 	        url: form.url.value,
 	        sleepTime: parseInt(form.sleepTime.value),
 	        makeScreenshots: form.makeScreenshots.checked,
 	    }
-        
+
 	    setLoading(true);
 	    let result : string = await props.handleTask(json);
 	    setLoading(false);
@@ -38,17 +38,17 @@ function EditModal (props : EditModalProps) {
         //alert(props.editMode ? "Updated" : "Created");
         //window.location.reload();
     }
-    
+
     const handleDeleteLocal = async (id : number) => {
 	    // Get data to json form and send it to higher level handler.
-        
+
 	    let json : ItemProps["props"] = {
 	        id: id,
 	        url: "",
 	        sleepTime: 0,
 	        makeScreenshots: false,
 	    }
-        
+
 	    setLoading(true);
 	    let result : string = await props.handleDelete(json);
 	    setLoading(false);
@@ -57,8 +57,8 @@ function EditModal (props : EditModalProps) {
         //alert(result);
         //window.location.reload();
     }
-    
-    
+
+
     function content(item : ItemProps["props"] | null) {
 	    // If item is provided (update scenario) use data from it.
 	    // If not (create scenario), create an example object.
@@ -72,7 +72,7 @@ function EditModal (props : EditModalProps) {
 	    } else {
 	        temp = item
 	    }
-        
+
 	    return (
 	        <Modal show={props.show} onHide={props.onHide}>
 	            <Modal.Header closeButton>
@@ -114,7 +114,7 @@ function EditModal (props : EditModalProps) {
 		                    {props.editMode ? "Update" : "Create"}
 		                </Button>
 		                {
-		                    props.editMode ? 
+		                    props.editMode ?
 			                    <Button type="button" variant="danger" onClick={() => handleDeleteLocal(temp.id)} className="float-right">Delete</Button> :
 			                <div></div>
 			            }
@@ -128,7 +128,7 @@ function EditModal (props : EditModalProps) {
 	        </Modal>
 	    )
     }
-    
+
     return (
 	    <div>{content(props.item)}</div>
     )

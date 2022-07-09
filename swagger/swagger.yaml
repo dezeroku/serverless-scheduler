@@ -63,7 +63,7 @@ paths:
             type: integer
           required: true
           description: id of the job
-      security: 
+      security:
       - bearerAuth: []
       operationId: item_update
       requestBody:
@@ -139,7 +139,7 @@ components:
         - makeScreenshots
       type: object
       properties:
-        url: 
+        url:
           type: string
         sleepTime:
           type: integer
