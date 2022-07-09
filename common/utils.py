@@ -2,7 +2,8 @@ import os
 from decimal import Decimal
 
 import boto3
-dynamodb = boto3.resource('dynamodb')
+
+dynamodb = boto3.resource("dynamodb")
 
 # https://github.com/boto/boto3/issues/369
 def replace_decimals(obj):
@@ -24,5 +25,5 @@ def replace_decimals(obj):
 
 
 def get_dynamo_table():
-    table = dynamodb.Table(os.environ['DYNAMO_DB'])
+    table = dynamodb.Table(os.environ["DYNAMO_DB"])
     return table

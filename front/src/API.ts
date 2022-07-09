@@ -31,7 +31,7 @@ export async function handleCreate(json : ItemProps["props"]) {
     }
     let data : any = { ...json, ...{owner: userId()}}
     data["sleepTime"] *= 60;
-    
+
     return axios.post(API_URL + "/v1/item/create", data, config)
 	    .then((response) => {
 	        console.log("AA");
@@ -59,14 +59,14 @@ export async function handleCreate(json : ItemProps["props"]) {
 export async function handleDelete(json : ItemProps["props"]) {
     console.log(json);
     console.log("REAL DELETE!");
-    
+
     let config = {
 	    timeout : 10000,
         headers: {
             Authorization: "Bearer " + getToken()
         }
     }
-    
+
     return axios.delete(API_URL + "/v1/item/delete/" + json.id, config)
 	    .then((response) => {
 	        console.log("AA");
@@ -102,7 +102,7 @@ export async function handleUpdate(json : ItemProps["props"]) {
     }
     let data : any = { ...json, ...{owner: userId()}}
     data["sleepTime"] *= 60;
-    
+
     return axios.put(API_URL + "/v1/item/update/" + json.id, data, config)
 	    .then((response) => {
 	        console.log("AA");

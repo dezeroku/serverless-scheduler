@@ -20,7 +20,7 @@ function ItemList (props : ItemListProps) {
     const [tab, setTab] = React.useState(0);
     const [showEditModal, setShowEditModal] = React.useState(false);
     const [activeItem, setActiveItem] = React.useState(null);
-    
+
     function renderItems(items : Array<ItemProps["props"]>, visibleCount : number) {
 	    console.log(items);
 	    let offset = tab * visibleCount;
@@ -37,20 +37,20 @@ function ItemList (props : ItemListProps) {
 			</ListGroup.Item>
 		)
     }
-    
+
     function itemClicked(item : any) {
 	    console.log(item);
 	    setActiveItem(item);
 	    setShowEditModal(true);
     }
-    
+
     function renderTabButtons(itemsCount : number, visibleCount : number) {
 	    let tabsCount = Math.ceil(itemsCount / visibleCount);
 	    let tabsIndexes = Array.from(Array(tabsCount).keys())
 	    return tabsIndexes.map((item) =>
 			<ToggleButton key={item} value={item}>{item}</ToggleButton>)
     }
-    
+
     return (
         <div className="ItemList">
 	        { props.items.length !== 0 ?
@@ -66,7 +66,7 @@ function ItemList (props : ItemListProps) {
                           Add something to the watch list using the "Create" button
                       </Card.Body>
                   </Card>
-                  
+
               </div>
             }
 	        <div className="Controls m-2 mt-1">

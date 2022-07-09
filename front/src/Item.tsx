@@ -14,7 +14,7 @@ type ItemState = {
 
 class Item extends React.Component<ItemProps, ItemState> {
     state : ItemState = {}
-    
+
     render () {
         return (
             <div className="Item">

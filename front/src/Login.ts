@@ -19,7 +19,7 @@ export function setToken(token : string) {
 
 export function userId() {
     let token = getToken();
-    
+
     if (token !== null) {
         let parsed = parseJwt(token);
         // TODO: add check for expiration date
@@ -29,7 +29,7 @@ export function userId() {
             }
         }
     }
-    
+
     return null;
 }
 
