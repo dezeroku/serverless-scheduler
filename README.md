@@ -1,12 +1,9 @@
-# Page Monitor (monitor-page)
-AWS based solution to monitor websites for changes in either HTML or screenshots of them.
+# Page Monitor
+AWS based serverless solution to monitor websites for changes in HTML.
 When such a change is detected user is notified via mail.
 
 ## Why?
 I've written it for myself and use it for monitoring couple pages, but the main idea behind it was to get a practical grasp on the microservices and cloud (AWS in this case).
-That's why the components are split as much as possible.
-The similar approach would be probably to just use a message-broker such as `RabbitMQ` instead of running a new checker lambda function for every URL.
-I haven't really compared it cost-wise yet though.
 
 ## How does it look?
 Couple screenshots from the `front` provided UI.
@@ -120,3 +117,11 @@ To run tests:
 docker build -t test . --target test
 docker run -it test
 ```
+
+## Utilities
+The `utils` directory contains few useful scripts that can be used in CI or just to speed-up the development.
+
+* `create_schemas.sh` -> generates `common/schemas.py` (contain JSON schemas) based on the `swagger/swagger.yaml`. The schemas are used later on in handler to validate requests/responses
+* `deploy.sh` -> small wrapper, does the necessary calls to deploy whole application to AWS
+* `teardown.sh` -> small wrapper, does the necessary calls to remove whole application from AWS
+* `json2py.py` -> utility for `create_schemas.sh`, converts .json files to .py file, which has a single variable inside and its value is the original .json content
