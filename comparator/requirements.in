@@ -1,5 +1,0 @@
-connexion[swagger-ui]==2.7.0
-flask==1.1.2
-scikit-image==0.17.2
-imutils==0.5.3
-opencv-python==4.3.0.38
