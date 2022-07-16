@@ -27,7 +27,7 @@ def create(event, context):
 
     user = cognito.get_username(event)
 
-    result = table.get_item(Key={"user_id": user})["Item"]
+    result = table.get_item(Key={"id": user})["Item"]
 
     # Generating the next id
     next_id = max(list(map(lambda x: x["id"], result["monitors"])) + [0]) + 1

@@ -17,7 +17,7 @@ def delete(event, context):
 
     item_id = int(event["pathParameters"]["item_id"])
 
-    result = table.get_item(Key={"user_id": user})["Item"]
+    result = table.get_item(Key={"id": user})["Item"]
 
     result["monitors"] = list(filter(lambda x: x["id"] != item_id, result["monitors"]))
 
