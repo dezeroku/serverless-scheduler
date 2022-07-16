@@ -19,7 +19,7 @@ def get(event, context):
     user = cognito.get_username(event)
 
     # Actually getting the data from a row:
-    result = table.get_item(Key={"user_id": user})
+    result = table.get_item(Key={"id": user})
 
     # TODO: This is a big hack
     # such a logic should be handled on the Lambda level
@@ -28,9 +28,9 @@ def get(event, context):
     # Row creation if needed
     if "Item" not in result:
         logger.info(f"HACK: putting the initial data for {user} in the table")
-        response = table.put_item(Item={"user_id": user, "monitors": []})
+        response = table.put_item(Item={"id": user, "monitors": []})
 
         # Doing it in such an ugly way, to make sure that the data is in place
-        result = table.get_item(Key={"user_id": user})
+        result = table.get_item(Key={"id": user})
 
     return utils.replace_decimals(result["Item"]["monitors"])

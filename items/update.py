@@ -27,7 +27,7 @@ def update(event, context):
 
     item_id = int(event["pathParameters"]["item_id"])
 
-    result = table.get_item(Key={"user_id": user})["Item"]
+    result = table.get_item(Key={"id": user})["Item"]
 
     to_update = event["body"]
     to_update["id"] = item_id
