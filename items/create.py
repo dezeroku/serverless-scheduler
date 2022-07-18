@@ -7,19 +7,45 @@ from lambda_decorators import (
     load_json_body,
 )
 
-from common import cognito
-from common import utils
+from common import cognito, utils
 from common.schemas import item_schema, itemwithid_schema
+
+from schemas import UserDataSchema, MonitorJobSchema
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
+
+
+def generate_next_id(user_data):
+    # Get the current highest id and add 1 to it
+    return (
+        max(
+            list(
+                map(
+                    lambda x: x.id,
+                    user_data.monitors,
+                )
+            )
+            + [0]
+        )
+        + 1
+    )
+
+
+def get_monitor_job_with_id(body, next_id):
+    body["id"] = next_id
+    return MonitorJobSchema().load(body)
+
 
 # TODO: get through these decorators properly, they don't seem to run from the bottom-up?
 @cors_headers
 @json_http_resp
 @load_json_body
 @json_schema_validator(
-    request_schema={"type": "object", "properties": {"body": item_schema}},
+    request_schema={
+        "type": "object",
+        "properties": {"body": item_schema},
+    },
     response_schema=itemwithid_schema,
 )
 def create(event, context):
@@ -28,17 +54,16 @@ def create(event, context):
     user = cognito.get_username(event)
 
     result = table.get_item(Key={"id": user})["Item"]
+    user_data = UserDataSchema().load(result)
 
-    # Generating the next id
-    next_id = max(list(map(lambda x: x["id"], result["monitors"])) + [0]) + 1
+    next_id = generate_next_id(user_data)
+    to_add = get_monitor_job_with_id(event["body"], next_id)
+    user_data.monitors.append(to_add)
 
-    to_add = event["body"]
-    to_add["id"] = next_id
+    logger.info(user_data)
 
-    result["monitors"] = result["monitors"] + [to_add]
+    to_save = UserDataSchema().dump(user_data)
+    response = table.put_item(Item=to_save)
 
-    logger.info(result)
-
-    response = table.put_item(Item=result)
-
-    return utils.replace_decimals(to_add)
+    to_return = dict(MonitorJobSchema().dump(to_add))
+    return utils.replace_decimals(to_return)

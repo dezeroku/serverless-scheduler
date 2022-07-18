@@ -29,7 +29,7 @@ export async function handleCreate(json : ItemProps["props"]) {
             Authorization: "Bearer " + getToken()
         }
     }
-    let data : any = { ...json, ...{owner: userId()}}
+    let data : any = { ...json}
     data["sleepTime"] *= 60;
 
     return axios.post(API_URL + "/v1/item/create", data, config)
@@ -100,7 +100,7 @@ export async function handleUpdate(json : ItemProps["props"]) {
             Authorization: "Bearer " + getToken()
         }
     }
-    let data : any = { ...json, ...{owner: userId()}}
+    let data : any = { ...json}
     data["sleepTime"] *= 60;
 
     return axios.put(API_URL + "/v1/item/update/" + json.id, data, config)
