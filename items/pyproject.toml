@@ -5,13 +5,14 @@ description = "Lambda REST API for managing monitor jobs"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 lambda-decorators = "^0.6.0"
 jsonschema = "^4.7.2"
 marshmallow = "^3.17.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7.1.2"
+moto = "^3.1.16"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
