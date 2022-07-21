@@ -10,7 +10,7 @@ from lambda_decorators import (
 from common import cognito, utils
 from common.schemas import item_schema
 
-from schemas import UserDataSchema, MonitorJobSchema
+from items.schemas import UserDataSchema, MonitorJobSchema
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
