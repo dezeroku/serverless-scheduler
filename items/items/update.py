@@ -8,7 +8,7 @@ from lambda_decorators import (
 )
 
 from common import cognito, utils
-from common.schemas import item_schema
+from common.common_schemas import item_schema
 
 from items.schemas import UserDataSchema, MonitorJobSchema
 

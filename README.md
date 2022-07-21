@@ -121,7 +121,13 @@ docker run -it test
 ## Utilities
 The `utils` directory contains few useful scripts that can be used in CI or just to speed-up the development.
 
-* `create_schemas.sh` -> generates `common/schemas.py` (contain JSON schemas) based on the `swagger/swagger.yaml`. The schemas are used later on in handler to validate requests/responses
+* `create_schemas.sh` -> generates `common/common_schemas.py` (contain JSON schemas) based on the `swagger/swagger.yaml`. The schemas are used later on in handler to validate requests/responses
 * `deploy.sh` -> small wrapper, does the necessary calls to deploy whole application to AWS
 * `teardown.sh` -> small wrapper, does the necessary calls to remove whole application from AWS
 * `json2py.py` -> utility for `create_schemas.sh`, converts .json files to .py file, which has a single variable inside and its value is the original .json content
+
+
+## Ideas
+Two queues, `schedulers` responsible for inserting jobs (based on sleepTime) and `monitors` which actually visit the website and compare with previous state.
+
+Or should I just merge these into a single `monitors`?

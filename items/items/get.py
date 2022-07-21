@@ -7,7 +7,7 @@ from lambda_decorators import (
 )
 
 from common import cognito, utils
-from common.schemas import itemwithid_schema
+from common.common_schemas import itemwithid_schema
 from items.schemas import UserDataSchema
 
 logger = logging.getLogger()

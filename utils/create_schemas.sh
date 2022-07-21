@@ -9,7 +9,7 @@ function create_schemas() {
     openapi2jsonschema ../swagger/swagger.yaml --stand-alone
 
     # Make the .jsons part of .py
-    rm -f schemas.py
+    rm -f common_schemas.py
 
     pushd schemas
 
@@ -22,7 +22,7 @@ function create_schemas() {
 
     popd
 
-    cat schemas/*.py > schemas.py
+    cat schemas/*.py > common_schemas.py
     popd
 }
 
