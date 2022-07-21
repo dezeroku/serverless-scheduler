@@ -7,43 +7,43 @@ from items.models import MonitorJob, UserData
 
 
 # TODO: Make the tests below work with fixture definitions from conftest
-#def example_empty_user_data_json(helpers):
+# def example_empty_user_data_json(helpers):
 #    return helpers.UserDataJSONFactory(id="example_user")
 #
 #
-#def example_monitor_job_json(helpers):
+# def example_monitor_job_json(helpers):
 #    return helpers.MonitorJobJSONFactory()
 #
 #
-#@pytest.mark.parametrize("in_data",
+# @pytest.mark.parametrize("in_data",
 #                         [
 #                             example_monitor_job_json(),
 #                             example_empty_user_data_json()
 #                         ])
-#@pytest.mark.parametrize(
+# @pytest.mark.parametrize(
 #    "schema, cls",
 #    [
 #        (MonitorJobSchema(), MonitorJob),
 #        (UserDataSchema(), UserData),
 #    ],
-#)
-#def test_schema_load_to_object(in_data, schema, cls):
+# )
+# def test_schema_load_to_object(in_data, schema, cls):
 #    assert isinstance(schema.load(in_data), cls)
 #
-#    
-#@pytest.mark.parametrize("in_data",
+#
+# @pytest.mark.parametrize("in_data",
 #                         [
 #                             example_monitor_job_json(),
 #                             example_empty_user_data_json()
 #                         ])
-#@pytest.mark.parametrize(
+# @pytest.mark.parametrize(
 #    "schema",
 #    [
 #        (MonitorJobSchema()),
 #        (UserDataSchema()),
 #    ],
-#)
-#def test_schema_dump(in_data, schema):
+# )
+# def test_schema_dump(in_data, schema):
 #    data = schema.load(in_data)
 #    dumped = schema.dump(data)
 #

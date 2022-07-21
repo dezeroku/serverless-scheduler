@@ -3,6 +3,7 @@ import pytest
 from items.schemas import MonitorJobSchema, UserDataSchema
 from items.models import MonitorJob, UserData
 
+
 @pytest.fixture
 def example_user_data(example_monitor_job):
     temp = UserDataSchema().load(Helpers().UserDataJSONFactory(id="example_user"))
@@ -10,17 +11,21 @@ def example_user_data(example_monitor_job):
 
     return temp
 
+
 @pytest.fixture
 def example_empty_user_data():
     return UserDataSchema().load(Helpers().UserDataJSONFactory(id="example_user"))
+
 
 @pytest.fixture
 def example_monitor_job():
     return MonitorJobSchema().load(Helpers().MonitorJobJSONFactory())
 
+
 @pytest.fixture
 def example_empty_user_data_json():
     return Helpers().UserDataJSONFactory(id="example_user")
+
 
 @pytest.fixture
 def example_monitor_job_json():
