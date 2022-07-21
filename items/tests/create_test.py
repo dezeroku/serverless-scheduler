@@ -1,4 +1,4 @@
-from create import generate_next_id, get_monitor_job_with_id
+from items.create import generate_next_id, get_monitor_job_with_id
 
 # TODO: The cases below should be also parametrized with pytest.mark.parametrize
 # but they use fixtures

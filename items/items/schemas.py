@@ -4,7 +4,7 @@ from marshmallow import (
     post_load,
 )
 
-from models import (
+from items.models import (
     UserData,
     MonitorJob,
 )

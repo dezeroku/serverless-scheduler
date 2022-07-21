@@ -10,7 +10,7 @@ from lambda_decorators import (
 from common import cognito, utils
 from common.schemas import item_schema, itemwithid_schema
 
-from schemas import UserDataSchema, MonitorJobSchema
+from items.schemas import UserDataSchema, MonitorJobSchema
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -53,11 +53,17 @@ def create(event, context):
 
     user = cognito.get_username(event)
 
-    result = table.get_item(Key={"id": user})["Item"]
-    user_data = UserDataSchema().load(result)
+    return handler(user, table, event["body"])
+
+
+def handler(user, table, payload):
+    # Extend the current data assigned to a user
+    # with new monitor entry
+    db_data = table.get_item(Key={"id": user})["Item"]
+    user_data = UserDataSchema().load(db_data)
 
     next_id = generate_next_id(user_data)
-    to_add = get_monitor_job_with_id(event["body"], next_id)
+    to_add = get_monitor_job_with_id(payload, next_id)
     user_data.monitors.append(to_add)
 
     logger.info(user_data)

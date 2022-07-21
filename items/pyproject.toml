@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "items"
+version = "0.1.0"
+description = "Lambda REST API for managing monitor jobs"
+authors = ["dezeroku <dezeroku@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+lambda-decorators = "^0.6.0"
+jsonschema = "^4.7.2"
+marshmallow = "^3.17.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
