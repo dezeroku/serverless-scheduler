@@ -46,6 +46,12 @@ constructs:
     worker:
       module: handler-demo
       handler: handler.consumer
+  #monitors:
+  #  type: queue
+  #  worker:
+  #    module: monitors
+  #    handler: consumer.consumer
+
   # The front webpage configuration can also be handled like that (+ route53 via cloudformation)
   # But this requires the project to be deployed in us-east-1
   # The big advantage here is automatic cloudfront cache invalidation
@@ -179,6 +185,8 @@ custom:
 
   pythonRequirements:
     dockerizePip: true
+    useDownloadCache: true
+    useStaticCache: true
   customDomain:
     # This requires the certificate for domain to be provided
     domainName: ${self:custom.userConfig.apiDomain}
