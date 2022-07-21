@@ -1,0 +1,28 @@
+---
+name: Run pytest
+
+on:
+  push:
+
+  workflow_dispatch:
+
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        subproject: ['items']
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'poetry'
+      - run: cd ${{ matrix.subproject }}
+      - run: poetry install
+      - run: poetry run pytest
