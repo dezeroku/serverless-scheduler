@@ -1,7 +1,7 @@
 import pytest
 
-from schemas import MonitorJobSchema, UserDataSchema
-from models import MonitorJob, UserData
+from items.schemas import MonitorJobSchema, UserDataSchema
+from items.models import MonitorJob, UserData
 
 @pytest.fixture
 def example_user_data(example_monitor_job):
