@@ -76,7 +76,7 @@ functions:
 
   items-get:
     module: items
-    handler: get.get
+    handler: items/get.get
     events:
       - httpApi:
           method: get
@@ -88,7 +88,7 @@ functions:
 
   item-create:
     module: items
-    handler: create.create
+    handler: items/create.create
     events:
       - httpApi:
           method: post
@@ -100,7 +100,7 @@ functions:
 
   item-delete:
     module: items
-    handler: delete.delete
+    handler: items/delete.delete
     events:
       - httpApi:
           method: delete
@@ -112,7 +112,7 @@ functions:
 
   item-update:
     module: items
-    handler: update.update
+    handler: items/update.update
     events:
       - httpApi:
           method: put
@@ -187,6 +187,7 @@ custom:
     dockerizePip: true
     useDownloadCache: true
     useStaticCache: true
+    cacheLocation: './.sls_packaging_cache'
   customDomain:
     # This requires the certificate for domain to be provided
     domainName: ${self:custom.userConfig.apiDomain}

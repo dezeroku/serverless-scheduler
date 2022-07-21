@@ -2,7 +2,7 @@ import logging
 
 from lambda_decorators import cors_headers
 from common import cognito, utils
-from schemas import UserDataSchema, MonitorJobSchema
+from items.schemas import UserDataSchema, MonitorJobSchema
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
