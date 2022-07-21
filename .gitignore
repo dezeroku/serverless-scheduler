@@ -27,3 +27,4 @@ common/schemas
 node_modules
 lambda_venv
 __pycache__
+.sls_packaging_cache
