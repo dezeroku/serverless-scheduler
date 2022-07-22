@@ -1,5 +1,6 @@
-import utils
 from decimal import Decimal
+
+import utils
 
 
 def test_replace_decimals():

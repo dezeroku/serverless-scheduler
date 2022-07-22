@@ -1,10 +1,8 @@
 import pytest
-
 from marshmallow.exceptions import ValidationError
 
-from items.schemas import MonitorJobSchema, UserDataSchema
 from items.models import MonitorJob, UserData
-
+from items.schemas import MonitorJobSchema, UserDataSchema
 
 # TODO: Make the tests below work with fixture definitions from conftest
 # def example_empty_user_data_json(helpers):
