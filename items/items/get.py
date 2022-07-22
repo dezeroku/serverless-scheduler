@@ -47,7 +47,7 @@ def handler(table, user):
         logger.info(f"HACK: putting the initial data for {user} in the table")
 
         user_data = schema.load({"id": user})
-        to_save = user_data.dump()
+        to_save = schema.dump(user_data)
         response = table.put_item(Item=to_save)
 
         # Doing it in such an ugly way, to make sure that the data is in place
