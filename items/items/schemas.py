@@ -25,6 +25,7 @@ class UserDataSchema(Schema):
     monitors = fields.List(
         fields.Nested(MonitorJobSchema),
         dump_default=[],
+        load_default=[],
     )
 
     @post_load
