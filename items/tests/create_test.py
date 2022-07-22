@@ -1,10 +1,10 @@
 import pytest
 from moto import mock_dynamodb
 
-from items.create import generate_next_id, get_monitor_job_with_id, handler, create
-
-from items.schemas import MonitorJobSchema, UserDataSchema
+from items.create import create, generate_next_id, get_monitor_job_with_id, handler
 from items.models import MonitorJob
+from items.schemas import MonitorJobSchema, UserDataSchema
+
 
 # TODO: The cases below should be also parametrized with pytest.mark.parametrize
 # but they use fixtures

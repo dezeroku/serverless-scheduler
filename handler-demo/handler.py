@@ -3,7 +3,6 @@ import logging
 import os
 
 import boto3
-
 from lambda_decorators import cors_headers
 
 logger = logging.getLogger()

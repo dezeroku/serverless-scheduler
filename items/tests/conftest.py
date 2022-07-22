@@ -1,15 +1,9 @@
-import pytest
 import boto3
+import pytest
 from moto import mock_dynamodb
 
-from items.schemas import (
-    MonitorJobSchema,
-    UserDataSchema,
-)
-from items.models import (
-    MonitorJob,
-    UserData,
-)
+from items.models import MonitorJob, UserData
+from items.schemas import MonitorJobSchema, UserDataSchema
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
-from items.get import handler
-from items.schemas import MonitorJobSchema, UserDataSchema
-from items.models import MonitorJob, UserData
 from common import utils
+from items.get import handler
+from items.models import MonitorJob, UserData
+from items.schemas import MonitorJobSchema, UserDataSchema
 
 
 def test_initial_data_addition(empty_mock_db, table_name):
@@ -14,7 +14,7 @@ def test_initial_data_addition(empty_mock_db, table_name):
         assert False
     except:
         pass
-    
+
     response = handler(table, user)
 
     result = table.get_item(Key={"id": user})["Item"]
@@ -32,13 +32,13 @@ def test_data_fetch_empty(empty_mock_db, table_name):
     user_data = UserDataSchema().load({"id": user})
     to_save = UserDataSchema().dump(user_data)
     table.put_item(Item=to_save)
-    
+
     response = handler(table, user)
 
     assert response == user_data.monitors
     assert not response
 
-    
+
 def test_data_fetch_single_item(empty_mock_db, table_name):
     user = "existing-user"
     table = empty_mock_db.Table(table_name)
@@ -48,7 +48,7 @@ def test_data_fetch_single_item(empty_mock_db, table_name):
 
     to_save = UserDataSchema().dump(user_data)
     table.put_item(Item=to_save)
-    
+
     response = handler(table, user)
 
     dumped = MonitorJobSchema(many=True).dump(user_data.monitors)

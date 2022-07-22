@@ -1,10 +1,6 @@
 import logging
 
-from lambda_decorators import (
-    cors_headers,
-    json_http_resp,
-    json_schema_validator,
-)
+from lambda_decorators import cors_headers, json_http_resp, json_schema_validator
 
 from common import cognito, utils
 from common.common_schemas import itemwithid_schema
