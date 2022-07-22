@@ -1,5 +1,5 @@
 ---
-name: Run pytest
+name: Run tests
 
 on:
   push:
@@ -27,3 +27,14 @@ jobs:
           cd ${{ matrix.subproject }}
           poetry install
           poetry run pytest
+
+
+  pre-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install and run pre-commit
+        run: |
+          pipx install pre-commit
+          pre-commit run --all-files
