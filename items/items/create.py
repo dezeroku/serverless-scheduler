@@ -50,13 +50,13 @@ def get_monitor_job_with_id(body, next_id):
 )
 def create(event, context):
     table = utils.get_dynamo_table()
-
     user = cognito.get_username(event)
+    payload = event["body"]
 
-    return handler(user, table, event["body"])
+    return handler(table, user, payload)
 
 
-def handler(user, table, payload):
+def handler(table, user, payload):
     # Extend the current data assigned to a user
     # with new monitor entry
     db_data = table.get_item(Key={"id": user})["Item"]
