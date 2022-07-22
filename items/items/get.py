@@ -22,13 +22,15 @@ logger.setLevel(logging.DEBUG)
         "items": itemwithid_schema,
     }
 )
-def get(
-    event,
-    context,
-):
+def get(event, context):
     table = utils.get_dynamo_table()
-
     user = cognito.get_username(event)
+
+    return handler(table, user)
+
+
+def handler(table, user):
+    # Return the data kept in DB unser user ID
 
     # Actually getting the data from a row:
     result = table.get_item(Key={"id": user})

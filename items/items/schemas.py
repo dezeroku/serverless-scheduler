@@ -1,13 +1,6 @@
-from marshmallow import (
-    Schema,
-    fields,
-    post_load,
-)
+from marshmallow import Schema, fields, post_load
 
-from items.models import (
-    UserData,
-    MonitorJob,
-)
+from items.models import UserData, MonitorJob
 
 
 class MonitorJobSchema(Schema):
