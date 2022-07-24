@@ -35,32 +35,3 @@ def test_creation_handler(mock_db, table_name, db_user):
     assert "id" in response
     assert response["id"] is not None
     assert type(response["id"]) == int
-
-
-# TODO
-def creation_event(mock_db, helpers, table_name, db_user):
-    import os
-
-    os.environ["DYNAMO_DB"] = table_name
-
-    to_create = MonitorJob(
-        id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
-    )
-
-    to_create_json = MonitorJobSchema().dump(to_create)
-
-    event = helpers.EventFactory(
-        path="/item/create",
-        httpMethod="POST",
-        requestContext={
-            "resourcePath": "/item/create",
-            "httpMethod": "POST",
-            "path": "/item/create",
-        },
-        body=to_create_json,
-        cognitoUsername=db_user,
-    )
-
-    response = create(event, None)
-
-    assert response == False
