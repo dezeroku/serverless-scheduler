@@ -5,15 +5,13 @@ from items.schemas import MonitorJobSchema, UserDataSchema
 
 
 def test_initial_data_addition(empty_mock_db, table_name):
-    user = "non-existing-user"
+    user = "non-existing-usero"
     table = empty_mock_db.Table(table_name)
 
     # Make sure that item does not exist
-    try:
-        table.get_item(Key={"id": user})
+    result = table.get_item(Key={"id": user})
+    if "Item" in result:
         assert False
-    except:
-        pass
 
     response = handler(table, user)
 
