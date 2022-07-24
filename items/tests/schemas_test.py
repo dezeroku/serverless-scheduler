@@ -66,3 +66,23 @@ def test_monitor_job_schema_load_url_validates(in_data, helpers):
         assert False
     except ValidationError as e:
         assert "Not a valid URL" in str(e)
+
+
+@pytest.mark.parametrize(
+    "in_data",
+    [
+        {
+            "id": 1,
+            "make_screenshots": True,
+            "sleep_time": -1,
+            "url": "http://example.com",
+        }
+    ],
+)
+def test_monitor_job_schema_load_negative_sleep_time_error(in_data, helpers):
+    schema = MonitorJobSchema()
+    try:
+        assert schema.load(helpers.MonitorJobJSONFactory(**in_data))
+        assert False
+    except ValidationError as e:
+        assert "sleepTime must be a positive number" in str(e)
