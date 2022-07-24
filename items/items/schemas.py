@@ -1,6 +1,11 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, ValidationError, fields, post_load
 
 from items.models import MonitorJob, UserData
+
+
+def validate_sleep_time(value):
+    if value < 1:
+        raise ValidationError("sleepTime must be a positive number")
 
 
 class MonitorJobSchema(Schema):
@@ -12,6 +17,7 @@ class MonitorJobSchema(Schema):
     sleep_time = fields.Int(
         data_key="sleepTime",
         required=True,
+        validate=validate_sleep_time,
     )
     url = fields.URL(required=True)
 
