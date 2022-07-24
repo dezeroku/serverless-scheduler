@@ -25,12 +25,20 @@ def handler(table, user, item_id):
     schema = UserDataSchema()
     user_data = schema.load(result)
 
+    len_before = len(user_data.monitors)
+
     user_data.monitors = list(
         filter(
             lambda x: x.id != item_id,
             user_data.monitors,
         )
     )
+
+    len_after = len(user_data.monitors)
+
+    if len_before == len_after:
+        logger.debug("Entry not found for id: %s", item_id)
+        return {"statusCode": 404}
 
     to_save = schema.dump(user_data)
     response = table.put_item(Item=to_save)
