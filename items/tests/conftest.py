@@ -190,6 +190,16 @@ def empty_mock_db(table_name):
 
 
 @pytest.fixture
+def mock_db_table(table_name):
+    with mock_dynamodb():
+        dynamodb = boto3.resource("dynamodb")
+
+        table = Helpers.empty_mock_table(dynamodb, table_name)
+
+        yield table
+
+
+@pytest.fixture
 def mock_db(db_user, table_name):
     with mock_dynamodb():
         dynamodb = boto3.resource("dynamodb")
