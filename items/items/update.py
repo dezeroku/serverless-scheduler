@@ -42,6 +42,10 @@ def handler(table, user, item_id, payload):
     to_update = payload
     to_update["id"] = item_id
 
+    # Check if the item to update actually exists
+    if not any(filter(lambda x: x.id == item_id, user_data.monitors)):
+        return {"statusCode": 404}
+
     schema = MonitorJobSchema()
     to_update = schema.load(to_update)
 
