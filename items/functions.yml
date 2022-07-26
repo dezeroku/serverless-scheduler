@@ -1,0 +1,47 @@
+items-get:
+  module: items
+  handler: items/get.get
+  events:
+    - httpApi:
+        method: get
+        path: /items
+        authorizer: serviceAuthorizer
+  environment:
+    DYNAMO_DB:
+      Ref: DynamoDB
+
+item-create:
+  module: items
+  handler: items/create.create
+  events:
+    - httpApi:
+        method: post
+        path: /item/create
+        authorizer: serviceAuthorizer
+  environment:
+    DYNAMO_DB:
+      Ref: DynamoDB
+
+item-delete:
+  module: items
+  handler: items/delete.delete
+  events:
+    - httpApi:
+        method: delete
+        path: /item/delete/{item_id}
+        authorizer: serviceAuthorizer
+  environment:
+    DYNAMO_DB:
+      Ref: DynamoDB
+
+item-update:
+  module: items
+  handler: items/update.update
+  events:
+    - httpApi:
+        method: put
+        path: /item/update/{item_id}
+        authorizer: serviceAuthorizer
+  environment:
+    DYNAMO_DB:
+      Ref: DynamoDB

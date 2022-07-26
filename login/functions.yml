@@ -1,0 +1,25 @@
+login-login:
+  module: login
+  handler: login.login
+  events:
+    - httpApi:
+        method: get
+        path: /login/cognito-login
+
+  environment:
+    FRONT_DOMAIN: ${self:custom.userConfig.frontDomain}
+    CLIENT_POOL_ID:
+      Ref: CognitoUserPoolClient
+
+login-logout:
+  module: login
+  handler: login.logout
+  events:
+    - httpApi:
+        method: get
+        path: /login/cognito-logout
+
+  environment:
+    FRONT_DOMAIN: ${self:custom.userConfig.frontDomain}
+    CLIENT_POOL_ID:
+      Ref: CognitoUserPoolClient
