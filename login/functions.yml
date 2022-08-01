@@ -1,6 +1,6 @@
 login-login:
   module: login
-  handler: login.login
+  handler: login/login.login
   events:
     - httpApi:
         method: get
@@ -13,7 +13,7 @@ login-login:
 
 login-logout:
   module: login
-  handler: login.logout
+  handler: login/login.logout
   events:
     - httpApi:
         method: get
