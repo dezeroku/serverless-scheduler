@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        subproject: ['items', 'common', 'schedulers']
+        subproject: ['items', 'common', 'schedulers', 'login']
 
     steps:
       - uses: actions/checkout@v3
