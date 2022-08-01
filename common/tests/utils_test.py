@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-import utils
+from common import utils
 
 
 def test_replace_decimals():
