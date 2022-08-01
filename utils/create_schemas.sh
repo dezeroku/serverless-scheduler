@@ -5,8 +5,8 @@ RUNDIR="$(readlink -f $(dirname "$0"))"
 set -e
 function create_schemas() {
     # Generate the .jsons
-    pushd common
-    openapi2jsonschema ../swagger/swagger.yaml --stand-alone
+    pushd "$(mktemp -d)"
+    openapi2jsonschema "${RUNDIR}/../swagger/swagger.yaml" --stand-alone
 
     # Make the .jsons part of .py
     rm -f common_schemas.py
@@ -22,7 +22,7 @@ function create_schemas() {
 
     popd
 
-    cat schemas/*.py > common_schemas.py
+    cat schemas/*.py > "${RUNDIR}/../common/common_schemas.py"
     popd
 }
 
