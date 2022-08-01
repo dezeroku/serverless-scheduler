@@ -14,11 +14,8 @@ moto = "^3.1.16"
 hypothesis = "^6.52.3"
 coverage = {extras = ["toml"], version = "^6.4.2"}
 
-[tool.pytest.ini_options]
-norecursedirs = "common"
-
 [tool.coverage.run]
-omit = ["*common*", "tests*"]
+omit = ["tests*"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
