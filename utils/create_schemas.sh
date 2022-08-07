@@ -8,9 +8,6 @@ function create_schemas() {
     pushd "$(mktemp -d)"
     openapi2jsonschema "${RUNDIR}/../swagger/swagger.yaml" --stand-alone
 
-    # Make the .jsons part of .py
-    rm -f common_schemas.py
-
     pushd schemas
 
     for x in $(find . -name "*.json"); do
@@ -22,7 +19,7 @@ function create_schemas() {
 
     popd
 
-    cat schemas/*.py > "${RUNDIR}/../common/common_schemas.py"
+    cat schemas/*.py > "${RUNDIR}/../common/common/json_schemas.py"
     popd
 }
 
