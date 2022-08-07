@@ -13,4 +13,6 @@ echo "pre-commit finished"
 if ! git diff-index --quiet HEAD -- "${SCHEMA_LOCATION}" ; then
     echo "Python JSON schemas (common/common/json_schemas.py) are not in sync with swagger definitions (swagger/swagger.yaml)!"
     echo "Run the utils/create_schemas.sh to fix this"
+else
+    echo "Schemas are up-to-date!"
 fi
