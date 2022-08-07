@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-RUNDIR="$(readlink -f $(dirname "$0"))"
+RUNDIR="$(readlink -f "$(dirname "$0")")"
 
 set -e
 function create_schemas() {
@@ -10,11 +10,11 @@ function create_schemas() {
 
     pushd schemas
 
-    for x in $(find . -name "*.json"); do
+    for x in *.json; do
         var_name="${x%%.json}"
         var_name="${var_name##./}_schema"
         out_name="${x%%.json}.py"
-        "${RUNDIR}/json2py.py" $x $out_name $var_name
+        "${RUNDIR}/json2py.py" "${x}" "${out_name}" "${var_name}"
     done
 
     popd
