@@ -40,3 +40,15 @@ jobs:
         run: |
           pipx install pre-commit
           pre-commit run --all-files
+
+
+  swagger-json-schemas:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check if swagger .py json schemas are up-to-date with swagger.yaml
+        run: |
+          pipx install pre-commit
+          pipx install openapi2jsonschema
+          utils/test_json_schemas_updated.sh
