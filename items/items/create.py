@@ -39,7 +39,10 @@ def get_monitor_job_with_id(body, next_id):
         "type": "object",
         "properties": {"body": item_schema},
     },
-    response_schema=itemwithid_schema,
+    response_schema={
+        "type": "object",
+        "properties": {"body": itemwithid_schema},
+    },
 )
 def create(event, context):
     table = utils.get_dynamo_table()

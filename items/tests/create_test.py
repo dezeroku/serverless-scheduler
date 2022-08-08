@@ -38,3 +38,26 @@ def test_creation_handler(mock_db, table_name, db_user):
     assert "id" in body
     assert body["id"] is not None
     assert type(body["id"]) == int
+
+
+def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_user):
+    to_create = MonitorJob(
+        id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
+    )
+
+    table = mock_db.Table(table_name)
+
+    monkeypatch.setenv("DYNAMO_DB", table_name)
+
+    payload = MonitorJobSchema().dump(to_create)
+
+    event = helpers.EventFactory(body=payload, cognitoUsername=db_user)
+    context = None
+    response = create(event, context)
+
+    assert response["statusCode"] == 200
+
+    body = response["body"]
+    assert "id" in body
+    assert body["id"] is not None
+    assert type(body["id"]) == int
