@@ -1,11 +1,6 @@
 import logging
 
-from lambda_decorators import (
-    cors_headers,
-    json_http_resp,
-    json_schema_validator,
-    load_json_body,
-)
+from lambda_decorators import cors_headers, json_schema_validator, load_json_body
 
 from common import cognito, utils
 from common.json_schemas import item_schema, itemwithid_schema
@@ -38,7 +33,6 @@ def get_monitor_job_with_id(body, next_id):
 
 # TODO: get through these decorators properly, they don't seem to run from the bottom-up?
 @cors_headers
-@json_http_resp
 @load_json_body
 @json_schema_validator(
     request_schema={
@@ -61,14 +55,28 @@ def handler(table, user, payload):
     db_data = table.get_item(Key={"id": user})["Item"]
     user_data = UserDataSchema().load(db_data)
 
+    # Doing it this way is rather ugly...
+    # TODO: There is a risk of conflicting IDs in case too many requests for
+    # the same user come at the same time.
+    # Not a big change for that, but it WILL be annoying
     next_id = generate_next_id(user_data)
     to_add = get_monitor_job_with_id(payload, next_id)
-    user_data.monitors.append(to_add)
+    to_add_json = MonitorJobSchema().dump(to_add)
+    logger.info(to_add_json)
 
-    logger.info(user_data)
+    result = table.update_item(
+        Key={"id": user},
+        UpdateExpression="SET monitors = list_append(monitors, :i)",
+        ExpressionAttributeValues={
+            ":i": [to_add_json],
+        },
+        ReturnValues="UPDATED_NEW",
+    )
 
-    to_save = UserDataSchema().dump(user_data)
-    response = table.put_item(Item=to_save)
+    status_code = result["ResponseMetadata"]["HTTPStatusCode"]
+    if status_code == 200:
+        body = utils.replace_decimals(to_add_json)
+    else:
+        body = {}
 
-    to_return = dict(MonitorJobSchema().dump(to_add))
-    return utils.replace_decimals(to_return)
+    return {"statusCode": status_code, "body": body}
