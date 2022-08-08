@@ -32,6 +32,9 @@ def test_creation_handler(mock_db, table_name, db_user):
 
     response = handler(table, db_user, payload)
 
-    assert "id" in response
-    assert response["id"] is not None
-    assert type(response["id"]) == int
+    assert response["statusCode"] == 200
+
+    body = response["body"]
+    assert "id" in body
+    assert body["id"] is not None
+    assert type(body["id"]) == int
