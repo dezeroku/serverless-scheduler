@@ -20,8 +20,6 @@ var/
 .serverless
 
 # User defined
-common/schemas
-
 *~
 .mypy_cache
 node_modules
