@@ -1,3 +1,5 @@
+import copy
+
 import boto3
 import pytest
 from moto import mock_dynamodb
@@ -107,6 +109,10 @@ class Helpers:
                 )
 
             temp = {"jwt": {"claims": {"username": cognitoUsername}}}
+            # https://stackoverflow.com/a/11416002 :)
+            # Modifying requestContext indirectly here, causes the change to be
+            # "remembered"
+            event["requestContext"] = copy.deepcopy(event["requestContext"])
             event["requestContext"]["authorizer"] = temp
 
         return event
