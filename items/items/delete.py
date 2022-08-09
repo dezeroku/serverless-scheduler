@@ -19,28 +19,22 @@ def delete(event, context):
 
 
 def handler(table, user, item_id):
-    # Delete entry (assigned to user) identified by item_id from DB
+    # Delete entry (assigned to user), identified by item_id, from DB
 
     result = table.get_item(Key={"id": user})["Item"]
     schema = UserDataSchema()
     user_data = schema.load(result)
 
-    len_before = len(user_data.monitors)
+    length = len(user_data.monitors)
+    index = [x for x in range(0, length) if user_data.monitors[x].id == item_id]
 
-    user_data.monitors = list(
-        filter(
-            lambda x: x.id != item_id,
-            user_data.monitors,
-        )
-    )
-
-    len_after = len(user_data.monitors)
-
-    if len_before == len_after:
+    if not index:
         logger.debug("Entry not found for id: %s", item_id)
         return {"statusCode": 404}
+    else:
+        index = index[0]
 
-    to_save = schema.dump(user_data)
-    response = table.put_item(Item=to_save)
+    query = "REMOVE monitors[%d]" % (index)
+    table.update_item(Key={"id": user}, UpdateExpression=query)
 
     return {"statusCode": 200}
