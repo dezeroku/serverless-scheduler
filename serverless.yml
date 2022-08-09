@@ -113,7 +113,7 @@ custom:
       localDir: ./front/build
 
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: non-linux
     useDownloadCache: true
     useStaticCache: true
     cacheLocation: './.sls_packaging_cache'
