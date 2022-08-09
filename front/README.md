@@ -30,3 +30,5 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 ### Development
 
 `front/mock-api/jwt` contains short code that can be pasted into the console to obtain access to the mocked API using dummy JWT.
+
+`.env` file contains few variables that affect communication with server side

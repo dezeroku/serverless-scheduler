@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Switch, Route, Redirect } from 'react-router-dom';
 import './index.css';
 import {getToken, setToken} from './Login';
-import {loginURL, logoutURL} from "./API";
+import {loginURL, logoutURL} from "./Config";
 import Home from './Home';
 import * as serviceWorker from './serviceWorker';
 import queryString from "query-string";

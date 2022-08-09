@@ -1,14 +1,11 @@
 import axios from "axios";
 
 // It is used to get access token.
-import {userId, getToken} from "./Login";
+import {getToken} from "./Login";
 import {API_URL} from "./Config";
 
 // Ensuring that proper types are used.
 import ItemProps from "./Item";
-
-export const loginURL = API_URL + "/v1/login/cognito-login";
-export const logoutURL = API_URL + "/v1/login/cognito-logout";
 
 export async function getItemsRaw() {
 	let config = {

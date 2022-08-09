@@ -4,11 +4,14 @@ declare global {
     interface Window {
         _env_: {
             REACT_APP_API_URL: string,
-            USE_ENV_REACT_APP_API_URL: string
+            USE_ENV_REACT_APP_API_URL: string,
+            USE_ENV_LOGIN_REDIRECT: string,
+            USE_ENV_FRONT_DOMAIN: string,
+            CLIENT_POOL_ID: string,
+            FRONT_DOMAIN: string
         };
     }
 }
-
 
 function getAPIURL() : string {
     if (process.env.NODE_ENV === "development") {
@@ -22,4 +25,78 @@ function getAPIURL() : string {
     return 'https://api.' + window.location.hostname;
 }
 
+function getFrontDomain() : string {
+    if (process.env.NODE_ENV === "development") {
+        if (process.env.USE_ENV_FRONT_DOMAIN === "true") {
+            return process.env.FRONT_DOMAIN as string;
+        }
+    } else {
+        if (window._env_.USE_ENV_FRONT_DOMAIN === "true") {
+            return window._env_.FRONT_DOMAIN;
+        }
+    }
+
+    return window.location.hostname;
+}
+
+function getUseEnvLoginRedirect() : string {
+    if (process.env.NODE_ENV === "development") {
+        return process.env.USE_ENV_LOGIN_REDIRECT as string;
+    } else {
+        return window._env_.USE_ENV_LOGIN_REDIRECT;
+    }
+}
+
+function getClientPoolId() : string {
+    if (process.env.NODE_ENV === "development") {
+        return process.env.CLIENT_POOL_ID as string;
+    } else {
+        return window._env_.CLIENT_POOL_ID;
+    }
+}
+
+function getLoginURL() : string {
+
+    if (getUseEnvLoginRedirect() === "true") {
+        let frontDomain = getFrontDomain();
+        let clientPoolID = getClientPoolId();
+        return "https://"
+            + "auth."
+            + frontDomain
+            + "/oauth2/authorize?client_id="
+            + clientPoolID
+            + "&response_type=token&scope="
+            + "aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri="
+            + "https://"
+            + frontDomain
+            + "/login/cognito-parser"
+    }
+
+    // Fallback to lambda intermediate endpoint
+    return API_URL + "/v1/login/cognito-login";
+}
+
+function getLogoutURL() : string {
+    if (getUseEnvLoginRedirect() === "true") {
+        let frontDomain = getFrontDomain();
+        let clientPoolID = getClientPoolId();
+
+        return "https://"
+            + "auth."
+            + frontDomain
+            + "/logout?client_id="
+            + clientPoolID
+            + "&logout_uri="
+            + "https://"
+            + frontDomain
+            + "/logout"
+    }
+
+    // Fallback to lambda intermediate endpoint
+    return API_URL + "/v1/login/cognito-logout";
+}
+
 export const API_URL: string = getAPIURL();
+
+export const loginURL: string = getLoginURL();
+export const logoutURL: string = getLogoutURL();
