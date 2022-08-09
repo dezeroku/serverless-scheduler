@@ -63,7 +63,7 @@ constructs:
 
 functions:
   - ${file(./items/functions.yml)}
-  - ${file(./login/functions.yml)}
+    #- ${file(./login/functions.yml)}
 
 #  producer:
 #    module: handler-demo
