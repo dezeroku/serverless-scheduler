@@ -36,10 +36,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install and run pre-commit
-        run: |
-          pipx install pre-commit
-          pre-commit run --all-files
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.0
 
 
   swagger-json-schemas:
