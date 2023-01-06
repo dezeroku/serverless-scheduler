@@ -31,6 +31,28 @@ jobs:
           poetry run coverage report
 
 
+  pylint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        subproject: ['items', 'common', 'schedulers']
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'poetry'
+      - name: Run pytest
+        run: |
+          cd ${{ matrix.subproject }}
+          poetry install
+          poetry run pylint ./${{ matrix.subproject }}
+
+
   pre-commit:
     runs-on: ubuntu-latest
 
