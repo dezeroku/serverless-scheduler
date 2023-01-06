@@ -8,7 +8,7 @@ on:
 
   pull_request:
 jobs:
-  pytest:
+  poetry-install:
     runs-on: ubuntu-latest
 
     strategy:
@@ -17,6 +17,31 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - run: |
+          cd ${{ matrix.subproject }}
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          poetry install --no-root
+
+
+  pytest:
+    runs-on: ubuntu-latest
+    needs: poetry-install
+
+    strategy:
+      matrix:
+        subproject: ['items', 'common', 'schedulers']
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          cd ${{ matrix.subproject }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -25,14 +50,13 @@ jobs:
           cache: 'poetry'
       - name: Run pytest
         run: |
-          cd ${{ matrix.subproject }}
-          poetry install
           poetry run coverage run -m pytest
           poetry run coverage report
 
 
   pylint:
     runs-on: ubuntu-latest
+    needs: poetry-install
 
     strategy:
       matrix:
@@ -40,6 +64,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - run: |
+          cd ${{ matrix.subproject }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -48,8 +74,6 @@ jobs:
           cache: 'poetry'
       - name: Run pylint
         run: |
-          cd ${{ matrix.subproject }}
-          poetry install
           poetry run pylint ./${{ matrix.subproject }}
 
 
