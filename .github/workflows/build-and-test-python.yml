@@ -1,0 +1,83 @@
+---
+name: Build and test a single Python component
+on:
+  workflow_dispatch:
+    inputs:
+      directory:
+        required: true
+        type: string
+      python-version:
+        required: true
+        type: string
+
+  workflow_call:
+    inputs:
+      directory:
+        required: true
+        type: string
+      python-version:
+        required: true
+        type: string
+jobs:
+  poetry-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: 'poetry'
+          cache-dependency-path: |
+            ${{ inputs.directory }}/pyproject.toml
+            ${{ inputs.directory }}/poetry.lock
+
+      - name: Install dependencies
+        run: |
+          cd ${{ inputs.directory }}
+          poetry install --no-root
+
+
+  pytest:
+    runs-on: ubuntu-latest
+    needs: poetry-install
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: 'poetry'
+          cache-dependency-path: |
+            ${{ inputs.directory }}/pyproject.toml
+            ${{ inputs.directory }}/poetry.lock
+      - name: Run pytest
+        run: |
+          cd ${{ inputs.directory }}
+          poetry run coverage run -m pytest
+          poetry run coverage report
+
+
+  pylint:
+    runs-on: ubuntu-latest
+    needs: poetry-install
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: 'poetry'
+          cache-dependency-path: |
+            ${{ inputs.directory }}/pyproject.toml
+            ${{ inputs.directory }}/poetry.lock
+      - name: Run pylint
+        run: |
+          cd ${{ inputs.directory }}
+          poetry run pylint ./${{ inputs.directory }}

@@ -8,9 +8,7 @@ on:
 
   pull_request:
 jobs:
-  poetry-install:
-    runs-on: ubuntu-latest
-
+  test-components:
     strategy:
       matrix:
         cfg:
@@ -20,83 +18,10 @@ jobs:
             python-version: '3.8'
           - component: 'schedulers'
             python-version: '3.8'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.cfg.python-version }}
-          cache: 'poetry'
-          cache-dependency-path: |
-            ${{ matrix.cfg.component }}/pyproject.toml
-            ${{ matrix.cfg.component }}/poetry.lock
-
-      - name: Install dependencies
-        run: |
-          cd ${{ matrix.cfg.component }}
-          poetry install --no-root
-
-
-  pytest:
-    runs-on: ubuntu-latest
-    needs: poetry-install
-
-    strategy:
-      matrix:
-        cfg:
-          - component: 'items'
-            python-version: '3.8'
-          - component: 'common'
-            python-version: '3.8'
-          - component: 'schedulers'
-            python-version: '3.8'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.cfg.python-version }}
-          cache: 'poetry'
-          cache-dependency-path: |
-            ${{ matrix.cfg.component }}/pyproject.toml
-            ${{ matrix.cfg.component }}/poetry.lock
-      - name: Run pytest
-        run: |
-          cd ${{ matrix.cfg.component }}
-          poetry run coverage run -m pytest
-          poetry run coverage report
-
-
-  pylint:
-    runs-on: ubuntu-latest
-    needs: poetry-install
-
-    strategy:
-      matrix:
-        cfg:
-          - component: 'items'
-            python-version: '3.8'
-          - component: 'common'
-            python-version: '3.8'
-          - component: 'schedulers'
-            python-version: '3.8'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install poetry
-        run: pipx install poetry
-      - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.cfg.python-version }}
-          cache: 'poetry'
-          cache-dependency-path: |
-            ${{ matrix.cfg.component }}/pyproject.toml
-            ${{ matrix.cfg.component }}/poetry.lock
-      - name: Run pylint
-        run: |
-          cd ${{ matrix.cfg.component }}
-          poetry run pylint ./${{ matrix.cfg.component }}
+    uses: ./.github/workflows/build-and-test-python.yml
+    with:
+      python-version: ${{ matrix.cfg.python-version }}
+      directory: ${{ matrix.cfg.component }}
 
 
   pre-commit:
