@@ -13,23 +13,27 @@ jobs:
 
     strategy:
       matrix:
-        subproject: ['items', 'common', 'schedulers']
-
+        - component: 'items'
+          python-version: '3.8'
+        - component: 'common'
+          python-version: '3.8'
+        - component: 'schedulers'
+          python-version: '3.8'
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
           cache: 'poetry'
           cache-dependency-path: |
-            ${{ matrix.subproject }}/pyproject.toml
-            ${{ matrix.subproject }}/poetry.lock
+            ${{ matrix.component }}/pyproject.toml
+            ${{ matrix.component }}/poetry.lock
 
       - name: Install dependencies
         run: |
-          cd ${{ matrix.subproject }}
+          cd ${{ matrix.component }}
           poetry install --no-root
 
 
@@ -39,22 +43,26 @@ jobs:
 
     strategy:
       matrix:
-        subproject: ['items', 'common', 'schedulers']
-
+        - component: 'items'
+          python-version: '3.8'
+        - component: 'common'
+          python-version: '3.8'
+        - component: 'schedulers'
+          python-version: '3.8'
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
           cache: 'poetry'
           cache-dependency-path: |
-            ${{ matrix.subproject }}/pyproject.toml
-            ${{ matrix.subproject }}/poetry.lock
+            ${{ matrix.component }}/pyproject.toml
+            ${{ matrix.component }}/poetry.lock
       - name: Run pytest
         run: |
-          cd ${{ matrix.subproject }}
+          cd ${{ matrix.component }}
           poetry run coverage run -m pytest
           poetry run coverage report
 
@@ -65,23 +73,27 @@ jobs:
 
     strategy:
       matrix:
-        subproject: ['items', 'common', 'schedulers']
-
+        - component: 'items'
+          python-version: '3.8'
+        - component: 'common'
+          python-version: '3.8'
+        - component: 'schedulers'
+          python-version: '3.8'
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
           cache: 'poetry'
           cache-dependency-path: |
-            ${{ matrix.subproject }}/pyproject.toml
-            ${{ matrix.subproject }}/poetry.lock
+            ${{ matrix.component }}/pyproject.toml
+            ${{ matrix.component }}/poetry.lock
       - name: Run pylint
         run: |
-          cd ${{ matrix.subproject }}
-          poetry run pylint ./${{ matrix.subproject }}
+          cd ${{ matrix.component }}
+          poetry run pylint ./${{ matrix.component }}
 
 
   pre-commit:
