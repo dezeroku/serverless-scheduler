@@ -17,8 +17,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          cd ${{ matrix.subproject }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -27,6 +25,7 @@ jobs:
           cache: 'poetry'
       - name: Install dependencies
         run: |
+          cd ${{ matrix.subproject }}
           poetry install --no-root
 
 
@@ -40,8 +39,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          cd ${{ matrix.subproject }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -50,6 +47,7 @@ jobs:
           cache: 'poetry'
       - name: Run pytest
         run: |
+          cd ${{ matrix.subproject }}
           poetry run coverage run -m pytest
           poetry run coverage report
 
@@ -64,8 +62,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          cd ${{ matrix.subproject }}
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -74,6 +70,7 @@ jobs:
           cache: 'poetry'
       - name: Run pylint
         run: |
+          cd ${{ matrix.subproject }}
           poetry run pylint ./${{ matrix.subproject }}
 
 
