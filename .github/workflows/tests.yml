@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: '3.8'
           cache: 'poetry'
-      - name: Run pytest
+      - name: Run pylint
         run: |
           cd ${{ matrix.subproject }}
           poetry install
