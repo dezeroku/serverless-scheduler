@@ -23,6 +23,10 @@ jobs:
         with:
           python-version: '3.8'
           cache: 'poetry'
+          cache-dependency-path: |
+            ${{ matrix.subproject }}/pyproject.toml
+            ${{ matrix.subproject }}/poetry.lock
+
       - name: Install dependencies
         run: |
           cd ${{ matrix.subproject }}
@@ -45,6 +49,9 @@ jobs:
         with:
           python-version: '3.8'
           cache: 'poetry'
+          cache-dependency-path: |
+            ${{ matrix.subproject }}/pyproject.toml
+            ${{ matrix.subproject }}/poetry.lock
       - name: Run pytest
         run: |
           cd ${{ matrix.subproject }}
@@ -68,6 +75,9 @@ jobs:
         with:
           python-version: '3.8'
           cache: 'poetry'
+          cache-dependency-path: |
+            ${{ matrix.subproject }}/pyproject.toml
+            ${{ matrix.subproject }}/poetry.lock
       - name: Run pylint
         run: |
           cd ${{ matrix.subproject }}
