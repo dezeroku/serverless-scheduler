@@ -6,8 +6,9 @@ RUN yum update && \
 ENV PATH=$PATH:/root/.local/bin
 RUN curl https://install.python-poetry.org | python3 - --version 1.3.0
 
-WORKDIR /app
+WORKDIR /app/builder
 
+COPY .packaging/temp /app/common
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-root --no-dev
 
