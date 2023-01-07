@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNDIR="$(readlink -f "$(dirname "$0")")"
+pushd "${RUNDIR}/.."
+
+export COMPONENT_NAME=items
+
+# Make sure that common is in place
+"${RUNDIR}/../../common/bin/package_lambda_entrypoint"
+
+# Package
+"${RUNDIR}/../../common/bin/package_lambda_runner.sh"
+"${RUNDIR}/../../common/bin/package_lambda_concatenate.sh"
