@@ -18,4 +18,4 @@ if [[ ! "$PWD" == "${DOCKERFILE_DIR}" ]]; then
   cp "${DOCKERFILE_DIR}/poetry.lock" .packaging/temp
 fi
 
-docker buildx build . -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output type=local,dest=./.packaging/result
+docker buildx build . --target zip -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output type=local,dest=./.packaging/work
