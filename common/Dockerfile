@@ -14,7 +14,7 @@ RUN poetry install --no-root --no-dev
 ARG COMPONENT_NAME
 COPY $COMPONENT_NAME $COMPONENT_NAME
 
-RUN poetry build
+RUN poetry build -f wheel
 
 RUN poetry run pip install --upgrade -t lambda-package dist/*.whl && \
     cd lambda-package && \
