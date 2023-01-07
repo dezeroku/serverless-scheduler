@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "common"
 version = "0.1.0"
-description = ""
+description = "Common utils used in Lambdas"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
