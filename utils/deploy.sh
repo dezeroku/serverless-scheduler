@@ -45,6 +45,7 @@ where SCOPE can be one of:
 - FULL
 - API
 - FRONT
+- INFRA
 HEREDOC
 
     exit 1
@@ -53,14 +54,19 @@ HEREDOC
 function provision_terraform() {
     pushd terraform
 
-    terraform apply
+    if [ -f "secret-values.tfvars" ]; then
+        terraform apply -var-file="secret-values.tfvars"
+    else
+        terraform apply
+    fi
+
     mkdir -p ../.deployment-temp/terraform
     terraform output -json > ../.deployment-temp/terraform/outputs.json
 
     popd
 }
 
-[ -z "$1" ] && usage
+[ -z "${1:-}" ] && usage
 
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"

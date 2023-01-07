@@ -110,7 +110,7 @@ custom:
       localDir: ./front/build
   customDomain:
     # This requires the certificate for domain to be provided
-    domainName: ${self:custom.userConfig.apiDomain}
+    domainName: ${self:custom.tfOutputs.api_domain.value}
     basePath: 'v1'
     stage: ${sls:stage}
     createRoute53Record: true
@@ -118,7 +118,7 @@ custom:
     # Run as part of the `deploy`
     #autoDomain: true
     apiType: http
-    certificateName: ${self:custom.userConfig.apiDomain}
+    certificateName: ${self:custom.tfOutputs.api_domain.value}
   customCertificate:
     # This is a cert for domain-manager, local apigateway, region cert is fine
     -

@@ -9,3 +9,11 @@ variable "stage" {
 variable "service" {
   type = string
 }
+
+variable "api_domain" {
+  default = "api.example.com"
+}
+
+variable "route53_cert_zone" {
+  default = "example.com"
+}

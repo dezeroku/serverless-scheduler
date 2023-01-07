@@ -17,3 +17,16 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  # Special provider for certs that need
+  # to be deployed in us-east-1 (e.g. CloudFront)
+  alias  = "acm"
+  region = "us-east-1"
+  default_tags {
+    tags = {
+      "Service" = var.service,
+      "Stage"   = var.stage,
+    }
+  }
+}
