@@ -7,5 +7,21 @@ output "api_domain" {
 }
 
 output "api_domain_cert_arn" {
-  value = aws_acm_certificate.api_domain.arn
+  value = module.api_domain_cert.certificate_arn
+}
+
+output "front_domain" {
+  value = var.front_domain
+}
+
+output "front_domain_cert_arn" {
+  value = module.front_domain_cert.certificate_arn
+}
+
+output "auth_domain" {
+  value = local.auth_domain
+}
+
+output "auth_domain_cert_arn" {
+  value = module.auth_domain_cert.certificate_arn
 }
