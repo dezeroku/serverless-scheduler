@@ -25,3 +25,13 @@ RUN poetry run pip install --upgrade -t lambda-package dist/*.whl && \
 FROM scratch as zip
 COPY --from=base /lambda.zip .
 COPY --from=base /*.whl .
+
+FROM base as concatenate-work
+COPY .packaging/work /app/work
+RUN poetry run pip install -t lambda-package /app/work/*.whl && \
+    cd lambda-package && \
+    zip -r /lambda.zip . -x '*.pyc'
+
+FROM scratch as concatenate
+COPY --from=concatenate-work /lambda.zip .
+COPY --from=concatenate-work /*.whl .
