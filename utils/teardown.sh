@@ -11,8 +11,6 @@ serverless remove
 
 sls delete_domain
 
-serverless remove-cert
-
 cd terraform
 
 tf destroy

@@ -85,9 +85,6 @@ if [[ "${BUILD_INFRA}" == "true" ]]; then
     echo "Provisioning terraform infra"
     provision_terraform
 
-    echo "Creating certs"
-    serverless create-cert
-
     echo "Creating domain"
     sls create_domain
 fi
