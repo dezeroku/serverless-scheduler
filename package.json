@@ -7,9 +7,8 @@
   "devDependencies": {
     "@boundstate/serverless-finch": "^2.8.2",
     "@dezeroku/serverless-certificate-creator": "^1.6.0",
-    "serverless-domain-manager": "^6.0.2",
+    "serverless-domain-manager": "^6.2.1",
     "serverless-lift": "^1.1.2",
-    "serverless-python-requirements": "^5.4.0",
     "serverless-s3-sync": "^2.0.0"
   },
   "dependencies": {

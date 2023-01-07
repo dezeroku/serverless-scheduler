@@ -1,5 +1,6 @@
 items-get:
-  module: items
+  package:
+    artifact: lambda-deployment-zips/items-lambda.zip
   handler: items/get.get
   events:
     - httpApi:
@@ -11,7 +12,8 @@ items-get:
       Ref: DynamoDB
 
 item-create:
-  module: items
+  package:
+    artifact: lambda-deployment-zips/items-lambda.zip
   handler: items/create.create
   events:
     - httpApi:
@@ -23,7 +25,8 @@ item-create:
       Ref: DynamoDB
 
 item-delete:
-  module: items
+  package:
+    artifact: lambda-deployment-zips/items-lambda.zip
   handler: items/delete.delete
   events:
     - httpApi:
@@ -35,7 +38,8 @@ item-delete:
       Ref: DynamoDB
 
 item-update:
-  module: items
+  package:
+    artifact: lambda-deployment-zips/items-lambda.zip
   handler: items/update.update
   events:
     - httpApi:
