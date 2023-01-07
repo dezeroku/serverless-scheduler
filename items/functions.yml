@@ -8,8 +8,7 @@ items-get:
         path: /items
         authorizer: serviceAuthorizer
   environment:
-    DYNAMO_DB:
-      Ref: DynamoDB
+    DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
 
 item-create:
   package:
@@ -21,8 +20,7 @@ item-create:
         path: /item/create
         authorizer: serviceAuthorizer
   environment:
-    DYNAMO_DB:
-      Ref: DynamoDB
+    DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
 
 item-delete:
   package:
@@ -34,8 +32,7 @@ item-delete:
         path: /item/delete/{item_id}
         authorizer: serviceAuthorizer
   environment:
-    DYNAMO_DB:
-      Ref: DynamoDB
+    DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
 
 item-update:
   package:
@@ -47,5 +44,4 @@ item-update:
         path: /item/update/{item_id}
         authorizer: serviceAuthorizer
   environment:
-    DYNAMO_DB:
-      Ref: DynamoDB
+    DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
