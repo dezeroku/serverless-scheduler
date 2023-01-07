@@ -1,17 +1,12 @@
 import logging
 
-from lambda_decorators import (
-    cors_headers,
-    json_http_resp,
-    json_schema_validator,
-    load_json_body,
-)
+from lambda_decorators import cors_headers, json_schema_validator, load_json_body
 
 from common import cognito, utils
 from common.json_schemas import item_schema
 from items.schemas import MonitorJobSchema, UserDataSchema
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
@@ -24,8 +19,9 @@ logger.setLevel(logging.DEBUG)
     }
 )
 def update(event, context):
-    table = utils.get_dynamo_table()
+    # pylint: disable=unused-argument
     user = cognito.get_username(event)
+    table = utils.get_dynamo_table()
     item_id = int(event["pathParameters"]["item_id"])
     payload = event["body"]
 
@@ -60,6 +56,6 @@ def handler(table, user, item_id, payload):
 
     to_save = UserDataSchema().dump(user_data)
 
-    response = table.put_item(Item=to_save)
+    table.put_item(Item=to_save)
 
     return {"statusCode": 200}

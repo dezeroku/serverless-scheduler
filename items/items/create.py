@@ -6,7 +6,7 @@ from common import cognito, utils
 from common.json_schemas import item_schema, itemwithid_schema
 from items.schemas import MonitorJobSchema, UserDataSchema
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
@@ -31,7 +31,6 @@ def get_monitor_job_with_id(body, next_id):
     return MonitorJobSchema().load(body)
 
 
-# TODO: get through these decorators properly, they don't seem to run from the bottom-up?
 @cors_headers
 @load_json_body
 @json_schema_validator(
@@ -45,6 +44,7 @@ def get_monitor_job_with_id(body, next_id):
     },
 )
 def create(event, context):
+    # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
     user = cognito.get_username(event)
     payload = event["body"]
@@ -59,7 +59,7 @@ def handler(table, user, payload):
     user_data = UserDataSchema().load(db_data)
 
     # Doing it this way is rather ugly...
-    # TODO: There is a risk of conflicting IDs in case too many requests for
+    # There is a risk of conflicting IDs in case too many requests for
     # the same user come at the same time.
     # Not a big change for that, but it WILL be annoying
     next_id = generate_next_id(user_data)

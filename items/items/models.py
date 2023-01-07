@@ -4,7 +4,7 @@ from typing import List
 
 @dataclass
 class MonitorJob:
-    id: int
+    id: int  # pylint: disable=invalid-name
     make_screenshots: bool
     sleep_time: int
     url: str
@@ -12,5 +12,5 @@ class MonitorJob:
 
 @dataclass
 class UserData:
-    id: str
+    id: str  # pylint: disable=invalid-name
     monitors: List[MonitorJob]
