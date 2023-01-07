@@ -208,12 +208,12 @@ files = [
 [[package]]
 name = "common"
 version = "0.1.0"
-description = ""
+description = "Common utils used in Lambdas"
 category = "main"
 optional = false
 python-versions = "^3.8"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 boto3 = "^1.24.43"
@@ -1164,4 +1164,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "87eae1040dee97e41b1b44d476ff83ca87756dbb14b2187809ddf44940bc88bf"
+content-hash = "3cebace63129c1b593ba5406c41123f4fee6f8d4364cd841a20ceb78f9205d74"
