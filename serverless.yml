@@ -94,14 +94,12 @@ plugins:
   - serverless-lift
   - serverless-domain-manager
   - serverless-s3-sync
-  - '@dezeroku/serverless-certificate-creator'
 package:
   individually: true
 
 custom:
   baseConfig: ${file(terraform/terraform.tfvars.json)}
   tfOutputs: ${file(.deployment-temp/terraform/outputs.json)}
-  userConfig: ${file(user-config.yml)}
 
   s3Sync:
     # A simple configuration for copying static assets
@@ -119,29 +117,6 @@ custom:
     #autoDomain: true
     apiType: http
     certificateName: ${self:custom.tfOutputs.api_domain.value}
-  customCertificate:
-    # This is a cert for domain-manager, local apigateway, region cert is fine
-    -
-      certificateName: ${self:custom.userConfig.apiDomain}
-      hostedZoneNames: ${self:custom.userConfig.baseDomain}.
-      region: ${self:provider.region}
-      enabled: true
-      rewriteRecords: false
-    # This is a cert for CloudFront, so it has to be in us-east-1
-    -
-      certificateName: ${self:custom.userConfig.frontDomain}
-      hostedZoneNames: ${self:custom.userConfig.baseDomain}.
-      region: us-east-1
-      enabled: true
-      rewriteRecords: false
-    # This is a cert for Cognito Domain, has to be in us-east-1
-    -
-      certificateName: auth.${self:custom.userConfig.frontDomain}
-      hostedZoneNames: ${self:custom.userConfig.baseDomain}.
-      region: us-east-1
-      enabled: true
-      rewriteRecords: false
-
 resources:
   - ${file(resources/front-bucket.yml)}
   - ${file(resources/cognito-user-pool.yml)}
