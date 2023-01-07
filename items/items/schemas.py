@@ -23,6 +23,7 @@ class MonitorJobSchema(Schema):
 
     @post_load
     def create_model(self, data, **kwargs):
+        # pylint: disable=unused-argument
         return MonitorJob(**data)
 
 
@@ -36,4 +37,5 @@ class UserDataSchema(Schema):
 
     @post_load
     def create_model(self, data, **kwargs):
+        # pylint: disable=unused-argument
         return UserData(**data)

@@ -6,7 +6,7 @@ from common import cognito, utils
 from common.json_schemas import itemwithid_schema
 from items.schemas import UserDataSchema
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
@@ -19,6 +19,7 @@ logger.setLevel(logging.DEBUG)
     }
 )
 def get(event, context):
+    # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
     user = cognito.get_username(event)
 
@@ -31,7 +32,7 @@ def handler(table, user):
     # Actually getting the data from a row:
     result = table.get_item(Key={"id": user})
 
-    # TODO: This is a big hack
+    # This is a big hack
     # such a logic should be handled on the Lambda level
     # This Lambda should listen to signup events of the cognito pool
     # and create rows as needed accordingly
@@ -40,11 +41,11 @@ def handler(table, user):
     # Row creation if needed
     schema = UserDataSchema()
     if "Item" not in result:
-        logger.info(f"HACK: putting the initial data for {user} in the table")
+        logger.info("HACK: putting the initial data for %s in the table", user)
 
         user_data = schema.load({"id": user})
         to_save = schema.dump(user_data)
-        response = table.put_item(Item=to_save)
+        table.put_item(Item=to_save)
 
         # Doing it in such an ugly way, to make sure that the data is in place
         result = table.get_item(Key={"id": user})

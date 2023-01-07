@@ -3,14 +3,15 @@ import logging
 from lambda_decorators import cors_headers
 
 from common import cognito, utils
-from items.schemas import MonitorJobSchema, UserDataSchema
+from items.schemas import UserDataSchema
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
 @cors_headers
 def delete(event, context):
+    # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
     user = cognito.get_username(event)
     item_id = int(event["pathParameters"]["item_id"])
@@ -31,10 +32,12 @@ def handler(table, user, item_id):
     if not index:
         logger.debug("Entry not found for id: %s", item_id)
         return {"statusCode": 404}
-    else:
-        index = index[0]
 
-    query = "REMOVE monitors[%d]" % (index)
+    index = index[0]
+
+    query = f"REMOVE monitors[{index}]"
+
+    # Need to handle errors?
     table.update_item(Key={"id": user}, UpdateExpression=query)
 
     return {"statusCode": 200}
