@@ -27,3 +27,4 @@ lambda_venv
 __pycache__
 .sls_packaging_cache
 .coverage
+lambda-deployment-zips
