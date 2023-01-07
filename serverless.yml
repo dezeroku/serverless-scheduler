@@ -40,12 +40,12 @@ provider:
               - - arn:aws:dynamodb:${self:provider.region}:*:table/
                 - Ref: DynamoDB
 
-constructs:
-  jobs:
-    type: queue
-    worker:
-      module: handler-demo
-      handler: handler.consumer
+#constructs:
+  #jobs:
+  #  type: queue
+  #  worker:
+  #    module: handler-demo
+  #    handler: handler.consumer
   #monitors:
   #  type: queue
   #  worker:
@@ -92,16 +92,11 @@ functions:
 
 plugins:
   - serverless-lift
-  - serverless-python-requirements
   - serverless-domain-manager
   - serverless-s3-sync
   - '@dezeroku/serverless-certificate-creator'
 package:
   individually: true
-  patterns:
-    - '!node_modules/**'
-    - '!lambda_venv/**'
-    - '!resources/**'
 
 custom:
   userConfig: ${file(user-config.yml)}
@@ -111,12 +106,6 @@ custom:
     # It also takes care of cleaning up the S3 buckets in 'remove' step
     - bucketNameKey: FrontBucketId
       localDir: ./front/build
-
-  pythonRequirements:
-    dockerizePip: non-linux
-    useDownloadCache: true
-    useStaticCache: true
-    cacheLocation: './.sls_packaging_cache'
   customDomain:
     # This requires the certificate for domain to be provided
     domainName: ${self:custom.userConfig.apiDomain}
@@ -127,6 +116,7 @@ custom:
     # Run as part of the `deploy`
     #autoDomain: true
     apiType: http
+    certificateName: ${self:custom.userConfig.apiDomain}
   customCertificate:
     # This is a cert for domain-manager, local apigateway, region cert is fine
     -

@@ -71,6 +71,9 @@ if [[ "${BUILD_API}" == "true" ]]; then
     echo "Creating domain"
     sls create_domain
 
+    echo "Packaging Lambdas"
+    "${RUNDIR}"/package_lambdas_zips.sh
+
     echo "Starting SLS deployment"
     serverless deploy --nos3sync
 fi
