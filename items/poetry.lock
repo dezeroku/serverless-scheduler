@@ -209,7 +209,7 @@ files = [
 name = "common"
 version = "0.1.0"
 description = "Common utils used in Lambdas"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "^3.8"
 files = []
@@ -1164,4 +1164,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "3cebace63129c1b593ba5406c41123f4fee6f8d4364cd841a20ceb78f9205d74"
+content-hash = "561daf3b1ac00b0c9864a04280655a8e476e498916a3f6a9c5f6c0fbf0a25aee"

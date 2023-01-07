@@ -1,0 +1,7 @@
+.*
+!items
+!poetry.lock
+!pyproject.toml
+!tests
+!.packaging/temp
+!.packaging/work
