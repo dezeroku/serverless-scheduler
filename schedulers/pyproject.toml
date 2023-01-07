@@ -6,7 +6,7 @@ authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-common = { path = "../common/", develop = false }
+common = { path = "../common/", develop = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
