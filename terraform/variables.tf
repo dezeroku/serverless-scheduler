@@ -1,11 +1,11 @@
 variable "aws_region" {
-  default = "eu-central-1"
+  type = string
 }
 
 variable "stage" {
-  default = "dev"
+  type = string
 }
 
 variable "service" {
-  default = "monitor-page"
+  type = string
 }
