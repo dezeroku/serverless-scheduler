@@ -1,6 +1,6 @@
 items-get:
   package:
-    artifact: lambda-deployment-zips/items-lambda.zip
+    artifact: .deployment-temp/lambda-zips/items-lambda.zip
   handler: items/get.get
   events:
     - httpApi:
@@ -13,7 +13,7 @@ items-get:
 
 item-create:
   package:
-    artifact: lambda-deployment-zips/items-lambda.zip
+    artifact: .deployment-temp/lambda-zips/items-lambda.zip
   handler: items/create.create
   events:
     - httpApi:
@@ -26,7 +26,7 @@ item-create:
 
 item-delete:
   package:
-    artifact: lambda-deployment-zips/items-lambda.zip
+    artifact: .deployment-temp/lambda-zips/items-lambda.zip
   handler: items/delete.delete
   events:
     - httpApi:
@@ -39,7 +39,7 @@ item-delete:
 
 item-update:
   package:
-    artifact: lambda-deployment-zips/items-lambda.zip
+    artifact: .deployment-temp/lambda-zips/items-lambda.zip
   handler: items/update.update
   events:
     - httpApi:
