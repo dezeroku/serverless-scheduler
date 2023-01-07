@@ -1,10 +1,10 @@
-service: monitor-page
+service: ${self:custom.baseConfig.service}
 frameworkVersion: '3'
 
 provider:
   versionFunctions: false
   name: aws
-  region: eu-central-1
+  region: ${self:custom.baseConfig.aws_region}
   runtime: python3.8
   memorySize: 128
   httpApi:
@@ -99,6 +99,7 @@ package:
   individually: true
 
 custom:
+  baseConfig: ${file(terraform/terraform.tfvars.json)}
   tfOutputs: ${file(.deployment-temp/terraform/outputs.json)}
   userConfig: ${file(user-config.yml)}
 
