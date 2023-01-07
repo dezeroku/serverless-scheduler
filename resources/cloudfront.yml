@@ -38,18 +38,18 @@ Resources:
         HttpVersion: http2
         IPV6Enabled: true
         Aliases:
-          - ${self:custom.userConfig.frontDomain}
+          - ${self:custom.tfOutputs.front_domain.value}
         ViewerCertificate:
-          AcmCertificateArn: ${self:custom.tfOutputs.api_domain_cert_arn.value}
+          AcmCertificateArn: ${self:custom.tfOutputs.front_domain_cert_arn.value}
           MinimumProtocolVersion: TLSv1.2_2019
           SslSupportMethod: sni-only
         PriceClass: PriceClass_100
   WebsiteDNSName:
     Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneName: ${self:custom.userConfig.baseDomain}.
+      HostedZoneName: ${self:custom.tfOutputs.base_domain.value}.
       RecordSets:
-        - Name: ${self:custom.userConfig.frontDomain}
+        - Name: ${self:custom.tfOutputs.front_domain.value}
           Type: A
           AliasTarget:
             HostedZoneId: Z2FDTNDATAQYW2 # This is just a hardcode for CloudFront

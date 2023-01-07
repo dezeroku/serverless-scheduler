@@ -39,10 +39,10 @@ Resources:
         Ref: CognitoUserPool
       GenerateSecret: false
       CallbackURLs:
-        - https://${self:custom.userConfig.frontDomain}/login/cognito-parser
+        - https://${self:custom.tfOutputs.front_domain.value}/login/cognito-parser
       LogoutURLs:
-        - https://${self:custom.userConfig.frontDomain}/logout
-      DefaultRedirectURI: https://${self:custom.userConfig.frontDomain}/login/cognito-parser
+        - https://${self:custom.tfOutputs.front_domain.value}/logout
+      DefaultRedirectURI: https://${self:custom.tfOutputs.front_domain.value}/login/cognito-parser
 
   CognitoUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
@@ -51,7 +51,7 @@ Resources:
     Properties:
       CustomDomainConfig:
         CertificateArn: ${self:custom.tfOutputs.auth_domain_cert_arn.value}
-      Domain: !Sub "auth.${self:custom.userConfig.frontDomain}"
+      Domain: ${self:custom.tfOutputs.auth_domain.value}
       UserPoolId:
         Ref: CognitoUserPool
 
@@ -59,8 +59,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     DependsOn: CognitoUserPoolDomain
     Properties:
-      Name: !Sub "auth.${self:custom.userConfig.frontDomain}"
-      HostedZoneName: ${self:custom.userConfig.baseDomain}.
+      Name: ${self:custom.tfOutputs.auth_domain.value}
+      HostedZoneName: ${self:custom.tfOutputs.base_domain.value}.
       Type: A
       AliasTarget:
         HostedZoneId: Z2FDTNDATAQYW2 # This is just a hardcode for CloudFront

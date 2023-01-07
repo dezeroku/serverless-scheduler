@@ -1,10 +1,10 @@
-service: ${self:custom.baseConfig.service}
+service: ${self:custom.tfOutputs.service.value}
 frameworkVersion: '3'
 
 provider:
   versionFunctions: false
   name: aws
-  region: ${self:custom.baseConfig.aws_region}
+  region: ${self:custom.tfOutputs.aws_region.value}
   runtime: python3.8
   memorySize: 128
   httpApi:
@@ -98,7 +98,6 @@ package:
   individually: true
 
 custom:
-  baseConfig: ${file(terraform/terraform.tfvars.json)}
   tfOutputs: ${file(.deployment-temp/terraform/outputs.json)}
 
   s3Sync:
