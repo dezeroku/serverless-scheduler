@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNDIR="$(readlink -f "$(dirname "$0")")"
+pushd "${RUNDIR}/.."
+
+export COMPONENT_NAME=common
+
+"${RUNDIR}/../../common/bin/package_lambda_runner.sh"

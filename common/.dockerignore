@@ -1,0 +1,5 @@
+.*
+!common
+!poetry.lock
+!pyproject.toml
+!tests
