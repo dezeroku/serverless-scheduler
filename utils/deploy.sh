@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 function get_front_vars() {
     echo "Obtaining requires variables from SLS"
@@ -50,27 +50,43 @@ HEREDOC
     exit 1
 }
 
+function provision_terraform() {
+    pushd terraform
+
+    terraform apply
+    mkdir -p ../.deployment-temp/terraform
+    terraform output -json > ../.deployment-temp/terraform/outputs.json
+
+    popd
+}
+
 [ -z "$1" ] && usage
 
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
+BUILD_INFRA=false
 BUILD_API=false
 BUILD_FRONT=false
 
+[[ "$1" == "INFRA" ]] && BUILD_INFRA=true
 [[ "$1" == "API" ]] && BUILD_API=true
 [[ "$1" == "FRONT" ]] && BUILD_FRONT=true
-[[ "$1" == "FULL" ]] && BUILD_API=true && BUILD_FRONT=true
+[[ "$1" == "FULL" ]] && BUILD_INFRA=true && BUILD_API=true && BUILD_FRONT=true
 
-if [[ "${BUILD_API}" == "true" ]]; then
-    echo "Starting API deployment"
+if [[ "${BUILD_INFRA}" == "true" ]]; then
+    echo "Provisioning terraform infra"
+    provision_terraform
+
     echo "Creating certs"
     serverless create-cert
 
     echo "Creating domain"
     sls create_domain
+fi
 
+if [[ "${BUILD_API}" == "true" ]]; then
     echo "Packaging Lambdas"
     "${RUNDIR}"/package_lambdas_zips.sh
 
@@ -79,4 +95,8 @@ if [[ "${BUILD_API}" == "true" ]]; then
 fi
 
 # Front is built last, as we need to push values from SLS deployment into it
-[[ "$BUILD_FRONT" == "true" ]] && build_front && upload_front
+
+if [[ "$BUILD_FRONT" == "true" ]]; then
+    build_front
+    upload_front
+fi

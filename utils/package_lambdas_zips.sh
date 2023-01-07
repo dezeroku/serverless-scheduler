@@ -7,9 +7,9 @@ set -euo pipefail
 pushd "${RUNDIR}/.."
 
 # Prepare dir
-DEPLOY_DIR="lambda-deployment-zips"
+DEPLOY_DIR=".deployment-temp/lambda-zips"
 rm -rf "${DEPLOY_DIR}"
-mkdir "${DEPLOY_DIR}"
+mkdir -p "${DEPLOY_DIR}"
 
 function package_service() {
     local service
