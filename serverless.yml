@@ -2,6 +2,7 @@ service: ${self:custom.tfOutputs.service.value}
 frameworkVersion: '3'
 
 provider:
+  stage: ${self:custom.tfOutputs.stage.value}
   versionFunctions: false
   name: aws
   region: ${self:custom.tfOutputs.aws_region.value}
