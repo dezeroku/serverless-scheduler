@@ -37,6 +37,7 @@ resource "aws_apigatewayv2_api" "api" {
       "X-Amzn-Trace-Id"
     ]
     allow_methods = ["OPTIONS", "GET", "POST", "PUT", "DELETE"]
+    max_age       = 300
   }
 }
 
