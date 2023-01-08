@@ -8,21 +8,21 @@ provider:
   runtime: python3.8
   memorySize: 128
   httpApi:
+    id: ${self:custom.tfOutputs.api_gateway_id.value}
+    # TODO: handle authorizer
     # We have a domain anyway
-    disableDefaultEndpoint: true
-    cors: true
-    authorizers:
-      serviceAuthorizer:
-        identitySource: $request.header.Authorization
-        issuerUrl:
-          Fn::Join:
-          - ''
-          - - 'https://cognito-idp.'
-            - '${opt:region, self:provider.region}'
-            - '.amazonaws.com/'
-            - Ref: CognitoUserPool
-        audience:
-          - Ref: CognitoUserPoolClient
+    #authorizers:
+    #  serviceAuthorizer:
+    #    identitySource: $request.header.Authorization
+    #    issuerUrl:
+    #      Fn::Join:
+    #      - ''
+    #      - - 'https://cognito-idp.'
+    #        - '${opt:region, self:provider.region}'
+    #        - '.amazonaws.com/'
+    #        - Ref: CognitoUserPool
+    #    audience:
+    #      - Ref: CognitoUserPoolClient
   iam:
     role:
       statements:
@@ -92,31 +92,8 @@ functions:
 
 plugins:
   - serverless-lift
-  - serverless-domain-manager
-  - serverless-s3-sync
 package:
   individually: true
 
 custom:
   tfOutputs: ${file(.deployment-temp/terraform/outputs.json)}
-
-  s3Sync:
-    # A simple configuration for copying static assets
-    # It also takes care of cleaning up the S3 buckets in 'remove' step
-    - bucketNameKey: FrontBucketId
-      localDir: ./front/build
-  customDomain:
-    # This requires the certificate for domain to be provided
-    domainName: ${self:custom.tfOutputs.api_domain.value}
-    basePath: 'v1'
-    stage: ${sls:stage}
-    createRoute53Record: true
-    endpointType: regional
-    # Run as part of the `deploy`
-    #autoDomain: true
-    apiType: http
-    certificateName: ${self:custom.tfOutputs.api_domain.value}
-resources:
-  - ${file(resources/front-bucket.yml)}
-  - ${file(resources/cognito-user-pool.yml)}
-  - ${file(resources/cloudfront.yml)}

@@ -6,7 +6,9 @@ items-get:
     - httpApi:
         method: get
         path: /items
-        authorizer: serviceAuthorizer
+        authorizer:
+          type: jwt
+          id: ${self:custom.tfOutputs.cognito_authorizer_id.value}
   environment:
     DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
 
@@ -18,7 +20,9 @@ item-create:
     - httpApi:
         method: post
         path: /item/create
-        authorizer: serviceAuthorizer
+        authorizer:
+          type: jwt
+          id: ${self:custom.tfOutputs.cognito_authorizer_id.value}
   environment:
     DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
 
@@ -30,7 +34,9 @@ item-delete:
     - httpApi:
         method: delete
         path: /item/delete/{item_id}
-        authorizer: serviceAuthorizer
+        authorizer:
+          type: jwt
+          id: ${self:custom.tfOutputs.cognito_authorizer_id.value}
   environment:
     DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}
 
@@ -42,6 +48,8 @@ item-update:
     - httpApi:
         method: put
         path: /item/update/{item_id}
-        authorizer: serviceAuthorizer
+        authorizer:
+          type: jwt
+          id: ${self:custom.tfOutputs.cognito_authorizer_id.value}
   environment:
     DYNAMO_DB: ${self:custom.tfOutputs.items_dynamodb_name.value}

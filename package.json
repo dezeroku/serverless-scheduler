@@ -6,9 +6,7 @@
   "license": "MIT",
   "devDependencies": {
     "@boundstate/serverless-finch": "^2.8.2",
-    "serverless-domain-manager": "^6.2.1",
-    "serverless-lift": "^1.1.2",
-    "serverless-s3-sync": "^2.0.0"
+    "serverless-lift": "^1.1.2"
   },
   "dependencies": {
     "serverless": "^3.21.0"

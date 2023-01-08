@@ -9,8 +9,8 @@ cd "${RUNDIR}/.."
 
 serverless remove
 
-sls delete_domain
-
-cd terraform
-
+pushd terraform
 tf destroy
+popd
+
+rm -rf .deployment-temp
