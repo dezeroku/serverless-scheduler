@@ -66,7 +66,7 @@ function getLoginURL() : string {
             + "/oauth2/authorize?client_id="
             + clientPoolID
             + "&response_type=token&scope="
-            + "aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri="
+            + "email+openid+profile&redirect_uri="
             + "https://"
             + frontDomain
             + "/login/cognito-parser"

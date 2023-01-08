@@ -11,13 +11,17 @@ variable "service" {
 }
 
 variable "api_domain" {
-  default = "api.example.com"
+  type = string
 }
 
 variable "front_domain" {
-  default = "monitor.example.com"
+  type = string
 }
 
 variable "route53_cert_zone" {
-  default = "example.com"
+  type = string
+}
+
+variable "api_gateway_api_mapping_key" {
+  type = string
 }
