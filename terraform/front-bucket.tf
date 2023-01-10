@@ -1,4 +1,5 @@
 resource "aws_s3_bucket" "front_bucket" {
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_acl" "front_bucket_acl" {
