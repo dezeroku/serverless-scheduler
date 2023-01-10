@@ -25,3 +25,7 @@ variable "route53_cert_zone" {
 variable "api_gateway_api_mapping_key" {
   type = string
 }
+
+variable "cognito_deletion_protection" {
+  default = "INACTIVE"
+}
