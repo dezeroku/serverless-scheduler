@@ -3,7 +3,7 @@ resource "aws_cognito_user_pool" "pool" {
   username_attributes      = ["email"]
   auto_verified_attributes = ["email"]
 
-  deletion_protection = "ACTIVE"
+  deletion_protection = "INACTIVE"
 
   password_policy {
     # Dummy settings for development
