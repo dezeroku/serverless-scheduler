@@ -6,13 +6,23 @@ set -euo pipefail
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
+function destroy_terraform() {
+    pushd terraform
+
+    suffix=""
+
+    if [ -f "secret-values.tfvars" ]; then
+        suffix="${suffix}-var-file=secret-values.tfvars"
+    fi
+
+    terraform destroy ${suffix}
+
+    popd
+}
 
 # TODO: remove content from front bucket
-
 serverless remove
 
-pushd terraform
-terraform destroy
-popd
+destroy_terraform
 
 rm -rf .deployment-temp
