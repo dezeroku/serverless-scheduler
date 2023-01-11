@@ -12,25 +12,13 @@ function get_front_vars() {
     fi
 }
 
-function set_front_vars() {
+function prepare_front_deployment() {
     get_front_vars
     pushd front
 
-    echo "Updating front/.env with new values"
-    sed -i "s/CLIENT_POOL_ID=.*/CLIENT_POOL_ID=${CLIENT_POOL_ID}/" .env
+    echo "Updating front/build/.env with new values"
+    sed -i "s/CLIENT_POOL_ID: \".*\"/CLIENT_POOL_ID: \"${CLIENT_POOL_ID}\"/" build/env-config.js
 
-    echo "Regenerating front/env-config.js"
-    ./env.sh
-
-    popd
-}
-
-function build_front() {
-    set_front_vars
-    ## Build the actual static front delivery
-    pushd ./front
-    echo "Starting front build"
-    make build
     popd
 }
 
@@ -87,26 +75,23 @@ function provision_terraform_core() {
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
-BUILD_INFRA=false
-BUILD_API=false
-BUILD_FRONT=false
+DEPLOY_INFRA=false
+DEPLOY_API=false
+DEPLOY_FRONT=false
 
-[ -z "${PACKAGE_LAMBDAS:-}" ] && PACKAGE_LAMBDAS="true"
+[[ "$1" == "INFRA" ]] && DEPLOY_INFRA=true
+[[ "$1" == "API" ]] && DEPLOY_API=true
+[[ "$1" == "FRONT" ]] && DEPLOY_FRONT=true
+[[ "$1" == "FULL" ]] && DEPLOY_INFRA=true && DEPLOY_API=true && DEPLOY_FRONT=true
 
-[[ "$1" == "INFRA" ]] && BUILD_INFRA=true
-[[ "$1" == "API" ]] && BUILD_API=true
-[[ "$1" == "FRONT" ]] && BUILD_FRONT=true
-[[ "$1" == "FULL" ]] && BUILD_INFRA=true && BUILD_API=true && BUILD_FRONT=true
-
-if [[ "${BUILD_INFRA}" == "true" ]]; then
+if [[ "${DEPLOY_INFRA}" == "true" ]]; then
     echo "Provisioning terraform infra"
     provision_terraform_core
 fi
 
-if [[ "${BUILD_API}" == "true" ]]; then
-    if [[ "${PACKAGE_LAMBDAS}" == "true" ]]; then
-        echo "Packaging Lambdas"
-        "${RUNDIR}"/package_lambdas_zips.sh
+if [[ "${DEPLOY_API}" == "true" ]]; then
+    if [[ "${BUILD_API:-false}" == "true" ]]; then
+        "${RUNDIR}"/utils/build.sh "API"
     fi
 
     echo "Starting SLS deployment"
@@ -114,12 +99,11 @@ if [[ "${BUILD_API}" == "true" ]]; then
 fi
 
 # Front is built last, as we need to push values from TF deployment into it
-if [[ "$BUILD_FRONT" == "true" ]]; then
-    if [[ "${BUILD_INFRA}" == "false" ]]; then
-        # make sure that proper TF outputs are in place
-        provision_terraform_core
+if [[ "$DEPLOY_FRONT" == "true" ]]; then
+    if [[ "${BUILD_FRONT:-false}" == "true" ]]; then
+        "${RUNDIR}"/utils/build.sh "FRONT"
     fi
 
-    build_front
+    prepare_front_deployment
     upload_front
 fi
