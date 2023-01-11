@@ -25,3 +25,7 @@ repos:
     rev: 3.0.0
     hooks:
       - id: shellcheck
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.77.0
+    hooks:
+      - id: terraform_tflint
