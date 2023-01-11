@@ -28,7 +28,7 @@ variable "api_gateway_api_mapping_key" {
 
 variable "cognito_deletion_protection" {
   default = "INACTIVE"
-  type = string
+  type    = string
 
   validation {
     condition     = length(regexall("^(INACTIVE|ACTIVE)$", var.cognito_deletion_protection)) > 0
