@@ -20,7 +20,6 @@ function destroy_terraform() {
     popd
 }
 
-# TODO: remove content from front bucket
 serverless remove
 
 destroy_terraform
