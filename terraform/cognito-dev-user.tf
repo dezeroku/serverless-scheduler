@@ -4,4 +4,7 @@ resource "aws_cognito_user" "dev_user" {
   username       = var.cognito_dev_user_email
   password       = var.cognito_dev_user_password
   message_action = "SUPPRESS"
+  attributes = {
+    email = var.cognito_dev_user_email
+  }
 }
