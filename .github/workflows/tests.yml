@@ -36,7 +36,7 @@ jobs:
         id: cache-tflint
         with:
           path: /usr/local/bin/tflint
-        key: ${{ runner.os }}-tflint-${{ env.tflint_version }}
+          key: ${{ runner.os }}-tflint-${{ env.tflint_version }}
       #- uses: actions/cache@v3
       #  name: Cache TFLint plugin dir
       #  with:
