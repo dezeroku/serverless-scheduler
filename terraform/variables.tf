@@ -29,3 +29,15 @@ variable "api_gateway_api_mapping_key" {
 variable "cognito_deletion_protection" {
   default = "INACTIVE"
 }
+
+variable "cognito_dev_user_enable" {
+  type = bool
+}
+
+variable "cognito_dev_user_email" {
+  type = string
+}
+
+variable "cognito_dev_user_password" {
+  type = string
+}
