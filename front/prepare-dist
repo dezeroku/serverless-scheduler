@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+# Set up runtime env variables
+./env.sh
+cp env-config.js build

@@ -21,7 +21,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && ./env.sh && cp env-config.js build",
+    "build": "react-scripts build",
+    "prepare-dist": "./prepare-dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
