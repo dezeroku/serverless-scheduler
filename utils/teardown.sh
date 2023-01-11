@@ -6,8 +6,8 @@ set -euo pipefail
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
-function destroy_terraform_core() {
-    pushd terraform/core
+function destroy_terraform() {
+    pushd terraform
 
     suffix=""
 
@@ -22,6 +22,6 @@ function destroy_terraform_core() {
 
 serverless remove
 
-destroy_terraform_core
+destroy_terraform
 
 rm -rf .deployment-temp
