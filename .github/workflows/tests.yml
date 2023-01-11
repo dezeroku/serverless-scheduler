@@ -27,8 +27,26 @@ jobs:
 
   pre-commit:
     runs-on: ubuntu-latest
+    env:
+      tflint_version: v0.44.1
 
     steps:
+      - uses: actions/cache@v3
+        name: Cache TFLint
+        id: cache-tflint
+        with:
+          path: /usr/local/bin/tflint
+        key: ${{ runner.os }}-tflint-${{ env.tflint_version }}
+      #- uses: actions/cache@v3
+      #  name: Cache TFLint plugin dir
+      #  with:
+      #    path: ~/.tflint.d/plugins
+      #    key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}-${{ env.tflint_version }}
+      - uses: terraform-linters/setup-tflint@v3
+        name: Setup TFLint
+        if: steps.cache-tflint.outputs.cache-hit != 'true'
+        with:
+          tflint_version: ${{ env.tflint_version }}
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: pre-commit/action@v3.0.0
