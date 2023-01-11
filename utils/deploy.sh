@@ -43,11 +43,11 @@ function upload_front() {
         exit 1
     fi
 
-    # Deleting like that can cause problems
-    # Overwriting things seems good enough
-    #aws s3 rm "s3://${bucket_name}" --recursive
+    pushd terraform/front
 
-    aws s3 cp ./front/build/ "s3://${bucket_name}" --recursive
+    terraform apply -var-file=../global.tfvars.json -var "front_bucket_name=${bucket_name}"
+
+    popd
 }
 
 function usage() {
@@ -66,12 +66,13 @@ HEREDOC
 function provision_terraform_core() {
     pushd terraform/core/
 
-    suffix=""
+    suffix="-var-file=../global.tfvars.json"
 
     if [ -f "secret-values.tfvars" ]; then
-        suffix="${suffix}-var-file=secret-values.tfvars"
+        suffix="${suffix} -var-file=secret-values.tfvars"
     fi
 
+    # shellcheck disable=SC2086 # Intended globbing
     terraform apply ${suffix}
 
     mkdir -p ../../.deployment-temp/terraform
