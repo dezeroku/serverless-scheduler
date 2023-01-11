@@ -63,8 +63,8 @@ HEREDOC
     exit 1
 }
 
-function provision_terraform() {
-    pushd terraform
+function provision_terraform_core() {
+    pushd terraform/core/
 
     suffix=""
 
@@ -74,8 +74,8 @@ function provision_terraform() {
 
     terraform apply ${suffix}
 
-    mkdir -p ../.deployment-temp/terraform
-    terraform output -json > ../.deployment-temp/terraform/outputs.json
+    mkdir -p ../../.deployment-temp/terraform
+    terraform output -json > ../../.deployment-temp/terraform/outputs.json
 
     popd
 }
@@ -99,7 +99,7 @@ BUILD_FRONT=false
 
 if [[ "${BUILD_INFRA}" == "true" ]]; then
     echo "Provisioning terraform infra"
-    provision_terraform
+    provision_terraform_core
 fi
 
 if [[ "${BUILD_API}" == "true" ]]; then
@@ -116,7 +116,7 @@ fi
 if [[ "$BUILD_FRONT" == "true" ]]; then
     if [[ "${BUILD_INFRA}" == "false" ]]; then
         # make sure that proper TF outputs are in place
-        provision_terraform
+        provision_terraform_core
     fi
 
     build_front
