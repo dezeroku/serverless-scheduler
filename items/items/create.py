@@ -4,7 +4,7 @@ from lambda_decorators import cors_headers, json_schema_validator, load_json_bod
 
 from common import cognito, utils
 from common.json_schemas import item_schema, itemwithid_schema
-from items.schemas import MonitorJobSchema, UserDataSchema
+from items.models import MonitorJob, UserData
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,7 +28,7 @@ def generate_next_id(user_data):
 
 def get_monitor_job_with_id(body, next_id):
     body["id"] = next_id
-    return MonitorJobSchema().load(body)
+    return MonitorJob(**body)
 
 
 @cors_headers
@@ -56,7 +56,7 @@ def handler(table, user, payload):
     # Extend the current data assigned to a user
     # with new monitor entry
     db_data = table.get_item(Key={"id": user})["Item"]
-    user_data = UserDataSchema().load(db_data)
+    user_data = UserData(**db_data)
 
     # Doing it this way is rather ugly...
     # There is a risk of conflicting IDs in case too many requests for
@@ -64,7 +64,7 @@ def handler(table, user, payload):
     # Not a big change for that, but it WILL be annoying
     next_id = generate_next_id(user_data)
     to_add = get_monitor_job_with_id(payload, next_id)
-    to_add_json = MonitorJobSchema().dump(to_add)
+    to_add_json = to_add.dict()
     logger.info(to_add_json)
 
     result = table.update_item(

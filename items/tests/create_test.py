@@ -3,7 +3,6 @@ from moto import mock_dynamodb
 
 from items.create import create, generate_next_id, get_monitor_job_with_id, handler
 from items.models import MonitorJob
-from items.schemas import MonitorJobSchema, UserDataSchema
 
 
 # TODO: The cases below should be also parametrized with pytest.mark.parametrize
@@ -21,14 +20,17 @@ def test_get_monitor_job_with_id(example_monitor_job_json):
     assert temp.id == 5
 
 
-def test_creation_handler(mock_db, table_name, db_user):
+def test_creation_handler(mock_db, table_name, db_user, helpers):
     to_create = MonitorJob(
-        id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
+        **helpers.MonitorJobJSONFactory(
+            id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
+        )
     )
 
     table = mock_db.Table(table_name)
 
-    payload = MonitorJobSchema().dump(to_create)
+    payload = to_create.dict()
+    print(payload)
 
     response = handler(table, db_user, payload)
 
@@ -42,14 +44,16 @@ def test_creation_handler(mock_db, table_name, db_user):
 
 def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_user):
     to_create = MonitorJob(
-        id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
+        **helpers.MonitorJobJSONFactory(
+            id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
+        )
     )
 
     table = mock_db.Table(table_name)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
 
-    payload = MonitorJobSchema().dump(to_create)
+    payload = to_create.dict()
 
     event = helpers.EventFactory(body=payload, cognitoUsername=db_user)
     context = None
