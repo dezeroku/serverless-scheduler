@@ -3,7 +3,7 @@ import logging
 from lambda_decorators import cors_headers
 
 from common import cognito, utils
-from items.schemas import UserDataSchema
+from items.models import UserData
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -23,8 +23,7 @@ def handler(table, user, item_id):
     # Delete entry (assigned to user), identified by item_id, from DB
 
     result = table.get_item(Key={"id": user})["Item"]
-    schema = UserDataSchema()
-    user_data = schema.load(result)
+    user_data = UserData(**result)
 
     length = len(user_data.monitors)
     index = [x for x in range(0, length) if user_data.monitors[x].id == item_id]

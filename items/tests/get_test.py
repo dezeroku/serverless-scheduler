@@ -3,7 +3,6 @@ import json
 from common import utils
 from items.get import get, handler
 from items.models import MonitorJob, UserData
-from items.schemas import MonitorJobSchema, UserDataSchema
 
 
 def test_initial_data_addition(empty_mock_db, table_name):
@@ -18,7 +17,7 @@ def test_initial_data_addition(empty_mock_db, table_name):
     response = handler(table, user)
 
     result = table.get_item(Key={"id": user})["Item"]
-    user_data_fetched = UserDataSchema().load(result)
+    user_data_fetched = UserData(**result)
 
     assert response == user_data_fetched.monitors
     assert user_data_fetched.id == user
@@ -40,7 +39,7 @@ def test_initial_data_addition_event(helpers, monkeypatch, empty_mock_db, table_
     response = get(event, context)
 
     result = table.get_item(Key={"id": user})["Item"]
-    user_data_fetched = UserDataSchema().load(result)
+    user_data_fetched = UserData(**result)
 
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == user_data_fetched.monitors
@@ -52,8 +51,8 @@ def test_data_fetch_empty(empty_mock_db, table_name):
     user = "existing-user"
     table = empty_mock_db.Table(table_name)
 
-    user_data = UserDataSchema().load({"id": user})
-    to_save = UserDataSchema().dump(user_data)
+    user_data = UserData(id=user)
+    to_save = user_data.dict()
     table.put_item(Item=to_save)
 
     response = handler(table, user)
@@ -66,8 +65,8 @@ def test_data_fetch_empty_event(helpers, monkeypatch, empty_mock_db, table_name)
     user = "existing-user"
     table = empty_mock_db.Table(table_name)
 
-    user_data = UserDataSchema().load({"id": user})
-    to_save = UserDataSchema().dump(user_data)
+    user_data = UserData(id=user)
+    to_save = user_data.dict()
     table.put_item(Item=to_save)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
@@ -84,15 +83,17 @@ def test_data_fetch_single_item(empty_mock_db, table_name):
     user = "existing-user"
     table = empty_mock_db.Table(table_name)
 
-    monitor = MonitorJob(12, True, 5, "http://example.com")
-    user_data = UserData(user, [monitor])
+    monitor = MonitorJob(
+        id=12, make_screenshots=True, sleep_time=5, url="http://example.com"
+    )
+    user_data = UserData(id=user, monitors=[monitor])
 
-    to_save = UserDataSchema().dump(user_data)
+    to_save = user_data.dict()
     table.put_item(Item=to_save)
 
     response = handler(table, user)
 
-    dumped = MonitorJobSchema(many=True).dump(user_data.monitors)
+    dumped = list(map(lambda x: x.dict(), user_data.monitors))
 
     assert response == utils.replace_decimals(dumped)
 
@@ -101,10 +102,12 @@ def test_data_fetch_single_item_event(helpers, monkeypatch, empty_mock_db, table
     user = "existing-user"
     table = empty_mock_db.Table(table_name)
 
-    monitor = MonitorJob(12, True, 5, "http://example.com")
-    user_data = UserData(user, [monitor])
+    monitor = MonitorJob(
+        id=12, make_screenshots=True, sleep_time=5, url="http://example.com"
+    )
+    user_data = UserData(id=user, monitors=[monitor])
 
-    to_save = UserDataSchema().dump(user_data)
+    to_save = user_data.dict()
     table.put_item(Item=to_save)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
@@ -112,7 +115,7 @@ def test_data_fetch_single_item_event(helpers, monkeypatch, empty_mock_db, table
     context = None
     response = get(event, context)
 
-    dumped = MonitorJobSchema(many=True).dump(user_data.monitors)
+    dumped = list(map(lambda x: x.dict(), user_data.monitors))
 
     assert json.loads(response["body"]) == utils.replace_decimals(dumped)
     assert response["statusCode"] == 200

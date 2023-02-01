@@ -4,7 +4,7 @@ from lambda_decorators import cors_headers, json_http_resp, json_schema_validato
 
 from common import cognito, utils
 from common.json_schemas import itemwithid_schema
-from items.schemas import UserDataSchema
+from items.models import UserData
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -39,19 +39,18 @@ def handler(table, user):
     # The case should be probably similar for user removal, but it's not as
     # important for now
     # Row creation if needed
-    schema = UserDataSchema()
     if "Item" not in result:
         logger.info("HACK: putting the initial data for %s in the table", user)
 
-        user_data = schema.load({"id": user})
-        to_save = schema.dump(user_data)
+        user_data = UserData(id=user)
+        to_save = user_data.dict()
         table.put_item(Item=to_save)
 
         # Doing it in such an ugly way, to make sure that the data is in place
         result = table.get_item(Key={"id": user})
-        user_data = schema.load(result["Item"])
+        user_data = UserData(**result["Item"])
     else:
-        user_data = schema.load(result["Item"])
+        user_data = UserData(**result["Item"])
 
-    to_return = UserDataSchema().dump(user_data)
+    to_return = user_data.dict()
     return utils.replace_decimals(to_return["monitors"])

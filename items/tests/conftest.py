@@ -5,14 +5,13 @@ import pytest
 from moto import mock_dynamodb
 
 from items.models import MonitorJob, UserData
-from items.schemas import MonitorJobSchema, UserDataSchema
 
 
 @pytest.fixture
 def example_user_data(
     example_monitor_job,
 ):
-    temp = UserDataSchema().load(Helpers().UserDataJSONFactory(id="example_user"))
+    temp = UserData(**Helpers().UserDataJSONFactory(id="example_user"))
     temp.monitors.append(example_monitor_job)
 
     return temp
@@ -20,12 +19,12 @@ def example_user_data(
 
 @pytest.fixture
 def example_empty_user_data():
-    return UserDataSchema().load(Helpers().UserDataJSONFactory(id="example_user"))
+    return UserData(**Helpers().UserDataJSONFactory(id="example_user"))
 
 
 @pytest.fixture
 def example_monitor_job():
-    return MonitorJobSchema().load(Helpers().MonitorJobJSONFactory())
+    return MonitorJob(**Helpers().MonitorJobJSONFactory())
 
 
 @pytest.fixture
@@ -60,8 +59,8 @@ class Helpers:
     ):
         return {
             "id": id,
-            "makeScreenshots": make_screenshots,
-            "sleepTime": sleep_time,
+            "make_screenshots": make_screenshots,
+            "sleep_time": sleep_time,
             "url": url,
         }
 
@@ -131,8 +130,8 @@ class Helpers:
     @staticmethod
     def insert_mock_user(table, user):
         # Set up dummy user
-        user_data = UserDataSchema().load({"id": user})
-        to_save = UserDataSchema().dump(user_data)
+        user_data = UserData(id=user)
+        to_save = user_data.dict()
         table.put_item(Item=to_save)
 
 

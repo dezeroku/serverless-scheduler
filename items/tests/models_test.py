@@ -1,8 +1,7 @@
 import pytest
-from marshmallow.exceptions import ValidationError
+from pydantic import ValidationError
 
 from items.models import MonitorJob, UserData
-from items.schemas import MonitorJobSchema, UserDataSchema
 
 # TODO: Make the tests below work with fixture definitions from conftest
 # def example_empty_user_data_json(helpers):
@@ -60,12 +59,8 @@ from items.schemas import MonitorJobSchema, UserDataSchema
     ],
 )
 def test_monitor_job_schema_load_url_validates(in_data, helpers):
-    schema = MonitorJobSchema()
-    try:
-        assert schema.load(helpers.MonitorJobJSONFactory(**in_data))
-        assert False
-    except ValidationError as e:
-        assert "Not a valid URL" in str(e)
+    with pytest.raises(ValidationError):
+        assert MonitorJob(**helpers.MonitorJobJSONFactory(**in_data))
 
 
 @pytest.mark.parametrize(
@@ -80,9 +75,29 @@ def test_monitor_job_schema_load_url_validates(in_data, helpers):
     ],
 )
 def test_monitor_job_schema_load_negative_sleep_time_error(in_data, helpers):
-    schema = MonitorJobSchema()
     try:
-        assert schema.load(helpers.MonitorJobJSONFactory(**in_data))
+        assert MonitorJob(**helpers.MonitorJobJSONFactory(**in_data))
         assert False
     except ValidationError as e:
         assert "sleepTime must be a positive number" in str(e)
+
+
+@pytest.mark.parametrize(
+    "in_data",
+    [
+        {
+            "id": 1,
+            "make_screenshots": True,
+            "sleep_time": 1,
+            "url": "http://example.com",
+        }
+    ],
+)
+def test_monitor_job_schema_proper_load(in_data, helpers):
+    data = MonitorJob(**helpers.MonitorJobJSONFactory(**in_data))
+    assert data.dict() == {
+        "id": 1,
+        "make_screenshots": True,
+        "sleep_time": 1,
+        "url": "http://example.com",
+    }
