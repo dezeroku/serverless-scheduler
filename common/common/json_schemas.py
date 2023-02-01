@@ -4,11 +4,11 @@ item_schema = {
     "$schema": "http://json-schema.org/schema#",
     "description": "Single monitoring job",
     "properties": {
-        "makeScreenshots": {"type": "boolean"},
-        "sleepTime": {"type": "integer"},
+        "make_screenshots": {"type": "boolean"},
+        "sleep_time": {"type": "integer"},
         "url": {"type": "string"},
     },
-    "required": ["url", "sleepTime", "makeScreenshots"],
+    "required": ["url", "sleep_time", "make_screenshots"],
     "type": "object",
 }
 
@@ -19,11 +19,11 @@ itemwithid_schema = {
             "$schema": "http://json-schema.org/schema#",
             "description": "Single monitoring job",
             "properties": {
-                "makeScreenshots": {"type": "boolean"},
-                "sleepTime": {"type": "integer"},
+                "make_screenshots": {"type": "boolean"},
+                "sleep_time": {"type": "integer"},
                 "url": {"type": "string"},
             },
-            "required": ["url", "sleepTime", "makeScreenshots"],
+            "required": ["url", "sleep_time", "make_screenshots"],
             "type": "object",
         },
         {
