@@ -5,8 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 type ItemProps = {
     id : number;
     url : string;
-    sleepTime : number;
-    makeScreenshots : boolean;
+    sleep_time : number;
+    make_screenshots : boolean;
 }
 
 type ItemState = {
@@ -19,8 +19,8 @@ class Item extends React.Component<ItemProps, ItemState> {
         return (
             <div className="Item">
 	            <a href={this.props.url}>{this.props.url}</a>|
-                sleep time: {Math.ceil(this.props.sleepTime / 60)} minutes|
-	            diff screenshots: {this.props.makeScreenshots.toString()}
+                sleep time: {Math.ceil(this.props.sleep_time / 60)} minutes|
+	            diff screenshots: {this.props.make_screenshots.toString()}
             </div>
         );
     }

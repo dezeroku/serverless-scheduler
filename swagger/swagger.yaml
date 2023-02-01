@@ -135,15 +135,15 @@ components:
       description: Single monitoring job
       required:
         - url
-        - sleepTime
-        - makeScreenshots
+        - sleep_time
+        - make_screenshots
       type: object
       properties:
         url:
           type: string
-        sleepTime:
+        sleep_time:
           type: integer
-        makeScreenshots:
+        make_screenshots:
           type: boolean
     itemWithId:
       allOf:

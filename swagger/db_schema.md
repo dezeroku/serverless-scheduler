@@ -5,8 +5,8 @@ monitors: [monitor]
 monitor:
 id -> int
 url -> string
-sleepTime -> int
-makeScreenshots -> bool
+sleep_time -> int
+make_screenshots -> bool
 
 
 To consider:

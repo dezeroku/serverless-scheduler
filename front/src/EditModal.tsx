@@ -26,8 +26,8 @@ function EditModal (props : EditModalProps) {
 	    let json : ItemProps["props"] = {
 	        id: parseInt(form.id.value),
 	        url: form.url.value,
-	        sleepTime: parseInt(form.sleepTime.value),
-	        makeScreenshots: form.makeScreenshots.checked,
+	        sleep_time: parseInt(form.sleep_time.value),
+	        make_screenshots: form.make_screenshots.checked,
 	    }
 
 	    setLoading(true);
@@ -45,8 +45,8 @@ function EditModal (props : EditModalProps) {
 	    let json : ItemProps["props"] = {
 	        id: id,
 	        url: "",
-	        sleepTime: 0,
-	        makeScreenshots: false,
+	        sleep_time: 0,
+	        make_screenshots: false,
 	    }
 
 	    setLoading(true);
@@ -67,8 +67,8 @@ function EditModal (props : EditModalProps) {
 	        temp = {
 		        id: 0,
 		        url: "",
-		        sleepTime: 60,
-		        makeScreenshots: true}
+		        sleep_time: 60,
+		        make_screenshots: true}
 	    } else {
 	        temp = item
 	    }
@@ -89,10 +89,10 @@ function EditModal (props : EditModalProps) {
 		                    <Form.Text className="text-muted">
 		                    </Form.Text>
 		                </Form.Group>
-		                <Form.Group controlId="sleepTime">
+		                <Form.Group controlId="sleep_time">
 		                    <Form.Label>How often (in minutes) should the page be checked</Form.Label>
 		                    <Form.Control as="select">
-                                <option>{Math.ceil(temp.sleepTime/60)}</option>
+                                <option>{Math.ceil(temp.sleep_time/60)}</option>
 		                        <option>2</option>
 		                        <option>5</option>
 		                        <option>10</option>
@@ -106,8 +106,8 @@ function EditModal (props : EditModalProps) {
 		                        <option>1440</option>
 		                    </Form.Control>
 		                </Form.Group>
-		                <Form.Group controlId="makeScreenshots">
-		                    <Form.Check type="checkbox" label="Make screenshots" defaultChecked={temp.makeScreenshots}/>
+		                <Form.Group controlId="make_screenshots">
+		                    <Form.Check type="checkbox" label="Make screenshots" defaultChecked={temp.make_screenshots}/>
 		                    <Form.Label>When checked, screenshots of changes will be attached to notification</Form.Label>
 		                </Form.Group>
 		                <Button variant="primary" type="submit">

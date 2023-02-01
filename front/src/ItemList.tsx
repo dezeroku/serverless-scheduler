@@ -32,8 +32,8 @@ function ItemList (props : ItemListProps) {
 					key={item.id}
 					id={item.id}
 					url={item.url}
-					sleepTime={item.sleepTime}
-					makeScreenshots={item.makeScreenshots} />
+					sleep_time={item.sleep_time}
+					make_screenshots={item.make_screenshots} />
 			</ListGroup.Item>
 		)
     }
