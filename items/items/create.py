@@ -76,8 +76,7 @@ def handler(table, user, payload):
         ReturnValues="UPDATED_NEW",
     )
 
-    status_code = result["ResponseMetadata"]["HTTPStatusCode"]
-    if status_code == 200:
+    if (status_code := result["ResponseMetadata"]["HTTPStatusCode"]) == 200:
         body = utils.replace_decimals(to_add_json)
     else:
         body = {}
