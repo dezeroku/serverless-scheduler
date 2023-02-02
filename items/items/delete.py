@@ -26,9 +26,10 @@ def handler(table, user, item_id):
     user_data = UserData(**result)
 
     length = len(user_data.monitors)
-    index = [x for x in range(0, length) if user_data.monitors[x].id == item_id]
 
-    if not index:
+    if not (
+        index := [x for x in range(0, length) if user_data.monitors[x].id == item_id]
+    ):
         logger.debug("Entry not found for id: %s", item_id)
         return {"statusCode": 404}
 

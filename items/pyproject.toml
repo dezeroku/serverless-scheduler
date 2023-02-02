@@ -23,9 +23,16 @@ pylint = "^2.15.9"
 [tool.coverage.run]
 omit = ["tests*"]
 
+[tool.pylint.MASTER]
+py-version = "3.8"
+extension-pkg-whitelist = "pydantic"
+load-plugins = [
+  "pylint.extensions.code_style",
+  "pylint.extensions.typing",
+]
+
 [tool.pylint.'MESSAGES CONTROL']
-# Ignore the docstring warnings
-disable = 'C0114,C0115,C0116'
+disable = 'missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods'
 
 [tool.mypy]
 plugins = "pydantic.mypy"

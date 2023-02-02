@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from pydantic import BaseModel, Extra, Field, HttpUrl, ValidationError, validator
+from pydantic import BaseModel, Extra, HttpUrl, validator
 
 
 class MonitorJob(BaseModel):
@@ -14,6 +14,8 @@ class MonitorJob(BaseModel):
 
     @validator("sleep_time")
     def sleep_time_must_be_positive(cls, v):
+        # pylint: disable=no-self-argument
+        # pylint: disable=invalid-name
         if v < 1:
             raise ValueError("sleepTime must be a positive number")
         return v
