@@ -1,10 +1,12 @@
 import logging
+from typing import List
 
+from boto3.dynamodb.conditions import Key
 from lambda_decorators import cors_headers, json_http_resp, json_schema_validator
 
 from common import cognito, utils
 from common.json_schemas import itemwithid_schema
-from items.models import UserData
+from items.models import MonitorJob
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -26,31 +28,19 @@ def get(event, context):
     return handler(table, user)
 
 
-def handler(table, user):
-    # Return the data kept in DB unser user ID
+def handler(table, user, pagination=True):
+    # Return the data kept in DB for user ID
+    # By default returns ALL the results, taking pagination into account
+    response = table.query(KeyConditionExpression=Key("user_id").eq(user))
 
-    # Actually getting the data from a row:
-    result = table.get_item(Key={"id": user})
+    monitor_jobs: List[MonitorJob] = response["Items"]
 
-    # This is a big hack
-    # such a logic should be handled on the Lambda level
-    # This Lambda should listen to signup events of the cognito pool
-    # and create rows as needed accordingly
-    # The case should be probably similar for user removal, but it's not as
-    # important for now
-    # Row creation if needed
-    if "Item" not in result:
-        logger.info("HACK: putting the initial data for %s in the table", user)
+    if pagination:
+        while "LastEvaluatedKey" in response:
+            response = table.query(
+                KeyConditionExpression=Key("user_id").eq(user),
+                ExclusiveStartKey=response["LastEvaluatedKey"],
+            )
+            monitor_jobs.extend(response["Items"])
 
-        user_data = UserData(id=user)
-        to_save = user_data.dict()
-        table.put_item(Item=to_save)
-
-        # Doing it in such an ugly way, to make sure that the data is in place
-        result = table.get_item(Key={"id": user})
-        user_data = UserData(**result["Item"])
-    else:
-        user_data = UserData(**result["Item"])
-
-    to_return = user_data.dict()
-    return utils.replace_decimals(to_return["monitors"])
+    return utils.replace_decimals(monitor_jobs)
