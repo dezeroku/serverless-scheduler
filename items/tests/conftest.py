@@ -1,35 +1,16 @@
 import copy
 
 import boto3
+import mypy_boto3_dynamodb
 import pytest
 from moto import mock_dynamodb
 
-from items.models import MonitorJob, UserData
-
-
-@pytest.fixture
-def example_user_data(
-    example_monitor_job,
-):
-    temp = UserData(**Helpers().UserDataJSONFactory(id="example_user"))
-    temp.monitors.append(example_monitor_job)
-
-    return temp
-
-
-@pytest.fixture
-def example_empty_user_data():
-    return UserData(**Helpers().UserDataJSONFactory(id="example_user"))
+from items.models import MonitorJob
 
 
 @pytest.fixture
 def example_monitor_job():
     return MonitorJob(**Helpers().MonitorJobJSONFactory())
-
-
-@pytest.fixture
-def example_empty_user_data_json():
-    return Helpers().UserDataJSONFactory(id="example_user")
 
 
 @pytest.fixture
@@ -39,26 +20,17 @@ def example_monitor_job_json():
 
 class Helpers:
     @staticmethod
-    def UserDataJSONFactory(
-        *,
-        id,
-        monitors=[],
-    ):
-        return {
-            "id": id,
-            "monitors": monitors,
-        }
-
-    @staticmethod
     def MonitorJobJSONFactory(
         *,
-        id=1,
+        user_id="example_user",
+        job_id=1,
         make_screenshots=True,
         sleep_time=1,
         url="http://example.com",
     ):
         return {
-            "id": id,
+            "user_id": user_id,
+            "job_id": job_id,
             "make_screenshots": make_screenshots,
             "sleep_time": sleep_time,
             "url": url,
@@ -117,22 +89,21 @@ class Helpers:
         return event
 
     @staticmethod
-    def empty_mock_table(dynamodb, table_name):
+    def empty_mock_table(dynamodb: mypy_boto3_dynamodb.ServiceResource, table_name):
         table = dynamodb.create_table(
             TableName=table_name,
-            KeySchema=[{"AttributeName": "id", "KeyType": "HASH"}],
-            AttributeDefinitions=[{"AttributeName": "id", "AttributeType": "S"}],
+            KeySchema=[
+                {"AttributeName": "user_id", "KeyType": "HASH"},
+                {"AttributeName": "job_id", "KeyType": "RANGE"},
+            ],
+            AttributeDefinitions=[
+                {"AttributeName": "user_id", "AttributeType": "S"},
+                {"AttributeName": "job_id", "AttributeType": "N"},
+            ],
             BillingMode="PAY_PER_REQUEST",
         )
 
         return table
-
-    @staticmethod
-    def insert_mock_user(table, user):
-        # Set up dummy user
-        user_data = UserData(id=user)
-        to_save = user_data.dict()
-        table.put_item(Item=to_save)
 
 
 @pytest.fixture
@@ -197,7 +168,7 @@ def empty_mock_db(table_name):
 @pytest.fixture
 def mock_db_table(table_name):
     with mock_dynamodb():
-        dynamodb = boto3.resource("dynamodb")
+        dynamodb: mypy_boto3_dynamodb.ServiceResource = boto3.resource("dynamodb")
 
         table = Helpers.empty_mock_table(dynamodb, table_name)
 
@@ -210,7 +181,5 @@ def mock_db(db_user, table_name):
         dynamodb = boto3.resource("dynamodb")
 
         table = Helpers.empty_mock_table(dynamodb, table_name)
-
-        Helpers.insert_mock_user(table, db_user)
 
         yield dynamodb
