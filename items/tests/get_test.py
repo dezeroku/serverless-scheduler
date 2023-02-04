@@ -2,120 +2,95 @@ import json
 
 from common import utils
 from items.get import get, handler
-from items.models import MonitorJob, UserData
+from items.models import MonitorJob
 
 
-def test_initial_data_addition(empty_mock_db, table_name):
-    user = "non-existing-user"
+def test_data_fetch_empty(empty_mock_db, table_name, db_user):
     table = empty_mock_db.Table(table_name)
 
-    # Make sure that item does not exist
-    result = table.get_item(Key={"id": user})
-    if "Item" in result:
-        assert False
+    response = handler(table, db_user)
 
-    response = handler(table, user)
-
-    result = table.get_item(Key={"id": user})["Item"]
-    user_data_fetched = UserData(**result)
-
-    assert response == user_data_fetched.monitors
-    assert user_data_fetched.id == user
-    assert not user_data_fetched.monitors
+    assert response == []
 
 
-def test_initial_data_addition_event(helpers, monkeypatch, empty_mock_db, table_name):
-    user = "non-existing-user"
-    table = empty_mock_db.Table(table_name)
-
-    # Make sure that item does not exist
-    result = table.get_item(Key={"id": user})
-    if "Item" in result:
-        assert False
+def test_data_fetch_empty_event(
+    helpers, monkeypatch, empty_mock_db, table_name, db_user
+):
+    empty_mock_db.Table(table_name)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
-    event = helpers.EventFactory(cognitoUsername=user)
-    context = None
-    response = get(event, context)
-
-    result = table.get_item(Key={"id": user})["Item"]
-    user_data_fetched = UserData(**result)
-
-    assert response["statusCode"] == 200
-    assert json.loads(response["body"]) == user_data_fetched.monitors
-    assert user_data_fetched.id == user
-    assert not user_data_fetched.monitors
-
-
-def test_data_fetch_empty(empty_mock_db, table_name):
-    user = "existing-user"
-    table = empty_mock_db.Table(table_name)
-
-    user_data = UserData(id=user)
-    to_save = user_data.dict()
-    table.put_item(Item=to_save)
-
-    response = handler(table, user)
-
-    assert response == user_data.monitors
-    assert not response
-
-
-def test_data_fetch_empty_event(helpers, monkeypatch, empty_mock_db, table_name):
-    user = "existing-user"
-    table = empty_mock_db.Table(table_name)
-
-    user_data = UserData(id=user)
-    to_save = user_data.dict()
-    table.put_item(Item=to_save)
-
-    monkeypatch.setenv("DYNAMO_DB", table_name)
-    event = helpers.EventFactory(cognitoUsername=user)
+    event = helpers.EventFactory(cognitoUsername=db_user)
     context = None
     response = get(event, context)
 
     assert response["statusCode"] == 200
-    assert json.loads(response["body"]) == user_data.monitors
-    assert not json.loads(response["body"])
+    assert json.loads(response["body"]) == []
 
 
-def test_data_fetch_single_item(empty_mock_db, table_name):
-    user = "existing-user"
+def test_data_fetch_single_item(empty_mock_db, table_name, db_user, helpers):
     table = empty_mock_db.Table(table_name)
 
-    monitor = MonitorJob(
-        id=12, make_screenshots=True, sleep_time=5, url="http://example.com"
-    )
-    user_data = UserData(id=user, monitors=[monitor])
+    monitor_job = MonitorJob(**helpers.MonitorJobJSONFactory(user_id=db_user))
 
-    to_save = user_data.dict()
+    to_save = monitor_job.dict()
     table.put_item(Item=to_save)
 
-    response = handler(table, user)
+    response = handler(table, db_user)
 
-    dumped = list(map(lambda x: x.dict(), user_data.monitors))
-
+    dumped = [monitor_job.dict()]
     assert response == utils.replace_decimals(dumped)
 
 
-def test_data_fetch_single_item_event(helpers, monkeypatch, empty_mock_db, table_name):
-    user = "existing-user"
+def test_data_fetch_single_item_event(
+    helpers, monkeypatch, empty_mock_db, table_name, db_user
+):
     table = empty_mock_db.Table(table_name)
 
-    monitor = MonitorJob(
-        id=12, make_screenshots=True, sleep_time=5, url="http://example.com"
-    )
-    user_data = UserData(id=user, monitors=[monitor])
+    monitor_job = MonitorJob(**helpers.MonitorJobJSONFactory(user_id=db_user))
 
-    to_save = user_data.dict()
+    to_save = monitor_job.dict()
     table.put_item(Item=to_save)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
-    event = helpers.EventFactory(cognitoUsername=user)
+    event = helpers.EventFactory(cognitoUsername=db_user)
     context = None
     response = get(event, context)
 
-    dumped = list(map(lambda x: x.dict(), user_data.monitors))
+    dumped = [monitor_job.dict()]
 
-    assert json.loads(response["body"]) == utils.replace_decimals(dumped)
     assert response["statusCode"] == 200
+    assert json.loads(response["body"]) == utils.replace_decimals(dumped)
+
+
+# These tests take a long time and aren't really worth the hassle to run them
+# TODO: Is there a simpler way to test pagination?
+# def test_data_fetch_pagination_fail(empty_mock_db, table_name, db_user, helpers):
+#    table = empty_mock_db.Table(table_name)
+#
+#    monitor_job = MonitorJob(
+#        **helpers.MonitorJobJSONFactory(user_id=db_user, job_id=0)
+#    )
+#    for i in range(13000):
+#        monitor_job.job_id = i
+#        to_save = monitor_job.dict()
+#        table.put_item(Item=to_save)
+#
+#    response = handler(table, db_user, pagination=False)
+#
+#    assert len(response) != 13000
+#
+#
+# def test_data_fetch_pagination_works(empty_mock_db, table_name, db_user, helpers):
+#    table = empty_mock_db.Table(table_name)
+#
+#    monitor_job = MonitorJob(
+#        **helpers.MonitorJobJSONFactory(user_id=db_user, job_id=0)
+#    )
+#    for i in range(13000):
+#        monitor_job.job_id = i
+#        to_save = monitor_job.dict()
+#        table.put_item(Item=to_save)
+#
+#    response = handler(table, db_user)
+#
+#    assert len(response) == 13000
