@@ -1,9 +1,9 @@
 import logging
 
+import botocore.exceptions
 from lambda_decorators import cors_headers
 
 from common import cognito, utils
-from items.models import UserData
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -22,22 +22,20 @@ def delete(event, context):
 def handler(table, user, item_id):
     # Delete entry (assigned to user), identified by item_id, from DB
 
-    result = table.get_item(Key={"id": user})["Item"]
-    user_data = UserData(**result)
-
-    length = len(user_data.monitors)
-
-    if not (
-        index := [x for x in range(0, length) if user_data.monitors[x].id == item_id]
-    ):
-        logger.debug("Entry not found for id: %s", item_id)
-        return {"statusCode": 404}
-
-    index = index[0]
-
-    query = f"REMOVE monitors[{index}]"
-
-    # Need to handle errors?
-    table.update_item(Key={"id": user}, UpdateExpression=query)
+    # ConditionExpression is a dummy way to check if deletion happened or not
+    # TODO: is it really cheaper (less operations) than checking via read?
+    # Do we even need to do it?
+    try:
+        table.delete_item(
+            Key={"user_id": user, "job_id": item_id},
+            ConditionExpression="(attribute_exists(user_id))",
+        )
+    except botocore.exceptions.ClientError as e:
+        # TODO: this just looks... wrong
+        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            return {"statusCode": 404}
+        else:
+            logger.debug(e)
+            return {"statusCode": 500}
 
     return {"statusCode": 200}

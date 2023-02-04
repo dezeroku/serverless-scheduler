@@ -9,6 +9,7 @@ python = "^3.8"
 lambda-decorators = "^0.6.0"
 jsonschema = "^4.7.2"
 pydantic = "^1.10.4"
+boto3-stubs = {extras = ["dynamodb"], version = "^1.26.64"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

@@ -4,7 +4,8 @@ from pydantic import BaseModel, Extra, HttpUrl, validator
 
 
 class MonitorJob(BaseModel):
-    id: Union[int, None]  # pylint: disable=invalid-name
+    user_id: str
+    job_id: Union[int, None]  # pylint: disable=invalid-name
     make_screenshots: bool = False
     sleep_time: int
     url: HttpUrl
@@ -21,9 +22,10 @@ class MonitorJob(BaseModel):
         return v
 
 
-class UserData(BaseModel):
-    id: Union[str, None]  # pylint: disable=invalid-name
-    monitors: List[MonitorJob] = []
-
-    class Config:
-        extra = Extra.forbid
+# class UserData(BaseModel):
+#    user_id: Union[str, None]  # pylint: disable=invalid-name
+#    monitors: List[MonitorJob] = []
+#
+#    class Config:
+#        extra = Extra.forbid
+#

@@ -1,61 +1,18 @@
 import pytest
 from pydantic import ValidationError
 
-from items.models import MonitorJob, UserData
-
-# TODO: Make the tests below work with fixture definitions from conftest
-# def example_empty_user_data_json(helpers):
-#    return helpers.UserDataJSONFactory(id="example_user")
-#
-#
-# def example_monitor_job_json(helpers):
-#    return helpers.MonitorJobJSONFactory()
-#
-#
-# @pytest.mark.parametrize("in_data",
-#                         [
-#                             example_monitor_job_json(),
-#                             example_empty_user_data_json()
-#                         ])
-# @pytest.mark.parametrize(
-#    "schema, cls",
-#    [
-#        (MonitorJobSchema(), MonitorJob),
-#        (UserDataSchema(), UserData),
-#    ],
-# )
-# def test_schema_load_to_object(in_data, schema, cls):
-#    assert isinstance(schema.load(in_data), cls)
-#
-#
-# @pytest.mark.parametrize("in_data",
-#                         [
-#                             example_monitor_job_json(),
-#                             example_empty_user_data_json()
-#                         ])
-# @pytest.mark.parametrize(
-#    "schema",
-#    [
-#        (MonitorJobSchema()),
-#        (UserDataSchema()),
-#    ],
-# )
-# def test_schema_dump(in_data, schema):
-#    data = schema.load(in_data)
-#    dumped = schema.dump(data)
-#
-#    assert dumped == in_data
+from items.models import MonitorJob
 
 
 @pytest.mark.parametrize(
     "in_data",
     [
         {
-            "id": 1,
-            "make_screenshots": True,
-            "sleep_time": 1,
             "url": "broken-url",
-        }
+        },
+        {
+            "url": "http://no-tld",
+        },
     ],
 )
 def test_monitor_job_schema_load_url_validates(in_data, helpers):
@@ -67,14 +24,14 @@ def test_monitor_job_schema_load_url_validates(in_data, helpers):
     "in_data",
     [
         {
-            "id": 1,
-            "make_screenshots": True,
             "sleep_time": -1,
-            "url": "http://example.com",
-        }
+        },
+        {
+            "sleep_time": 0,
+        },
     ],
 )
-def test_monitor_job_schema_load_negative_sleep_time_error(in_data, helpers):
+def test_monitor_job_schema_load_nonpositive_sleep_time_error(in_data, helpers):
     try:
         assert MonitorJob(**helpers.MonitorJobJSONFactory(**in_data))
         assert False
@@ -86,17 +43,18 @@ def test_monitor_job_schema_load_negative_sleep_time_error(in_data, helpers):
     "in_data",
     [
         {
-            "id": 1,
+            "job_id": 1,
             "make_screenshots": True,
             "sleep_time": 1,
             "url": "http://example.com",
         }
     ],
 )
-def test_monitor_job_schema_proper_load(in_data, helpers):
+def test_monitor_job_schema_proper_load(in_data, helpers, db_user):
     data = MonitorJob(**helpers.MonitorJobJSONFactory(**in_data))
     assert data.dict() == {
-        "id": 1,
+        "user_id": db_user,
+        "job_id": 1,
         "make_screenshots": True,
         "sleep_time": 1,
         "url": "http://example.com",

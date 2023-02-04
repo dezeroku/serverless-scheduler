@@ -1,103 +1,100 @@
 import pytest
+from boto3.dynamodb.conditions import Key
 
-from common import utils
 from items.delete import delete, handler
-from items.models import MonitorJob, UserData
+from items.models import MonitorJob
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_db_table, db_user):
+def setup(mock_db_table, db_user, helpers):
     # Add a single element to DB to be used later on in tests
-    monitor = MonitorJob(
-        id=12, make_screenshots=True, sleep_time=5, url="http://example.com"
-    )
-    user_data = UserData(id=db_user, monitors=[monitor])
+    monitor_job = helpers.MonitorJobJSONFactory(job_id=123)
 
-    to_save = user_data.dict()
+    to_save = MonitorJob(**monitor_job).dict()
     mock_db_table.put_item(Item=to_save)
 
 
 def test_successful_delete(mock_db_table, db_user):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
+    monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id
 
-    item_id = loaded.monitors[0].id
-
-    response = handler(mock_db_table, db_user, item_id)
+    response = handler(mock_db_table, db_user, monitor_job_id)
 
     assert response["statusCode"] == 200
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
-
-    assert len(loaded.monitors) == 0
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 0
 
 
 def test_successful_delete_event(
     monkeypatch, helpers, table_name, mock_db_table, db_user
 ):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
-
-    item_id = loaded.monitors[0].id
+    monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        cognitoUsername=db_user, pathParameters={"item_id": item_id}
+        cognitoUsername=db_user, pathParameters={"item_id": monitor_job_id}
     )
     context = None
     response = delete(event, context)
 
     assert response["statusCode"] == 200
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
-
-    assert len(loaded.monitors) == 0
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 0
 
 
 def test_delete_nonexisting(mock_db_table, db_user):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
+    nonexistent_monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id + 1
 
-    item_id = loaded.monitors[0].id + 1
-
-    response = handler(mock_db_table, db_user, item_id)
+    response = handler(mock_db_table, db_user, nonexistent_monitor_job_id)
 
     assert response["statusCode"] == 404
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
-
-    assert len(loaded.monitors) == 1
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
 
 def test_delete_nonexisting_event(
     monkeypatch, helpers, table_name, mock_db_table, db_user
 ):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
-
-    item_id = loaded.monitors[0].id + 1
+    nonexistent_monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id + 1
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        cognitoUsername=db_user, pathParameters={"item_id": item_id}
+        cognitoUsername=db_user, pathParameters={"item_id": nonexistent_monitor_job_id}
     )
     context = None
     response = delete(event, context)
 
     assert response["statusCode"] == 404
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
-
-    assert len(loaded.monitors) == 1
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
