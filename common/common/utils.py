@@ -2,6 +2,7 @@ import os
 from decimal import Decimal
 
 import boto3
+from mypy_boto3_dynamodb import ServiceResource
 
 
 # https://github.com/boto/boto3/issues/369
@@ -26,6 +27,6 @@ def replace_decimals(obj):
 
 
 def get_dynamo_table():
-    dynamodb = boto3.resource("dynamodb")
+    dynamodb: ServiceResource = boto3.resource("dynamodb")
     table = dynamodb.Table(os.environ["DYNAMO_DB"])
     return table

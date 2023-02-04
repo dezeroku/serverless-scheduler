@@ -27,8 +27,11 @@ itemwithid_schema = {
             "type": "object",
         },
         {
-            "properties": {"id": {"type": "integer"}},
-            "required": ["id"],
+            "properties": {
+                "job_id": {"type": "integer"},
+                "user_id": {"type": "string"},
+            },
+            "required": ["job_id", "user_id"],
             "type": "object",
         },
     ],
