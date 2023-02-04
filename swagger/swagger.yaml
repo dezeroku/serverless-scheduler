@@ -150,7 +150,10 @@ components:
       - $ref: '#/components/schemas/item'
       - type: object
         required:
-          - id
+          - job_id
+          - user_id
         properties:
-          id:
+          job_id:
             type: integer
+          user_id:
+            type: string
