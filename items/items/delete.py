@@ -30,12 +30,12 @@ def handler(table, user, item_id):
             Key={"user_id": user, "job_id": item_id},
             ConditionExpression="(attribute_exists(user_id))",
         )
-    except botocore.exceptions.ClientError as e:
+    except botocore.exceptions.ClientError as exc:
         # TODO: this just looks... wrong
-        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+        if exc.response["Error"]["Code"] == "ConditionalCheckFailedException":
             return {"statusCode": 404}
-        else:
-            logger.debug(e)
-            return {"statusCode": 500}
+
+        logger.debug(exc)
+        return {"statusCode": 500}
 
     return {"statusCode": 200}

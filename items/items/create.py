@@ -43,8 +43,7 @@ def handler(table, user, payload):
         KeyConditionExpression=Key("user_id").eq(user), ScanIndexForward=False, Limit=1
     )
 
-    last_monitor_job_result = response["Items"]
-    if not last_monitor_job_result:
+    if not (last_monitor_job_result := response["Items"]):
         logger.debug("First entry for user")
         next_id = 0
     else:
