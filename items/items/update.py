@@ -1,10 +1,11 @@
 import logging
 
+import botocore
 from lambda_decorators import cors_headers, json_schema_validator, load_json_body
 
 from common import cognito, utils
 from common.json_schemas import item_schema
-from items.models import MonitorJob, UserData
+from items.models import MonitorJob
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -31,29 +32,22 @@ def update(event, context):
 def handler(table, user, item_id, payload):
     # Update the item kept under `item_id` with
     # data that was sent in the request
-    result = table.get_item(Key={"id": user})["Item"]
-    user_data = UserData(**result)
-
     to_update = payload
-    to_update["id"] = item_id
+    to_update["job_id"] = item_id
+    to_update["user_id"] = user
+    to_update_dict = MonitorJob(**to_update).dict()
 
-    # Check if the item to update actually exists
-    if not any(filter(lambda x: x.id == item_id, user_data.monitors)):
-        return {"statusCode": 404}
-
-    to_update = MonitorJob(**to_update)
-
-    user_data.monitors = list(
-        map(
-            lambda x: x if x.id != item_id else to_update,
-            user_data.monitors,
+    try:
+        table.put_item(
+            Item=to_update_dict,
+            ConditionExpression="(attribute_exists(user_id))",
         )
-    )
-
-    logger.info(user_data)
-
-    to_save = user_data.dict()
-
-    table.put_item(Item=to_save)
+    except botocore.exceptions.ClientError as e:
+        # TODO: this just looks... wrong
+        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            return {"statusCode": 404}
+        else:
+            logger.debug(e)
+            return {"statusCode": 500}
 
     return {"statusCode": 200}
