@@ -33,7 +33,7 @@ load-plugins = [
 ]
 
 [tool.pylint.'MESSAGES CONTROL']
-disable = 'missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods'
+disable = 'missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods,fixme'
 
 [tool.mypy]
 plugins = "pydantic.mypy"
