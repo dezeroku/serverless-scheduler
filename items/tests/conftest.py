@@ -79,7 +79,7 @@ class Helpers:
                     "cognitoUsername passed together with requestContext.authorizer"
                 )
 
-            temp = {"jwt": {"claims": {"username": cognitoUsername}}}
+            temp = {"jwt": {"claims": {"email": cognitoUsername}}}
             # https://stackoverflow.com/a/11416002 :)
             # Modifying requestContext indirectly here, causes the change to be
             # "remembered"

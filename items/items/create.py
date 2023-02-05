@@ -35,7 +35,10 @@ def create(event, context):
     payload = event["body"]
     payload["user_id"] = user
 
-    return handler(table, user, payload)
+    response = handler(table, user, payload)
+    # TODO: is the output here correct or should I jsonify it?
+    # response["body"] = json.dumps(response["body"])
+    return response
 
 
 def handler(table, user, payload):
@@ -54,7 +57,8 @@ def handler(table, user, payload):
         # probably better to use UUIDs or check for conflicts at the creation time?
         next_id = MonitorJob(**last_monitor_job_result.pop()).job_id + 1
 
-    to_add_dict = get_monitor_job_with_id(payload, next_id).dict()
+    to_add = get_monitor_job_with_id(payload, next_id)
+    to_add_dict = to_add.dict()
     logger.info(to_add_dict)
 
     result = table.put_item(Item=to_add_dict)
@@ -62,8 +66,11 @@ def handler(table, user, payload):
     logger.debug(result)
 
     if (status_code := result["ResponseMetadata"]["HTTPStatusCode"]) == 200:
-        body = utils.replace_decimals(to_add_dict)
+        body = to_add.dict()
     else:
         body = {}
+
+    logger.debug(status_code)
+    logger.debug(body)
 
     return {"statusCode": status_code, "body": body}
