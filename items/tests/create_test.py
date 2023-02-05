@@ -25,9 +25,7 @@ def test_creation_handler(mock_db, table_name, db_user, helpers):
 
     response = handler(table, db_user, payload)
 
-    assert response["statusCode"] == 200
-
-    body = response["body"]
+    body = response
     assert "job_id" in body
     assert body["job_id"] is not None
     assert type(body["job_id"]) == int
@@ -46,8 +44,7 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
 
     response = handler(table, db_user, payload)
 
-    assert response["statusCode"] == 200
-    body = response["body"]
+    body = response
     assert "job_id" in body
     assert body["job_id"] is not None
     assert type(body["job_id"]) == int
@@ -56,8 +53,7 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
     # Add second time
     response = handler(table, db_user, payload)
 
-    assert response["statusCode"] == 200
-    body = response["body"]
+    body = response
     assert body["job_id"] == 1
 
 
@@ -82,7 +78,7 @@ def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_us
     assert response["statusCode"] == 200
     print(response)
 
-    body = response["body"]
+    body = json.loads(response["body"])
     assert "job_id" in body
     assert body["job_id"] is not None
     assert type(body["job_id"]) == int

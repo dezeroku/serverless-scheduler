@@ -1,7 +1,12 @@
 import logging
 
 from boto3.dynamodb.conditions import Key
-from lambda_decorators import cors_headers, json_schema_validator, load_json_body
+from lambda_decorators import (
+    cors_headers,
+    json_http_resp,
+    json_schema_validator,
+    load_json_body,
+)
 
 from common import cognito, utils
 from common.json_schemas import item_schema, itemwithid_schema
@@ -18,15 +23,16 @@ def get_monitor_job_with_id(body, next_id):
 
 @cors_headers
 @load_json_body
+@json_http_resp
 @json_schema_validator(
     request_schema={
         "type": "object",
         "properties": {"body": item_schema},
     },
-    response_schema={
-        "type": "object",
-        "properties": {"body": itemwithid_schema},
-    },
+    # response_schema={
+    #    "type": "object",
+    #    "properties": {"body": itemwithid_schema},
+    # },
 )
 def create(event, context):
     # pylint: disable=unused-argument
@@ -65,12 +71,9 @@ def handler(table, user, payload):
 
     logger.debug(result)
 
-    if (status_code := result["ResponseMetadata"]["HTTPStatusCode"]) == 200:
+    if result["ResponseMetadata"]["HTTPStatusCode"] == 200:
         body = to_add.dict()
     else:
         body = {}
 
-    logger.debug(status_code)
-    logger.debug(body)
-
-    return {"statusCode": status_code, "body": body}
+    return body
