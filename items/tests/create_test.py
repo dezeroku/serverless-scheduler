@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from moto import mock_dynamodb
 
@@ -66,7 +68,7 @@ def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_us
         )
     )
 
-    table = mock_db.Table(table_name)
+    mock_db.Table(table_name)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
 
@@ -74,12 +76,11 @@ def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_us
     del payload["user_id"]
 
     event = helpers.EventFactory(body=payload, cognitoUsername=db_user)
-    print(event)
     context = None
     response = create(event, context)
 
-    print(response)
     assert response["statusCode"] == 200
+    print(response)
 
     body = response["body"]
     assert "job_id" in body
