@@ -24,7 +24,7 @@ function EditModal (props : EditModalProps) {
 	    event.stopPropagation();
 
 	    let json : ItemProps["props"] = {
-	        id: parseInt(form.id.value),
+	        job_id: parseInt(form.id.value),
 	        url: form.url.value,
 	        sleep_time: parseInt(form.sleep_time.value),
 	        make_screenshots: form.make_screenshots.checked,
@@ -43,7 +43,7 @@ function EditModal (props : EditModalProps) {
 	    // Get data to json form and send it to higher level handler.
 
 	    let json : ItemProps["props"] = {
-	        id: id,
+	        job_id: id,
 	        url: "",
 	        sleep_time: 0,
 	        make_screenshots: false,
