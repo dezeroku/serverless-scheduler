@@ -31,6 +31,8 @@ def handler(table, user, item_id):
             ConditionExpression="(attribute_exists(user_id))",
         )
     except botocore.exceptions.ClientError as exc:
+        # duplicated code with update
+        # pylint: disable=R0801
         # TODO: this just looks... wrong
         if exc.response["Error"]["Code"] == "ConditionalCheckFailedException":
             return {"statusCode": 404}
