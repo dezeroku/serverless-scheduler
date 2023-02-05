@@ -59,6 +59,8 @@ def handler(table, user, payload):
 
     result = table.put_item(Item=to_add_dict)
 
+    logger.debug(result)
+
     if (status_code := result["ResponseMetadata"]["HTTPStatusCode"]) == 200:
         body = utils.replace_decimals(to_add_dict)
     else:

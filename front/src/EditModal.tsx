@@ -65,7 +65,7 @@ function EditModal (props : EditModalProps) {
 	    var temp : ItemProps["props"]
 	    if (item == null) {
 	        temp = {
-		        id: 0,
+		        job_id: 0,
 		        url: "",
 		        sleep_time: 60,
 		        make_screenshots: true}
@@ -81,7 +81,7 @@ function EditModal (props : EditModalProps) {
 	            <Modal.Body hidden={loading}>
 		            <Form onSubmit={handleTaskLocal}>
 		                <Form.Group controlId="id">
-		                    <Form.Control type="hidden" value={temp.id.toString()}/>
+		                    <Form.Control type="hidden" value={temp.job_id.toString()}/>
 		                </Form.Group>
 		                <Form.Group controlId="url">
 		                    <Form.Label>URL of the page you want to monitor</Form.Label>
@@ -115,7 +115,7 @@ function EditModal (props : EditModalProps) {
 		                </Button>
 		                {
 		                    props.editMode ?
-			                    <Button type="button" variant="danger" onClick={() => handleDeleteLocal(temp.id)} className="float-right">Delete</Button> :
+			                    <Button type="button" variant="danger" onClick={() => handleDeleteLocal(temp.job_id)} className="float-right">Delete</Button> :
 			                <div></div>
 			            }
 		            </Form>

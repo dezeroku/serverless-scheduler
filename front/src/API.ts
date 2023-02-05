@@ -64,7 +64,7 @@ export async function handleDelete(json : ItemProps["props"]) {
         }
     }
 
-    return axios.delete(API_URL + "/v1/item/delete/" + json.id, config)
+    return axios.delete(API_URL + "/v1/item/delete/" + json.job_id, config)
 	    .then((response) => {
 	        console.log("AA");
 	        if (response.status !== 200) {
@@ -100,7 +100,7 @@ export async function handleUpdate(json : ItemProps["props"]) {
     let data : any = { ...json}
     data["sleep_time"] *= 60;
 
-    return axios.put(API_URL + "/v1/item/update/" + json.id, data, config)
+    return axios.put(API_URL + "/v1/item/update/" + json.job_id, data, config)
 	    .then((response) => {
 	        console.log("AA");
 	        if (response.status !== 200) {
