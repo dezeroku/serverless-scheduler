@@ -55,7 +55,7 @@ function getClientPoolId() : string {
     }
 }
 
-function getLoginURL() : string {
+function getAuthorizeURL() : string {
 
     if (getUseEnvLoginRedirect() === "true") {
         let frontDomain = getFrontDomain();
@@ -65,7 +65,7 @@ function getLoginURL() : string {
             + frontDomain
             + "/oauth2/authorize?client_id="
             + clientPoolID
-            + "&response_type=token&scope="
+            + "&response_type=code&scope="
             + "email+openid+profile&redirect_uri="
             + "https://"
             + frontDomain
@@ -75,6 +75,30 @@ function getLoginURL() : string {
     // Fallback to lambda intermediate endpoint
     return API_URL + "/v1/login/cognito-login";
 }
+
+
+function getTokenURL(code: string) : string {
+
+    //if (getUseEnvLoginRedirect() === "true") {
+        let frontDomain = getFrontDomain();
+        let clientPoolID = getClientPoolId();
+        return "https://"
+            + "auth."
+            + frontDomain
+            + "/oauth2/token?client_id="
+            + clientPoolID
+            + "&grant_type=authorization_code"
+            + "&redirect_uri="
+            + "https://"
+            + frontDomain
+            + "/login/cognito-parser"
+            + "&code=" + code
+    //}
+
+    // Fallback to lambda intermediate endpoint
+    //return API_URL + "/v1/login/cognito-login";
+}
+
 
 function getLogoutURL() : string {
     if (getUseEnvLoginRedirect() === "true") {
@@ -96,7 +120,8 @@ function getLogoutURL() : string {
     return API_URL + "/v1/login/cognito-logout";
 }
 
+export {getTokenURL};
 export const API_URL: string = getAPIURL();
 
-export const loginURL: string = getLoginURL();
+export const authorizeURL: string = getAuthorizeURL();
 export const logoutURL: string = getLogoutURL();

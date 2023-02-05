@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Switch, Route, Redirect } from 'react-router-dom';
 import './index.css';
 import {getToken, setToken} from './Login';
-import {loginURL, logoutURL} from "./Config";
+import {authorizeURL, logoutURL, getTokenURL} from "./Config";
 import Home from './Home';
 import * as serviceWorker from './serviceWorker';
 import queryString from "query-string";
@@ -16,7 +16,7 @@ ReactDOM.render((
 	        </Route>
             <Route path='/login' component={() => {
                        // Just redirect to Cognito
-                       window.location.href = loginURL;
+                       window.location.href = authorizeURL;
                        return null;
                    }}/>
             <Route path='/logout-internal' component={() => {
@@ -38,11 +38,27 @@ ReactDOM.render((
 
 function LoginParser(props : any) {
     // TODO: also properly handle the access time, what to do when it expires?
-    let responseData = queryString.parse(props.location.hash);
-    if (typeof responseData.access_token === "string") {
-        setToken(responseData.access_token as string);
+    let responseData = queryString.parse(props.location.search);
+    console.log(responseData);
+    if (typeof responseData.code === "string") {
+        // This is an authorization code, now let's obtain the real token
+        let code = responseData.code;
+
+        // This is synchronous and ugly
+        // Oh well, it all needs a rewrite anyway
+        const request = new XMLHttpRequest();
+        request.open('POST', getTokenURL(code), false)
+        request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.send(null);
+
+        if (request.status !== 200) {
+            alert("Something went wrong!");
+        } else {
+            const parsed = JSON.parse(request.response);
+            setToken(parsed.id_token as string);
+        }
     } else {
-        alert('Seems that this page was accessed without a token!');
+        alert('Seems that this page was accessed without an auth code!');
     }
     return <Redirect to="/" />;
 }
