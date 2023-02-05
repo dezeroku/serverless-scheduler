@@ -27,10 +27,10 @@ function ItemList (props : ItemListProps) {
 	    return items.slice(offset, offset + visibleCount).map((item : ItemProps["props"], key) =>
 			<ListGroup.Item
 				onClick={(e : any) => itemClicked(item)}
-				key={item.id} action>
+				key={item.job_id} action>
 				<Item
-					key={item.id}
-					id={item.id}
+					key={item.job_id}
+					job_id={item.job_id}
 					url={item.url}
 					sleep_time={item.sleep_time}
 					make_screenshots={item.make_screenshots} />

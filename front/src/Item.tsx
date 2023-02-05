@@ -3,7 +3,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 type ItemProps = {
-    id : number;
+    job_id : number;
     url : string;
     sleep_time : number;
     make_screenshots : boolean;
