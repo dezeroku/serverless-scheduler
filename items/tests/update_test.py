@@ -1,32 +1,30 @@
 import copy
 
 import pytest
+from boto3.dynamodb.conditions import Key
 
 from common import utils
-from items.models import MonitorJob, UserData
+from items.models import MonitorJob
 from items.update import handler, update
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_db_table, db_user):
+def setup(helpers, mock_db_table, db_user):
     # Add a single element to DB to be used later on in tests
-    monitor = MonitorJob(
-        id=12, make_screenshots=True, sleep_time=5, url="http://example.com"
-    )
-    user_data = UserData(id=db_user, monitors=[monitor])
+    monitor_job = MonitorJob(**helpers.MonitorJobJSONFactory(user_id=db_user, job_id=0))
 
-    to_save = user_data.dict()
+    to_save = monitor_job.dict()
     mock_db_table.put_item(Item=to_save)
 
 
 def test_successful_update(mock_db_table, db_user):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
-
-    old_item = loaded.monitors[0]
-    item_id = old_item.id
+    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    item_id = old_item.job_id
 
     new_item = copy.deepcopy(old_item)
     new_item.sleep_time = old_item.sleep_time + 1
@@ -41,24 +39,25 @@ def test_successful_update(mock_db_table, db_user):
 
     assert response["statusCode"] == 200
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    changed = loaded.monitors[0]
-
+    changed = MonitorJob(**monitor_jobs_dicts[0])
     assert changed == new_item
 
 
 def test_successful_update_event(
     helpers, monkeypatch, table_name, mock_db_table, db_user
 ):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
-
-    old_item = loaded.monitors[0]
-    item_id = old_item.id
+    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    item_id = old_item.job_id
 
     new_item = copy.deepcopy(old_item)
     new_item.sleep_time = old_item.sleep_time + 1
@@ -78,22 +77,23 @@ def test_successful_update_event(
 
     assert response["statusCode"] == 200
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    changed = loaded.monitors[0]
-
+    changed = MonitorJob(**monitor_jobs_dicts[0])
     assert changed == new_item
 
 
 def test_update_nonexisting(mock_db_table, db_user):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
-
-    old_item = loaded.monitors[0]
-    item_id = old_item.id + 1
+    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    item_id = old_item.job_id + 1
 
     payload = old_item.dict()
 
@@ -101,23 +101,23 @@ def test_update_nonexisting(mock_db_table, db_user):
 
     assert response["statusCode"] == 404
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
-
-    assert len(loaded.monitors) == 1
-    assert loaded.monitors[0] == old_item
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
+    assert MonitorJob(**monitor_jobs_dicts[0]) == old_item
 
 
 def test_update_nonexisting_event(
     helpers, monkeypatch, table_name, mock_db_table, db_user
 ):
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
 
-    assert len(loaded.monitors) == 1
-
-    old_item = loaded.monitors[0]
-    item_id = old_item.id + 1
+    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    item_id = old_item.job_id + 1
 
     payload = old_item.dict()
 
@@ -130,8 +130,8 @@ def test_update_nonexisting_event(
 
     assert response["statusCode"] == 404
 
-    user_data = mock_db_table.get_item(Key={"id": db_user})["Item"]
-    loaded = UserData(**user_data)
-
-    assert len(loaded.monitors) == 1
-    assert loaded.monitors[0] == old_item
+    monitor_jobs_dicts = mock_db_table.query(
+        KeyConditionExpression=Key("user_id").eq(db_user)
+    )["Items"]
+    assert len(monitor_jobs_dicts) == 1
+    assert MonitorJob(**monitor_jobs_dicts[0]) == old_item
