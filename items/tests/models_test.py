@@ -53,7 +53,7 @@ def test_monitor_job_schema_load_nonpositive_sleep_time_error(in_data, helpers):
 def test_monitor_job_schema_proper_load(in_data, helpers, db_user):
     data = MonitorJob(**helpers.MonitorJobJSONFactory(**in_data))
     assert data.dict() == {
-        "user_id": db_user,
+        "user_email": db_user,
         "job_id": 1,
         "make_screenshots": True,
         "sleep_time": 1,

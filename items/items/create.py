@@ -37,19 +37,21 @@ def get_monitor_job_with_id(body, next_id):
 def create(event, context):
     # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
-    user = cognito.get_username(event)
+    user_email = cognito.get_email(event)
     payload = event["body"]
-    payload["user_id"] = user
+    payload["user_email"] = user_email
 
-    response = handler(table, user, payload)
+    response = handler(table, user_email, payload)
     # TODO: is the output here correct or should I jsonify it?
     # response["body"] = json.dumps(response["body"])
     return response
 
 
-def handler(table, user, payload):
+def handler(table, user_email, payload):
     response = table.query(
-        KeyConditionExpression=Key("user_id").eq(user), ScanIndexForward=False, Limit=1
+        KeyConditionExpression=Key("user_email").eq(user_email),
+        ScanIndexForward=False,
+        Limit=1,
     )
 
     if not (last_monitor_job_result := response["Items"]):

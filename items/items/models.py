@@ -4,7 +4,7 @@ from pydantic import BaseModel, Extra, HttpUrl, validator
 
 
 class MonitorJob(BaseModel):
-    user_id: str
+    user_email: str
     job_id: Union[int, None]  # pylint: disable=invalid-name
     make_screenshots: bool = False
     sleep_time: int
@@ -20,12 +20,3 @@ class MonitorJob(BaseModel):
         if v < 1:
             raise ValueError("sleepTime must be a positive number")
         return v
-
-
-# class UserData(BaseModel):
-#    user_id: Union[str, None]  # pylint: disable=invalid-name
-#    monitors: List[MonitorJob] = []
-#
-#    class Config:
-#        extra = Extra.forbid
-#

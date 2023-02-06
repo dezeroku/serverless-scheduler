@@ -22,14 +22,14 @@ class Helpers:
     @staticmethod
     def MonitorJobJSONFactory(
         *,
-        user_id="example_user",
+        user_email="example_user",
         job_id=1,
         make_screenshots=True,
         sleep_time=1,
         url="http://example.com",
     ):
         return {
-            "user_id": user_id,
+            "user_email": user_email,
             "job_id": job_id,
             "make_screenshots": make_screenshots,
             "sleep_time": sleep_time,
@@ -54,7 +54,7 @@ class Helpers:
         stageVariables=None,
         body=None,
         isBase64Encoded=False,
-        cognitoUsername=None,
+        cognitoEmail=None,
     ):
         assert httpMethod == requestContext.get("httpMethod")
 
@@ -73,13 +73,13 @@ class Helpers:
             "isBase64Encoded": isBase64Encoded,
         }
 
-        if cognitoUsername:
+        if cognitoEmail:
             if event.get("requestContext").get("authorizer", None):
                 raise ValueError(
-                    "cognitoUsername passed together with requestContext.authorizer"
+                    "cognitoEmail passed together with requestContext.authorizer"
                 )
 
-            temp = {"jwt": {"claims": {"email": cognitoUsername}}}
+            temp = {"jwt": {"claims": {"email": cognitoEmail}}}
             # https://stackoverflow.com/a/11416002 :)
             # Modifying requestContext indirectly here, causes the change to be
             # "remembered"
@@ -93,11 +93,11 @@ class Helpers:
         table = dynamodb.create_table(
             TableName=table_name,
             KeySchema=[
-                {"AttributeName": "user_id", "KeyType": "HASH"},
+                {"AttributeName": "user_email", "KeyType": "HASH"},
                 {"AttributeName": "job_id", "KeyType": "RANGE"},
             ],
             AttributeDefinitions=[
-                {"AttributeName": "user_id", "AttributeType": "S"},
+                {"AttributeName": "user_email", "AttributeType": "S"},
                 {"AttributeName": "job_id", "AttributeType": "N"},
             ],
             BillingMode="PAY_PER_REQUEST",
