@@ -11,7 +11,9 @@ from items.update import handler, update
 @pytest.fixture(autouse=True)
 def setup(helpers, mock_db_table, db_user):
     # Add a single element to DB to be used later on in tests
-    monitor_job = MonitorJob(**helpers.MonitorJobJSONFactory(user_id=db_user, job_id=0))
+    monitor_job = MonitorJob(
+        **helpers.MonitorJobJSONFactory(user_email=db_user, job_id=0)
+    )
 
     to_save = monitor_job.dict()
     mock_db_table.put_item(Item=to_save)
@@ -19,7 +21,7 @@ def setup(helpers, mock_db_table, db_user):
 
 def test_successful_update(mock_db_table, db_user):
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
@@ -40,7 +42,7 @@ def test_successful_update(mock_db_table, db_user):
     assert response["statusCode"] == 200
 
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
@@ -52,7 +54,7 @@ def test_successful_update_event(
     helpers, monkeypatch, table_name, mock_db_table, db_user
 ):
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
@@ -70,7 +72,7 @@ def test_successful_update_event(
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        body=payload, cognitoUsername=db_user, pathParameters={"item_id": item_id}
+        body=payload, cognitoEmail=db_user, pathParameters={"item_id": item_id}
     )
     context = None
     response = update(event, context)
@@ -78,7 +80,7 @@ def test_successful_update_event(
     assert response["statusCode"] == 200
 
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
@@ -88,7 +90,7 @@ def test_successful_update_event(
 
 def test_update_nonexisting(mock_db_table, db_user):
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
@@ -102,7 +104,7 @@ def test_update_nonexisting(mock_db_table, db_user):
     assert response["statusCode"] == 404
 
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
     assert MonitorJob(**monitor_jobs_dicts[0]) == old_item
@@ -112,7 +114,7 @@ def test_update_nonexisting_event(
     helpers, monkeypatch, table_name, mock_db_table, db_user
 ):
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
@@ -123,7 +125,7 @@ def test_update_nonexisting_event(
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        body=payload, cognitoUsername=db_user, pathParameters={"item_id": item_id}
+        body=payload, cognitoEmail=db_user, pathParameters={"item_id": item_id}
     )
     context = None
     response = update(event, context)
@@ -131,7 +133,7 @@ def test_update_nonexisting_event(
     assert response["statusCode"] == 404
 
     monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_id").eq(db_user)
+        KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
     assert MonitorJob(**monitor_jobs_dicts[0]) == old_item

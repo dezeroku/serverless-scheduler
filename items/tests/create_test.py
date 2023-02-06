@@ -69,9 +69,9 @@ def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_us
     monkeypatch.setenv("DYNAMO_DB", table_name)
 
     payload = to_create.dict()
-    del payload["user_id"]
+    del payload["user_email"]
 
-    event = helpers.EventFactory(body=payload, cognitoUsername=db_user)
+    event = helpers.EventFactory(body=payload, cognitoEmail=db_user)
     context = None
     response = create(event, context)
 

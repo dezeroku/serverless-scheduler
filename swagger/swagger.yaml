@@ -19,7 +19,7 @@ paths:
       description: return all items that are monitored by specified user
       responses:
         200:
-          description: list of all monitoring jobs that are assigned to an user_id (obtained via bearerAuth)
+          description: list of all monitoring jobs that are assigned to an user_email (obtained via bearerAuth)
           content:
             application/json:
               schema:
@@ -151,9 +151,9 @@ components:
       - type: object
         required:
           - job_id
-          - user_id
+          - user_email
         properties:
           job_id:
             type: integer
-          user_id:
+          user_email:
             type: string

@@ -23,22 +23,22 @@ logger.setLevel(logging.DEBUG)
 def get(event, context):
     # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
-    user = cognito.get_username(event)
+    user_email = cognito.get_email(event)
 
-    return handler(table, user)
+    return handler(table, user_email)
 
 
-def handler(table, user, pagination=True):
+def handler(table, user_email, pagination=True):
     # Return the data kept in DB for user ID
     # By default returns ALL the results, taking pagination into account
-    response = table.query(KeyConditionExpression=Key("user_id").eq(user))
+    response = table.query(KeyConditionExpression=Key("user_email").eq(user_email))
 
     monitor_jobs: List[MonitorJob] = response["Items"]
 
     if pagination:
         while "LastEvaluatedKey" in response:
             response = table.query(
-                KeyConditionExpression=Key("user_id").eq(user),
+                KeyConditionExpression=Key("user_email").eq(user_email),
                 ExclusiveStartKey=response["LastEvaluatedKey"],
             )
             monitor_jobs.extend(response["Items"])

@@ -29,9 +29,9 @@ itemwithid_schema = {
         {
             "properties": {
                 "job_id": {"type": "integer"},
-                "user_id": {"type": "string"},
+                "user_email": {"type": "string"},
             },
-            "required": ["job_id", "user_id"],
+            "required": ["job_id", "user_email"],
             "type": "object",
         },
     ],

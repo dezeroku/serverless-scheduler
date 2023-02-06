@@ -13,13 +13,13 @@ logger.setLevel(logging.DEBUG)
 def delete(event, context):
     # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
-    user = cognito.get_username(event)
+    user_email = cognito.get_email(event)
     item_id = int(event["pathParameters"]["item_id"])
 
-    return handler(table, user, item_id)
+    return handler(table, user_email, item_id)
 
 
-def handler(table, user, item_id):
+def handler(table, user_email, item_id):
     # Delete entry (assigned to user), identified by item_id, from DB
 
     # ConditionExpression is a dummy way to check if deletion happened or not
@@ -27,8 +27,8 @@ def handler(table, user, item_id):
     # Do we even need to do it?
     try:
         table.delete_item(
-            Key={"user_id": user, "job_id": item_id},
-            ConditionExpression="(attribute_exists(user_id))",
+            Key={"user_email": user_email, "job_id": item_id},
+            ConditionExpression="(attribute_exists(user_email))",
         )
     except botocore.exceptions.ClientError as exc:
         # duplicated code with update
