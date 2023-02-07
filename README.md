@@ -13,6 +13,25 @@ Couple screenshots from the `front` provided UI.
 ![Home Page](docs/pictures/added.png?raw=true "Home Page")
 ![Modify Modal](docs/pictures/modify.png?raw=true "Modify Modal")
 
+
+## Top level design
+* Frontend - React
+* CRUD - api-gateway + Lambdas on backend, writing to `Items` dynamodb
+* Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `item-changes` (to not block)
+* FIFO SQS `item-changes` consumer, owning a set of EventBridge Schedulers that are modified according to incoming DB changes
+* EventBridge Schedulers inserting events to an SNS `Distribution`
+* SQSs attached to SNS `Distribution` getting the produced events from `Distribution` SNS based on event type (e.g. html handler vs checking port on some host being open handler)
+* Finally real "checker" lambdas consuming events from SQSs (keeping temporary state in S3)
+* Real "checker" lambdas inserting the (potential) notification events to `Output` SQS (or should it be SNS)
+* `Output` events are consumed by a Lambda reponsible for outgoing communication
+
+### Why so many levels?
+To make it as asynchronous as possible
+
+### Potential dangers
+* EventBridge Schedulers getting out of sync with `Items` DB - is it possible?
+
+
 ## Structure (AWS refactored)
 
 Let me shed some light on the general design and describe the more important ones.
