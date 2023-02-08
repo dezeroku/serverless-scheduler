@@ -1,14 +1,15 @@
 from typing import Union
 
-from pydantic import BaseModel, Extra, HttpUrl, validator
+from pydantic import BaseModel, EmailStr, Extra, validator
+
+from common.models.job_type import JobType
 
 
-class MonitorJob(BaseModel):
-    user_email: str
+class ScheduledJob(BaseModel):
+    user_email: EmailStr
     job_id: Union[int, None]  # pylint: disable=invalid-name
-    make_screenshots: bool = False
     sleep_time: int
-    url: HttpUrl
+    job_type: JobType = None
 
     class Config:
         extra = Extra.forbid

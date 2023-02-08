@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+poetry run coverage run -m pytest
+poetry run coverage report --show-missing

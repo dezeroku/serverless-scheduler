@@ -1,8 +1,8 @@
 import json
 
 from common import utils
+from common.models import HTMLMonitorJob
 from items.get import get, handler
-from items.models import MonitorJob
 
 
 def test_data_fetch_empty(empty_mock_db, table_name, db_user):
@@ -30,7 +30,9 @@ def test_data_fetch_empty_event(
 def test_data_fetch_single_item(empty_mock_db, table_name, db_user, helpers):
     table = empty_mock_db.Table(table_name)
 
-    monitor_job = MonitorJob(**helpers.MonitorJobJSONFactory(user_email=db_user))
+    monitor_job = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(user_email=db_user)
+    )
 
     to_save = monitor_job.dict()
     table.put_item(Item=to_save)
@@ -46,7 +48,9 @@ def test_data_fetch_single_item_event(
 ):
     table = empty_mock_db.Table(table_name)
 
-    monitor_job = MonitorJob(**helpers.MonitorJobJSONFactory(user_email=db_user))
+    monitor_job = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(user_email=db_user)
+    )
 
     to_save = monitor_job.dict()
     table.put_item(Item=to_save)
@@ -68,7 +72,7 @@ def test_data_fetch_single_item_event(
 #    table = empty_mock_db.Table(table_name)
 #
 #    monitor_job = MonitorJob(
-#        **helpers.MonitorJobJSONFactory(user_email=db_user, job_id=0)
+#        **helpers.html_monitor_job_dict_factory(user_email=db_user, job_id=0)
 #    )
 #    for i in range(13000):
 #        monitor_job.job_id = i
@@ -84,7 +88,7 @@ def test_data_fetch_single_item_event(
 #    table = empty_mock_db.Table(table_name)
 #
 #    monitor_job = MonitorJob(
-#        **helpers.MonitorJobJSONFactory(user_email=db_user, job_id=0)
+#        **helpers.html_monitor_job_dict_factory(user_email=db_user, job_id=0)
 #    )
 #    for i in range(13000):
 #        monitor_job.job_id = i

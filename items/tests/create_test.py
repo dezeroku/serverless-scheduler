@@ -3,18 +3,21 @@ import json
 import pytest
 from moto import mock_dynamodb
 
+from common.models import HTMLMonitorJob
 from items.create import create, get_monitor_job_with_id, handler
-from items.models import MonitorJob
 
 
-def test_get_monitor_job_with_id(example_monitor_job_json):
-    temp = get_monitor_job_with_id(example_monitor_job_json, 5)
-    assert temp.job_id == 5
+def test_get_monitor_job_with_id(helpers):
+    base = helpers.html_monitor_job_dict_factory(job_id=1)
+    del base["job_id"]
+
+    result = get_monitor_job_with_id(base, 2)
+    assert result.job_id == 2
 
 
 def test_creation_handler(mock_db, table_name, db_user, helpers):
-    to_create = MonitorJob(
-        **helpers.MonitorJobJSONFactory(
+    to_create = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
         )
     )
@@ -32,8 +35,8 @@ def test_creation_handler(mock_db, table_name, db_user, helpers):
 
 
 def test_double_creation_handler(mock_db, table_name, db_user, helpers):
-    to_create = MonitorJob(
-        **helpers.MonitorJobJSONFactory(
+    to_create = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
         )
     )
@@ -58,8 +61,8 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
 
 
 def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_user):
-    to_create = MonitorJob(
-        **helpers.MonitorJobJSONFactory(
+    to_create = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
         )
     )
