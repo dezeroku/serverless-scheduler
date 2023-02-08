@@ -28,3 +28,5 @@ __pycache__
 .sls_packaging_cache
 .coverage
 .deployment-temp
+.idea
+.fleet
