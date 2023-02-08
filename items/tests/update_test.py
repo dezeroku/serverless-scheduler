@@ -4,15 +4,15 @@ import pytest
 from boto3.dynamodb.conditions import Key
 
 from common import utils
-from items.models import MonitorJob
+from common.models import HTMLMonitorJob
 from items.update import handler, update
 
 
 @pytest.fixture(autouse=True)
 def setup(helpers, mock_db_table, db_user):
     # Add a single element to DB to be used later on in tests
-    monitor_job = MonitorJob(
-        **helpers.MonitorJobJSONFactory(user_email=db_user, job_id=0)
+    monitor_job = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(user_email=db_user, job_id=0)
     )
 
     to_save = monitor_job.dict()
@@ -25,7 +25,7 @@ def test_successful_update(mock_db_table, db_user):
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
     item_id = old_item.job_id
 
     new_item = copy.deepcopy(old_item)
@@ -46,7 +46,7 @@ def test_successful_update(mock_db_table, db_user):
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    changed = MonitorJob(**monitor_jobs_dicts[0])
+    changed = HTMLMonitorJob(**monitor_jobs_dicts[0])
     assert changed == new_item
 
 
@@ -58,7 +58,7 @@ def test_successful_update_event(
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
     item_id = old_item.job_id
 
     new_item = copy.deepcopy(old_item)
@@ -84,7 +84,7 @@ def test_successful_update_event(
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    changed = MonitorJob(**monitor_jobs_dicts[0])
+    changed = HTMLMonitorJob(**monitor_jobs_dicts[0])
     assert changed == new_item
 
 
@@ -94,7 +94,7 @@ def test_update_nonexisting(mock_db_table, db_user):
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
     item_id = old_item.job_id + 1
 
     payload = old_item.dict()
@@ -107,7 +107,7 @@ def test_update_nonexisting(mock_db_table, db_user):
         KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
-    assert MonitorJob(**monitor_jobs_dicts[0]) == old_item
+    assert HTMLMonitorJob(**monitor_jobs_dicts[0]) == old_item
 
 
 def test_update_nonexisting_event(
@@ -118,7 +118,7 @@ def test_update_nonexisting_event(
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    old_item = MonitorJob(**monitor_jobs_dicts[0])
+    old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
     item_id = old_item.job_id + 1
 
     payload = old_item.dict()
@@ -136,4 +136,4 @@ def test_update_nonexisting_event(
         KeyConditionExpression=Key("user_email").eq(db_user)
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
-    assert MonitorJob(**monitor_jobs_dicts[0]) == old_item
+    assert HTMLMonitorJob(**monitor_jobs_dicts[0]) == old_item

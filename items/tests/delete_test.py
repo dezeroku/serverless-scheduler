@@ -1,16 +1,16 @@
 import pytest
 from boto3.dynamodb.conditions import Key
 
+from common.models import HTMLMonitorJob
 from items.delete import delete, handler
-from items.models import MonitorJob
 
 
 @pytest.fixture(autouse=True)
 def setup(mock_db_table, db_user, helpers):
     # Add a single element to DB to be used later on in tests
-    monitor_job = helpers.MonitorJobJSONFactory(job_id=123)
+    monitor_job = helpers.html_monitor_job_dict_factory(job_id=123)
 
-    to_save = MonitorJob(**monitor_job).dict()
+    to_save = HTMLMonitorJob(**monitor_job).dict()
     mock_db_table.put_item(Item=to_save)
 
 
@@ -20,7 +20,7 @@ def test_successful_delete(mock_db_table, db_user):
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id
+    monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id
 
     response = handler(mock_db_table, db_user, monitor_job_id)
 
@@ -40,7 +40,7 @@ def test_successful_delete_event(
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id
+    monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
@@ -63,7 +63,7 @@ def test_delete_nonexisting(mock_db_table, db_user):
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    nonexistent_monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id + 1
+    nonexistent_monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id + 1
 
     response = handler(mock_db_table, db_user, nonexistent_monitor_job_id)
 
@@ -83,7 +83,7 @@ def test_delete_nonexisting_event(
     )["Items"]
     assert len(monitor_jobs_dicts) == 1
 
-    nonexistent_monitor_job_id = MonitorJob(**monitor_jobs_dicts[0]).job_id + 1
+    nonexistent_monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id + 1
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(

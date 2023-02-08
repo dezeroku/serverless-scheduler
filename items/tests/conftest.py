@@ -5,24 +5,16 @@ import mypy_boto3_dynamodb
 import pytest
 from moto import mock_dynamodb
 
-from items.models import MonitorJob
+from common.models import HTMLMonitorJob
 
-
-@pytest.fixture
-def example_monitor_job():
-    return MonitorJob(**Helpers().MonitorJobJSONFactory())
-
-
-@pytest.fixture
-def example_monitor_job_json():
-    return Helpers().MonitorJobJSONFactory()
+_EXAMPLE_USER_EMAIL = "user@example.com"
 
 
 class Helpers:
     @staticmethod
-    def MonitorJobJSONFactory(
+    def html_monitor_job_dict_factory(
         *,
-        user_email="example_user",
+        user_email=_EXAMPLE_USER_EMAIL,
         job_id=1,
         make_screenshots=True,
         sleep_time=1,
@@ -111,28 +103,6 @@ def helpers():
     return Helpers
 
 
-@pytest.fixture
-def example_event():
-    return {
-        "resource": "/",
-        "path": "/",
-        "httpMethod": "GET",
-        "requestContext": {
-            "resourcePath": "/",
-            "httpMethod": "GET",
-            "path": "/Prod/",
-        },
-        "headers": {"header": "header-value"},
-        "multiValueHeaders": {},
-        "queryStringParameters": None,
-        "multiValueQueryStringParameters": None,
-        "pathParameters": None,
-        "stageVariables": None,
-        "body": None,
-        "isBase64Encoded": False,
-    }
-
-
 @pytest.fixture(autouse=True)
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
@@ -147,7 +117,7 @@ def aws_credentials():
 
 @pytest.fixture()
 def db_user():
-    return "example_user"
+    return _EXAMPLE_USER_EMAIL
 
 
 @pytest.fixture()
@@ -160,7 +130,7 @@ def empty_mock_db(table_name):
     with mock_dynamodb():
         dynamodb = boto3.resource("dynamodb")
 
-        table = Helpers.empty_mock_table(dynamodb, table_name)
+        Helpers.empty_mock_table(dynamodb, table_name)
 
         yield dynamodb
 
@@ -176,10 +146,10 @@ def mock_db_table(table_name):
 
 
 @pytest.fixture
-def mock_db(db_user, table_name):
+def mock_db(table_name):
     with mock_dynamodb():
         dynamodb = boto3.resource("dynamodb")
 
-        table = Helpers.empty_mock_table(dynamodb, table_name)
+        Helpers.empty_mock_table(dynamodb, table_name)
 
         yield dynamodb
