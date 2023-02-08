@@ -1,5 +1,5 @@
 service: ${self:custom.tfOutputs.service.value}
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   stage: ${self:custom.tfOutputs.stage.value}
@@ -37,25 +37,25 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             Fn::Join:
-              - ''
+              - ""
               - - arn:aws:dynamodb:${self:provider.region}:*:table/
                 - ${self:custom.tfOutputs.items_dynamodb_name.value}
 
 #constructs:
-  #jobs:
-  #  type: queue
-  #  worker:
-  #    module: handler-demo
-  #    handler: handler.consumer
-  #monitors:
-  #  type: queue
-  #  worker:
-  #    module: monitors
-  #    handler: consumer.consumer
+#jobs:
+#  type: queue
+#  worker:
+#    module: handler-demo
+#    handler: handler.consumer
+#monitors:
+#  type: queue
+#  worker:
+#    module: monitors
+#    handler: consumer.consumer
 
-  # The front webpage configuration can also be handled like that (+ route53 via cloudformation)
-  # But this requires the project to be deployed in us-east-1
-  # The big advantage here is automatic cloudfront cache invalidation
+# The front webpage configuration can also be handled like that (+ route53 via cloudformation)
+# But this requires the project to be deployed in us-east-1
+# The big advantage here is automatic cloudfront cache invalidation
 #  react:
 #    type: static-website
 #    path: ../front/build

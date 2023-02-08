@@ -8,13 +8,13 @@ info:
     name: MIT
   version: 1.0.0
 servers:
-- url: /v1
-  description: first api version
+  - url: /v1
+    description: first api version
 paths:
   /items:
     get:
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       operationId: items_get
       description: return all items that are monitored by specified user
       responses:
@@ -25,9 +25,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/itemWithId'
+                  $ref: "#/components/schemas/itemWithId"
         401:
-          $ref: '#/components/responses/UnauthorizedError'
+          $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
   #/item/{id}:
@@ -64,19 +64,19 @@ paths:
           required: true
           description: id of the job
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       operationId: item_update
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/item'
+              $ref: "#/components/schemas/item"
       description: update a job under provided ID
       responses:
         200:
           description: successfully updated job
         401:
-          $ref: '#/components/responses/UnauthorizedError'
+          $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
   /item/delete/{id}:
@@ -89,26 +89,26 @@ paths:
           required: true
           description: id of the job
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       operationId: item_delete
       description: delete a job under provided ID
       responses:
         200:
           description: successfully deleted job
         401:
-          $ref: '#/components/responses/UnauthorizedError'
+          $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
   /item/create:
     post:
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       operationId: item_create
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/item'
+              $ref: "#/components/schemas/item"
       description: create a job, and return it with id
       responses:
         200:
@@ -116,9 +116,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/itemWithId'
+                $ref: "#/components/schemas/itemWithId"
         401:
-          $ref: '#/components/responses/UnauthorizedError'
+          $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
 components:
@@ -147,13 +147,13 @@ components:
           type: boolean
     itemWithId:
       allOf:
-      - $ref: '#/components/schemas/item'
-      - type: object
-        required:
-          - job_id
-          - user_email
-        properties:
-          job_id:
-            type: integer
-          user_email:
-            type: string
+        - $ref: "#/components/schemas/item"
+        - type: object
+          required:
+            - job_id
+            - user_email
+          properties:
+            job_id:
+              type: integer
+            user_email:
+              type: string
