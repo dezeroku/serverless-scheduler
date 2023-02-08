@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
-          cache: 'poetry'
+          cache: "poetry"
           cache-dependency-path: |
             ${{ inputs.directory }}/pyproject.toml
             ${{ inputs.directory }}/poetry.lock
@@ -38,7 +38,6 @@ jobs:
         run: |
           cd ${{ inputs.directory }}
           poetry install --no-root
-
 
   pytest:
     runs-on: ubuntu-latest
@@ -51,7 +50,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
-          cache: 'poetry'
+          cache: "poetry"
           cache-dependency-path: |
             ${{ inputs.directory }}/pyproject.toml
             ${{ inputs.directory }}/poetry.lock
@@ -60,7 +59,6 @@ jobs:
           cd ${{ inputs.directory }}
           poetry run coverage run -m pytest
           poetry run coverage report
-
 
   pylint:
     runs-on: ubuntu-latest
@@ -73,7 +71,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
-          cache: 'poetry'
+          cache: "poetry"
           cache-dependency-path: |
             ${{ inputs.directory }}/pyproject.toml
             ${{ inputs.directory }}/poetry.lock
