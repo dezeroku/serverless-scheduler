@@ -169,3 +169,17 @@ The `utils` directory contains few useful scripts that can be used in CI or just
 Two queues, `schedulers` responsible for inserting jobs (based on sleepTime) and `monitors` which actually visit the website and compare with previous state.
 
 Or should I just merge these into a single `monitors`?
+
+# How to deploy it?
+
+First build the packages by issuing
+
+```
+./utils/build.sh FULL
+```
+
+then prepare the `<ENV>-secret-values.tfvars` in `terraform/deployments/core` (you can base on `dev-secret-values.tfvars.example` and finally
+
+```
+DEPLOY_ENV=<ENV> ./utils/deploy.sh FULL
+```
