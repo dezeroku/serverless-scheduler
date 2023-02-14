@@ -1,12 +1,11 @@
 import pytest
-from boto3.dynamodb.conditions import Key
 
 from common.models import HTMLMonitorJob
 from items.delete import delete, handler
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_db_table, db_user, helpers):
+def setup(mock_db_table, helpers):
     # Add a single element to DB to be used later on in tests
     monitor_job = helpers.html_monitor_job_dict_factory(job_id=123)
 
@@ -14,10 +13,8 @@ def setup(mock_db_table, db_user, helpers):
     mock_db_table.put_item(Item=to_save)
 
 
-def test_successful_delete(mock_db_table, db_user):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+def test_successful_delete(mock_db_table, db_user, helpers):
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id
@@ -26,18 +23,14 @@ def test_successful_delete(mock_db_table, db_user):
 
     assert response["statusCode"] == 200
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 0
 
 
 def test_successful_delete_event(
     monkeypatch, helpers, table_name, mock_db_table, db_user
 ):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id
@@ -51,16 +44,12 @@ def test_successful_delete_event(
 
     assert response["statusCode"] == 200
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 0
 
 
-def test_delete_nonexisting(mock_db_table, db_user):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+def test_delete_nonexisting(mock_db_table, db_user, helpers):
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     nonexistent_monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id + 1
@@ -69,18 +58,14 @@ def test_delete_nonexisting(mock_db_table, db_user):
 
     assert response["statusCode"] == 404
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
 
 def test_delete_nonexisting_event(
     monkeypatch, helpers, table_name, mock_db_table, db_user
 ):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     nonexistent_monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id + 1
@@ -94,7 +79,5 @@ def test_delete_nonexisting_event(
 
     assert response["statusCode"] == 404
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1

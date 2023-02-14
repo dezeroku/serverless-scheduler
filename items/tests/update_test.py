@@ -1,9 +1,7 @@
 import copy
 
 import pytest
-from boto3.dynamodb.conditions import Key
 
-from common import utils
 from common.models import HTMLMonitorJob
 from items.update import handler, update
 
@@ -19,10 +17,8 @@ def setup(helpers, mock_db_table, db_user):
     mock_db_table.put_item(Item=to_save)
 
 
-def test_successful_update(mock_db_table, db_user):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+def test_successful_update(mock_db_table, db_user, helpers):
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
@@ -41,9 +37,7 @@ def test_successful_update(mock_db_table, db_user):
 
     assert response["statusCode"] == 200
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     changed = HTMLMonitorJob(**monitor_jobs_dicts[0])
@@ -53,9 +47,7 @@ def test_successful_update(mock_db_table, db_user):
 def test_successful_update_event(
     helpers, monkeypatch, table_name, mock_db_table, db_user
 ):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
@@ -79,19 +71,15 @@ def test_successful_update_event(
 
     assert response["statusCode"] == 200
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     changed = HTMLMonitorJob(**monitor_jobs_dicts[0])
     assert changed == new_item
 
 
-def test_update_nonexisting(mock_db_table, db_user):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+def test_update_nonexisting(mock_db_table, db_user, helpers):
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
@@ -103,9 +91,7 @@ def test_update_nonexisting(mock_db_table, db_user):
 
     assert response["statusCode"] == 404
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
     assert HTMLMonitorJob(**monitor_jobs_dicts[0]) == old_item
 
@@ -113,9 +99,7 @@ def test_update_nonexisting(mock_db_table, db_user):
 def test_update_nonexisting_event(
     helpers, monkeypatch, table_name, mock_db_table, db_user
 ):
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
@@ -132,8 +116,6 @@ def test_update_nonexisting_event(
 
     assert response["statusCode"] == 404
 
-    monitor_jobs_dicts = mock_db_table.query(
-        KeyConditionExpression=Key("user_email").eq(db_user)
-    )["Items"]
+    monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
     assert HTMLMonitorJob(**monitor_jobs_dicts[0]) == old_item

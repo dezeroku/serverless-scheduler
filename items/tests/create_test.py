@@ -1,8 +1,5 @@
 import json
 
-import pytest
-from moto import mock_dynamodb
-
 from common.models import HTMLMonitorJob
 from items.create import create, get_monitor_job_with_id, handler
 
@@ -31,7 +28,7 @@ def test_creation_handler(mock_db, table_name, db_user, helpers):
     body = response
     assert "job_id" in body
     assert body["job_id"] is not None
-    assert type(body["job_id"]) == int
+    assert isinstance(body["job_id"], int)
 
 
 def test_double_creation_handler(mock_db, table_name, db_user, helpers):
@@ -50,7 +47,7 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
     body = response
     assert "job_id" in body
     assert body["job_id"] is not None
-    assert type(body["job_id"]) == int
+    assert isinstance(body["job_id"], int)
     assert body["job_id"] == 0
 
     # Add second time
@@ -84,4 +81,4 @@ def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_us
     body = json.loads(response["body"])
     assert "job_id" in body
     assert body["job_id"] is not None
-    assert type(body["job_id"]) == int
+    assert isinstance(body["job_id"], int)

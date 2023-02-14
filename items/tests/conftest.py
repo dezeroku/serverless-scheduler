@@ -1,11 +1,11 @@
 import copy
+import os
 
 import boto3
 import mypy_boto3_dynamodb
 import pytest
+from boto3.dynamodb.conditions import Key
 from moto import mock_dynamodb
-
-from common.models import HTMLMonitorJob
 
 _EXAMPLE_USER_EMAIL = "user@example.com"
 
@@ -33,21 +33,22 @@ class Helpers:
         resource="/",
         path="/",
         httpMethod="GET",
-        requestContext={
-            "resourcePath": "/",
-            "httpMethod": "GET",
-            "path": "/",
-        },
-        headers={},
-        multiValueHeaders={},
+        requestContext=None,
         queryStringParameters=None,
         multiValueQueryStringParameters=None,
         pathParameters=None,
-        stageVariables=None,
         body=None,
-        isBase64Encoded=False,
         cognitoEmail=None,
     ):
+        # pylint: disable=invalid-name,too-many-arguments
+
+        if requestContext is None:
+            requestContext = {
+                "resourcePath": "/",
+                "httpMethod": "GET",
+                "path": "/",
+            }
+
         assert httpMethod == requestContext.get("httpMethod")
 
         event = {
@@ -55,14 +56,10 @@ class Helpers:
             "path": path,
             "httpMethod": httpMethod,
             "requestContext": requestContext,
-            "headers": headers,
-            "multiValueHeaders": multiValueHeaders,
             "queryStringParameters": queryStringParameters,
             "multiValueQueryStringParameters": multiValueQueryStringParameters,
             "pathParameters": pathParameters,
-            "stageVariables": stageVariables,
             "body": body,
-            "isBase64Encoded": isBase64Encoded,
         }
 
         if cognitoEmail:
@@ -97,17 +94,21 @@ class Helpers:
 
         return table
 
+    @staticmethod
+    def get_monitor_jobs_for_user(table, user_email):
+        return table.query(KeyConditionExpression=Key("user_email").eq(user_email))[
+            "Items"
+        ]
 
-@pytest.fixture
-def helpers():
+
+@pytest.fixture(name="helpers")
+def helpers_fixture():
     return Helpers
 
 
 @pytest.fixture(autouse=True)
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
-    import os
-
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
@@ -115,13 +116,13 @@ def aws_credentials():
     os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 
-@pytest.fixture()
-def db_user():
+@pytest.fixture(name="db_user")
+def db_user_fixture():
     return _EXAMPLE_USER_EMAIL
 
 
-@pytest.fixture()
-def table_name():
+@pytest.fixture(name="table_name")
+def table_name_fixture():
     return "items_ut"
 
 
