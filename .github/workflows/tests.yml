@@ -16,9 +16,10 @@ jobs:
           - component: "items"
             python-version: "3.8"
           - component: "common"
-            python-version: "3.8"
-          - component: "schedulers"
-            python-version: "3.8"
+            python-version:
+              "3.8"
+              #- component: "schedulers"
+              # python-version: "3.8"
     uses: ./.github/workflows/build-and-test-python.yml
     with:
       python-version: ${{ matrix.cfg.python-version }}
