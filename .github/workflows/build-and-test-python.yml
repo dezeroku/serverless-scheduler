@@ -78,4 +78,4 @@ jobs:
       - name: Run pylint
         run: |
           cd ${{ inputs.directory }}
-          poetry run pylint ./${{ inputs.directory }}
+          poetry run pylint ./${{ inputs.directory }} ./tests
