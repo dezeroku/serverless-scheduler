@@ -31,9 +31,17 @@ function upload_front() {
         exit 1
     fi
 
-    pushd "terraform/deployments/${DEPLOY_ENV}/front"
+    pushd "terraform/deployments/front"
 
-    terraform apply -var-file=../global.tfvars.json -var "front_bucket_name=${bucket_name}"
+    suffix="-var-file=../global.tfvars.json"
+    if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
+        suffix="${suffix} -var-file=${DEPLOY_ENV}.tfvars.json"
+    fi
+
+    terraform workspace select "${DEPLOY_ENV}"
+
+    # shellcheck disable=SC2086 # Intended globbing
+    terraform apply ${suffix} -var "front_bucket_name=${bucket_name}"
 
     popd
 }
@@ -54,19 +62,24 @@ HEREDOC
 }
 
 function provision_terraform_core() {
-    pushd "terraform/deployments/${DEPLOY_ENV}/core/"
+    pushd "terraform/deployments/core/"
 
+    terraform workspace select "${DEPLOY_ENV}"
     suffix="-var-file=../global.tfvars.json"
 
-    if [ -f "secret-values.tfvars" ]; then
-        suffix="${suffix} -var-file=secret-values.tfvars"
+    if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
+        suffix="${suffix} -var-file=${DEPLOY_ENV}.tfvars.json"
+    fi
+
+    if [ -f "${DEPLOY_ENV}-secret-values.tfvars" ]; then
+        suffix="${suffix} -var-file=${DEPLOY_ENV}-secret-values.tfvars"
     fi
 
     # shellcheck disable=SC2086 # Intended globbing
     terraform apply ${suffix}
 
-    mkdir -p "../../../../.deployment-temp/${DEPLOY_ENV}/terraform"
-    terraform output -json > "../../../../.deployment-temp/${DEPLOY_ENV}/terraform/outputs.json"
+    mkdir -p "../../../.deployment-temp/${DEPLOY_ENV}/terraform"
+    terraform output -json > "../../../.deployment-temp/${DEPLOY_ENV}/terraform/outputs.json"
 
     popd
 }
