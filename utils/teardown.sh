@@ -7,7 +7,7 @@ RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
 function destroy_terraform_core() {
-    pushd terraform/core
+    pushd "terraform/deployments/${DEPLOY_ENV}/core"
 
     suffix="-var-file=../global.tfvars.json"
 
@@ -21,8 +21,10 @@ function destroy_terraform_core() {
     popd
 }
 
-serverless remove
+[ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"
+
+DEPLOY_ENV="${DEPLOY_ENV}" serverless remove
 
 destroy_terraform_core
 
-rm -rf .deployment-temp
+rm -rf ".deployment-temp/${DEPLOY_ENV}"

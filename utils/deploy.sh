@@ -5,7 +5,7 @@ set -euo pipefail
 function get_front_vars() {
     echo "Obtaining requires variables from TF"
     echo "Make sure that TF deployment was run first"
-    CLIENT_POOL_ID="$(jq -r '.cognito_user_pool_client_id.value' < .deployment-temp/terraform/outputs.json)"
+    CLIENT_POOL_ID="$(jq -r '.core.value.cognito_user_pool_client_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
     if [ -z "${CLIENT_POOL_ID}" ]; then
         echo "ERROR: Couldn't get UserPoolClientId from TF outputs!"
         exit 1
@@ -24,14 +24,14 @@ function prepare_front_deployment() {
 
 function upload_front() {
     local bucket_name
-    bucket_name="$(jq -r '.front_bucket_id.value' < .deployment-temp/terraform/outputs.json)"
+    bucket_name="$(jq -r '.core.value.front_bucket_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
 
     if [ -z "${bucket_name}" ]; then
         echo "Couldn't read bucket name from TF outputs!"
         exit 1
     fi
 
-    pushd terraform/front
+    pushd "terraform/deployments/${DEPLOY_ENV}/front"
 
     terraform apply -var-file=../global.tfvars.json -var "front_bucket_name=${bucket_name}"
 
@@ -46,13 +46,15 @@ where SCOPE can be one of:
 - API
 - FRONT
 - INFRA
+You can also pass DEPLOY_ENV env variable to choose
+to which env changes should be deployed
 HEREDOC
 
     exit 1
 }
 
 function provision_terraform_core() {
-    pushd terraform/core/
+    pushd "terraform/deployments/${DEPLOY_ENV}/core/"
 
     suffix="-var-file=../global.tfvars.json"
 
@@ -63,17 +65,21 @@ function provision_terraform_core() {
     # shellcheck disable=SC2086 # Intended globbing
     terraform apply ${suffix}
 
-    mkdir -p ../../.deployment-temp/terraform
-    terraform output -json > ../../.deployment-temp/terraform/outputs.json
+    mkdir -p "../../../../.deployment-temp/${DEPLOY_ENV}/terraform"
+    terraform output -json > "../../../../.deployment-temp/${DEPLOY_ENV}/terraform/outputs.json"
 
     popd
 }
 
 [ -z "${1:-}" ] && usage
 
+
+
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
+
+[ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"
 
 DEPLOY_INFRA=false
 DEPLOY_API=false
@@ -95,7 +101,7 @@ if [[ "${DEPLOY_API}" == "true" ]]; then
     fi
 
     echo "Starting SLS deployment"
-    serverless deploy
+    DEPLOY_ENV="${DEPLOY_ENV}" serverless deploy
 fi
 
 # Front is built last, as we need to push values from TF deployment into it
