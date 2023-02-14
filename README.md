@@ -5,7 +5,7 @@ The main use at the moment is monitoring websites for changes in HTML, where job
 When an HTML change is detected user is notified via an email.
 
 This is very much a work in progress at the moment and most of the things don't work (in reality there is only CRUD in place for now).
-For a similar thing but working and in K8S look at `k8s`.
+For a similar thing but working and in K8S look at `k8s` branch of this repo.
 In reality if you don't need it to run in a cluster or scale to the moon your best bet is a widely recognized project such as [changedetection.io](https://github.com/dgtlmoon/changedetection.io).
 This repo should be treated as a fun project, not something you should rely on.
 
