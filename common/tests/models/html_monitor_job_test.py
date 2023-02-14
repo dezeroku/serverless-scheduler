@@ -6,9 +6,11 @@ from common.models import HTMLMonitorJob, JobType
 
 def test_monitor_job_immutable_job_type(helpers):
     # with pytest.raises(ValidationError):
-    assert HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(), job_type=JobType.Test
+    test = HTMLMonitorJob(
+        **helpers.html_monitor_job_dict_factory(), job_type=JobType.TEST
     )
+
+    assert test.job_type == JobType.HTML_MONITOR_JOB
 
 
 @pytest.mark.parametrize(
@@ -46,12 +48,12 @@ def test_monitor_job_schema_proper_load(in_data, helpers, example_user_email):
         "make_screenshots": True,
         "sleep_time": 1,
         "url": "http://example.com",
-        "job_type": JobType.HTMLMonitorJob,
+        "job_type": JobType.HTML_MONITOR_JOB,
     }
 
 
-def test_monitor_job_schema_job_type_default_parse(helpers, example_user_email):
+def test_monitor_job_schema_job_type_default_parse(helpers):
     data = HTMLMonitorJob(
         **helpers.html_monitor_job_dict_factory(), job_type="something-broken"
     )
-    assert data.job_type == JobType.HTMLMonitorJob
+    assert data.job_type == JobType.HTML_MONITOR_JOB
