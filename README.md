@@ -11,10 +11,10 @@ I've written it for myself and use it for monitoring couple pages, but the main 
 
 Couple screenshots from the `front` provided UI.
 
-![Home Page (empty)](docs/pictures/home.png?raw=true "Home Page (empty)")
-![Task Creation](docs/pictures/create.png?raw=true "Task Creation")
-![Home Page](docs/pictures/added.png?raw=true "Home Page")
-![Modify Modal](docs/pictures/modify.png?raw=true "Modify Modal")
+![Home Page (empty)](docs/static/front/home.png?raw=true "Home Page (empty)")
+![Task Creation](docs/static/front/create.png?raw=true "Task Creation")
+![Home Page](docs/static/front/added.png?raw=true "Home Page")
+![Modify Modal](docs/static/front/modify.png?raw=true "Modify Modal")
 
 ## Top level design
 
