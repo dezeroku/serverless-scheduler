@@ -10,20 +10,6 @@ provider:
   memorySize: 128
   httpApi:
     id: ${self:custom.tfOutputs.api_gateway_id.value}
-    # TODO: handle authorizer
-    # We have a domain anyway
-    #authorizers:
-    #  serviceAuthorizer:
-    #    identitySource: $request.header.Authorization
-    #    issuerUrl:
-    #      Fn::Join:
-    #      - ''
-    #      - - 'https://cognito-idp.'
-    #        - '${opt:region, self:provider.region}'
-    #        - '.amazonaws.com/'
-    #        - Ref: CognitoUserPool
-    #    audience:
-    #      - Ref: CognitoUserPoolClient
   iam:
     role:
       statements:
@@ -41,58 +27,9 @@ provider:
               - - arn:aws:dynamodb:${self:provider.region}:*:table/
                 - ${self:custom.tfOutputs.items_dynamodb_name.value}
 
-#constructs:
-#jobs:
-#  type: queue
-#  worker:
-#    module: handler-demo
-#    handler: handler.consumer
-#monitors:
-#  type: queue
-#  worker:
-#    module: monitors
-#    handler: consumer.consumer
-
-# The front webpage configuration can also be handled like that (+ route53 via cloudformation)
-# But this requires the project to be deployed in us-east-1
-# The big advantage here is automatic cloudfront cache invalidation
-#  react:
-#    type: static-website
-#    path: ../front/build
-#    domain: ${self:custom.userConfig.frontDomain}
-#    certificate: ${certificate(${self:custom.customCertificate.certificateName}):CertificateArn}
-
 functions:
   - ${file(./items/functions.yml)}
-    #- ${file(./login/functions.yml)}
 
-#  producer:
-#    module: handler-demo
-#    handler: handler.producer
-#    events:
-#      - httpApi:
-#          method: post
-#          path: /produce
-#          authorizer: serviceAuthorizer
-#
-#    environment:
-#      QUEUE_URL: ${construct:jobs.queueUrl}
-
-#  cognito-signup:
-#    module: cognito
-#    handler: cognito.signup
-#    events:
-#      - cognitoUserPool:
-#          pool:
-#            Ref: CognitoUserPool
-#          trigger: PreSignUp
-#          existing: true
-#    environment:
-#      DYNAMO_DB:
-#        Ref: DynamoDB
-
-plugins:
-  - serverless-lift
 package:
   individually: true
 

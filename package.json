@@ -4,10 +4,6 @@
   "description": "HTML changes monitoring application",
   "author": "dezeroku",
   "license": "MIT",
-  "devDependencies": {
-    "@boundstate/serverless-finch": "^2.8.2",
-    "serverless-lift": "^1.1.2"
-  },
   "dependencies": {
     "serverless": "^3.21.0"
   }
