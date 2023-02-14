@@ -7,12 +7,17 @@ RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
 function destroy_terraform_core() {
-    pushd "terraform/deployments/${DEPLOY_ENV}/core"
+    pushd "terraform/deployments/core"
+    terraform workspace select "${DEPLOY_ENV}"
 
     suffix="-var-file=../global.tfvars.json"
 
-    if [ -f "secret-values.tfvars" ]; then
-        suffix="${suffix} -var-file=secret-values.tfvars"
+    if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
+        suffix="${suffix} -var-file=${DEPLOY_ENV}.tfvars.json"
+    fi
+
+    if [ -f "${DEPLOY_ENV}-secret-values.tfvars" ]; then
+        suffix="${suffix} -var-file=${DEPLOY_ENV}-secret-values.tfvars"
     fi
 
     # shellcheck disable=SC2086 # Intended globbing
