@@ -19,7 +19,7 @@ function create_schemas() {
 
     popd
 
-    cat schemas/*.py > "${RUNDIR}/../items/items/json_schemas.py"
+    cat schemas/*.py | grep . > "${RUNDIR}/../items/items/json_schemas.py"
     popd
 }
 
