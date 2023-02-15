@@ -6,7 +6,7 @@ set -e
 function create_schemas() {
     # Generate the .jsons
     pushd "$(mktemp -d)"
-    openapi2jsonschema "${RUNDIR}/../swagger/swagger.yaml" --stand-alone
+    openapi2jsonschema "${RUNDIR}/../items/swagger.yaml" --stand-alone
 
     pushd schemas
 
