@@ -9,7 +9,7 @@ provider:
   runtime: python3.8
   memorySize: 128
   httpApi:
-    id: ${self:custom.tfOutputs.core.value.api_gateway_id}
+    id: ${self:custom.tfOutputs.items_core.value.api_gateway_id}
   iam:
     role:
       statements:
@@ -25,7 +25,7 @@ provider:
             Fn::Join:
               - ""
               - - arn:aws:dynamodb:${self:provider.region}:*:table/
-                - ${self:custom.tfOutputs.core.value.items_dynamodb_name}
+                - ${self:custom.tfOutputs.items_core.value.items_dynamodb_name}
 
 functions:
   - ${file(../items/functions.yml)}

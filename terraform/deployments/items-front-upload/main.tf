@@ -3,7 +3,7 @@ module "front_upload" {
     aws = aws
   }
 
-  source = "../../blocks/front-upload/"
+  source = "../../blocks/items-front-upload/"
 
   front_bucket_name = var.front_bucket_name
 }
