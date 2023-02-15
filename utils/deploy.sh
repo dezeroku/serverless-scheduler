@@ -114,7 +114,9 @@ if [[ "${DEPLOY_API}" == "true" ]]; then
     fi
 
     echo "Starting SLS deployment"
+    pushd serverless
     DEPLOY_ENV="${DEPLOY_ENV}" serverless deploy
+    popd
 fi
 
 # Front is built last, as we need to push values from TF deployment into it

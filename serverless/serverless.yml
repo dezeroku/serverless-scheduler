@@ -28,10 +28,10 @@ provider:
                 - ${self:custom.tfOutputs.core.value.items_dynamodb_name}
 
 functions:
-  - ${file(./items/functions.yml)}
+  - ${file(../items/functions.yml)}
 
 package:
   individually: true
 
 custom:
-  tfOutputs: ${file(.deployment-temp/${env:DEPLOY_ENV}/terraform/outputs.json)}
+  tfOutputs: ${file(../.deployment-temp/${env:DEPLOY_ENV}/terraform/outputs.json)}
