@@ -5,7 +5,7 @@ set -euo pipefail
 function get_front_vars() {
     echo "Obtaining requires variables from TF"
     echo "Make sure that TF deployment was run first"
-    CLIENT_POOL_ID="$(jq -r '.items-core.value.cognito_user_pool_client_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
+    CLIENT_POOL_ID="$(jq -r '.items_core.value.cognito_user_pool_client_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
     if [ -z "${CLIENT_POOL_ID}" ]; then
         echo "ERROR: Couldn't get UserPoolClientId from TF outputs!"
         exit 1
@@ -24,7 +24,7 @@ function prepare_front_deployment() {
 
 function upload_front() {
     local bucket_name
-    bucket_name="$(jq -r '.items-core.value.front_bucket_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
+    bucket_name="$(jq -r '.items_core.value.front_bucket_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
 
     if [ -z "${bucket_name}" ]; then
         echo "Couldn't read bucket name from TF outputs!"
