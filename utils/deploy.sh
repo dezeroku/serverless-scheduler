@@ -5,7 +5,7 @@ set -euo pipefail
 function get_front_vars() {
     echo "Obtaining requires variables from TF"
     echo "Make sure that TF deployment was run first"
-    CLIENT_POOL_ID="$(jq -r '.core.value.cognito_user_pool_client_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
+    CLIENT_POOL_ID="$(jq -r '.items-core.value.cognito_user_pool_client_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
     if [ -z "${CLIENT_POOL_ID}" ]; then
         echo "ERROR: Couldn't get UserPoolClientId from TF outputs!"
         exit 1
@@ -24,14 +24,14 @@ function prepare_front_deployment() {
 
 function upload_front() {
     local bucket_name
-    bucket_name="$(jq -r '.core.value.front_bucket_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
+    bucket_name="$(jq -r '.items-core.value.front_bucket_id' < ".deployment-temp/${DEPLOY_ENV}/terraform/outputs.json")"
 
     if [ -z "${bucket_name}" ]; then
         echo "Couldn't read bucket name from TF outputs!"
         exit 1
     fi
 
-    pushd "terraform/deployments/front-upload"
+    pushd "terraform/deployments/items-front-upload"
 
     suffix="-var-file=../global.tfvars.json"
     if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
@@ -61,8 +61,8 @@ HEREDOC
     exit 1
 }
 
-function provision_terraform_core() {
-    pushd "terraform/deployments/core/"
+function provision_terraform_items_core() {
+    pushd "terraform/deployments/items-core/"
 
     terraform workspace select "${DEPLOY_ENV}"
     suffix="-var-file=../global.tfvars.json"
@@ -105,7 +105,7 @@ DEPLOY_FRONT=false
 
 if [[ "${DEPLOY_INFRA}" == "true" ]]; then
     echo "Provisioning terraform infra"
-    provision_terraform_core
+    provision_terraform_items_core
 fi
 
 if [[ "${DEPLOY_API}" == "true" ]]; then

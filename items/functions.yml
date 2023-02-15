@@ -8,9 +8,9 @@ items-get:
         path: /items
         authorizer:
           type: jwt
-          id: ${self:custom.tfOutputs.core.value.cognito_authorizer_id}
+          id: ${self:custom.tfOutputs.items_core.value.cognito_authorizer_id}
   environment:
-    DYNAMO_DB: ${self:custom.tfOutputs.core.value.items_dynamodb_name}
+    DYNAMO_DB: ${self:custom.tfOutputs.items_core.value.items_dynamodb_name}
 
 item-create:
   package:
@@ -22,9 +22,9 @@ item-create:
         path: /item/create
         authorizer:
           type: jwt
-          id: ${self:custom.tfOutputs.core.value.cognito_authorizer_id}
+          id: ${self:custom.tfOutputs.items_core.value.cognito_authorizer_id}
   environment:
-    DYNAMO_DB: ${self:custom.tfOutputs.core.value.items_dynamodb_name}
+    DYNAMO_DB: ${self:custom.tfOutputs.items_core.value.items_dynamodb_name}
 
 item-delete:
   package:
@@ -36,9 +36,9 @@ item-delete:
         path: /item/delete/{item_id}
         authorizer:
           type: jwt
-          id: ${self:custom.tfOutputs.core.value.cognito_authorizer_id}
+          id: ${self:custom.tfOutputs.items_core.value.cognito_authorizer_id}
   environment:
-    DYNAMO_DB: ${self:custom.tfOutputs.core.value.items_dynamodb_name}
+    DYNAMO_DB: ${self:custom.tfOutputs.items_core.value.items_dynamodb_name}
 
 item-update:
   package:
@@ -50,6 +50,6 @@ item-update:
         path: /item/update/{item_id}
         authorizer:
           type: jwt
-          id: ${self:custom.tfOutputs.core.value.cognito_authorizer_id}
+          id: ${self:custom.tfOutputs.items_core.value.cognito_authorizer_id}
   environment:
-    DYNAMO_DB: ${self:custom.tfOutputs.core.value.items_dynamodb_name}
+    DYNAMO_DB: ${self:custom.tfOutputs.items_core.value.items_dynamodb_name}

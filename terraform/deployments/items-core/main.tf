@@ -1,10 +1,10 @@
-module "core" {
+module "items_core" {
   providers = {
     aws     = aws
     aws.acm = aws.acm
   }
 
-  source = "../../blocks/core/"
+  source = "../../blocks/items-core/"
 
   stage                       = var.stage
   service                     = var.service

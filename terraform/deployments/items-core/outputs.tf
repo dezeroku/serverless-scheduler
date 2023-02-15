@@ -1,5 +1,5 @@
-output "core" {
-  value = module.core
+output "items_core" {
+  value = module.items_core
 }
 
 output "aws_region" {
