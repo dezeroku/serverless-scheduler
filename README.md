@@ -40,6 +40,12 @@ Couple screenshots from the provided web UI.
 
 # How to deploy it?
 
+Situation is a bit messed up at the moment, but in general:
+
+1. There is terraform module for deploying core infra
+2. There is terraform module for uploading front files
+3. Serverless framework is used to deploy functions to API Gateway that's defined in core terraform infra. This is to be rewritten into terraform most likely
+
 First build the packages by issuing
 
 ```
