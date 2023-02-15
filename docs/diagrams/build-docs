@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+
+RUNDIR="$(readlink -f "$(dirname "$0")")"
+cd "${RUNDIR}"
+
+pushd builder
+# Handle proper IDs during a build, so permissions are OK on host
+docker build --build-arg UID="$(id -u)" --build-arg GID="$(id -u)" -t diagrams-builder .
+popd
+
+docker run -v "$PWD:/diagrams" -it diagrams-builder /bin/sh -c 'cd /diagrams; for x in $(ls *.py); do python $x; done;'
+
+mkdir -p created
+
+mv ./*.png created
