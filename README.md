@@ -38,6 +38,13 @@ Couple screenshots from the provided web UI.
 ![Home Page](docs/static/front/added.png?raw=true "Home Page")
 ![Modify Modal](docs/static/front/modify.png?raw=true "Modify Modal")
 
+# Project layout
+
+There are few "groups" in place. 0. `common` - common definitions to be shared between the python services
+
+1. `items` - REST endpoints for managing scheduled jobs for a user. `terraform/deployments/items-core`
+2. `front` - React based UI for the above API. `terraform/deployments/items-front-upload`
+
 # How to deploy it?
 
 Situation is a bit messed up at the moment, but in general:
