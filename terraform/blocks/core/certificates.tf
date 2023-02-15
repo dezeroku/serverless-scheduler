@@ -3,7 +3,7 @@ module "front_domain_cert" {
     aws = aws.acm
   }
 
-  source = "./modules/acm_certificate/"
+  source = "../../modules/acm_certificate/"
 
   domain            = var.front_domain
   route53_cert_zone = var.route53_cert_zone
@@ -14,7 +14,7 @@ module "auth_domain_cert" {
     aws = aws.acm
   }
 
-  source = "./modules/acm_certificate/"
+  source = "../../modules/acm_certificate/"
 
   domain            = local.auth_domain
   route53_cert_zone = var.route53_cert_zone
