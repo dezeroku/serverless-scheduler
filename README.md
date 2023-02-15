@@ -11,6 +11,8 @@ This repo should be treated as a fun project, not something you should rely on.
 
 # High level overview
 
+![High Level Overview](docs/diagrams/created/high_level_overview.png?raw=true "High Level Overview")
+
 - Frontend - React
 - CRUD - api-gateway + Lambdas on backend, writing to `Items` dynamodb
 - Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `item-changes` (to not block)
