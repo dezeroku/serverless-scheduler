@@ -31,7 +31,7 @@ function upload_front() {
         exit 1
     fi
 
-    pushd "terraform/deployments/front"
+    pushd "terraform/deployments/front-upload"
 
     suffix="-var-file=../global.tfvars.json"
     if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
