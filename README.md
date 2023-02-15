@@ -40,8 +40,9 @@ Couple screenshots from the provided web UI.
 
 # Project layout
 
-There are few "groups" in place. 0. `common` - common definitions to be shared between the python services
+There are few "groups" in place.
 
+0. `common` - common definitions to be shared between the python services
 1. `items` - REST endpoints for managing scheduled jobs for a user. `terraform/deployments/items-core`
 2. `front` - React based UI for the above API. `terraform/deployments/items-front-upload`
 
