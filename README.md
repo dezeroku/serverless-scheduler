@@ -18,8 +18,8 @@ This repo should be treated as a fun project, not something you should rely on.
 - Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `item-changes` (to not block)
 - FIFO SQS `item-changes` consumer, owning a set of EventBridge Schedulers that are modified according to incoming DB changes
 - EventBridge Schedulers inserting events to an SNS `Distribution`
-- SQSs attached to SNS `Distribution` getting the produced events from `Distribution` SNS based on event type (e.g. html handler vs checking port on some host being open handler)
-- Finally real "checker" lambdas consuming events from SQSs (keeping temporary state in S3)
+- SQSs attached to SNS `Distribution` getting the produced events from `Distribution` SNS based on job type (e.g. html handler vs checking port on some host being open)
+- Finally real "checker" lambdas consuming events from SQSs (keeping temporary state in S3 if needed)
 - Real "checker" lambdas inserting the (potential) notification events to `Output` SQS (or should it be SNS)
 - `Output` events are consumed by a Lambda reponsible for outgoing communication
 
