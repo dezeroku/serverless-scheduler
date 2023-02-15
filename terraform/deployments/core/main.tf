@@ -4,7 +4,7 @@ module "core" {
     aws.acm = aws.acm
   }
 
-  source = "../../modules/core/"
+  source = "../../blocks/core/"
 
   stage                       = var.stage
   service                     = var.service
