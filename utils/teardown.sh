@@ -28,7 +28,9 @@ function destroy_terraform_core() {
 
 [ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"
 
+pushd serverless
 DEPLOY_ENV="${DEPLOY_ENV}" serverless remove
+popd
 
 destroy_terraform_core
 
