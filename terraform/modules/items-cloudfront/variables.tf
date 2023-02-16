@@ -10,6 +10,10 @@ variable "front_bucket_regional_domain_name" {
   type = string
 }
 
-variable "front_bucket_cloudfront_access_identity_path" {
+variable "front_bucket_id" {
+  type = string
+}
+
+variable "front_bucket_arn" {
   type = string
 }
