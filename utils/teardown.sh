@@ -7,7 +7,7 @@ RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
 function destroy_terraform_core() {
-    pushd "terraform/deployments/items-core"
+    pushd "terraform/deployments/items-infra"
     terraform workspace select "${DEPLOY_ENV}"
 
     suffix="-var-file=../global.tfvars.json"

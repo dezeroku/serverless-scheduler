@@ -62,7 +62,7 @@ HEREDOC
 }
 
 function provision_terraform_items_core() {
-    pushd "terraform/deployments/items-core/"
+    pushd "terraform/deployments/items-infra/"
 
     terraform workspace select "${DEPLOY_ENV}"
     suffix="-var-file=../global.tfvars.json"
