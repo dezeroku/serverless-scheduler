@@ -34,7 +34,8 @@ resource "aws_cognito_user_pool_client" "client" {
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
-  depends_on      = [aws_route53_record.front-cloudfront]
+  # Set up cloudfront first to make sure that A record for parent domain is in place
+  depends_on      = [module.cloudfront]
   domain          = local.auth_domain
   certificate_arn = module.auth_domain_cert.certificate_arn
   user_pool_id    = aws_cognito_user_pool.pool.id

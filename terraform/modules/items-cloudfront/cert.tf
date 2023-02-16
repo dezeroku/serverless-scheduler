@@ -1,11 +1,11 @@
-module "auth_domain_cert" {
+module "front_domain_cert" {
   providers = {
     aws = aws.acm
   }
 
   source = "../../modules/acm_certificate/"
 
-  domain            = local.auth_domain
+  domain            = var.front_domain
   route53_cert_zone = var.route53_cert_zone
 }
 
