@@ -47,5 +47,5 @@ output "cognito_user_pool_client_id" {
 }
 
 output "front_bucket_id" {
-  value = aws_s3_bucket.front_bucket.id
+  value = module.front_bucket.bucket_id
 }

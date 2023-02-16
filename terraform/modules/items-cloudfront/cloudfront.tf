@@ -2,7 +2,7 @@ resource "aws_cloudfront_distribution" "front_distribution" {
   origin {
     domain_name = var.front_bucket_regional_domain_name
     s3_origin_config {
-      origin_access_identity = var.front_bucket_cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.front_bucket.cloudfront_access_identity_path
     }
     origin_id = "front-s3"
   }
