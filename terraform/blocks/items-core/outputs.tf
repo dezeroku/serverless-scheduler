@@ -15,7 +15,7 @@ output "api_domain" {
 }
 
 output "api_domain_cert_arn" {
-  value = module.api_domain_cert.certificate_arn
+  value = module.api_gateway.api_domain_cert_arn
 }
 
 output "front_domain" {
@@ -35,11 +35,11 @@ output "auth_domain_cert_arn" {
 }
 
 output "api_gateway_id" {
-  value = aws_apigatewayv2_api.api.id
+  value = module.api_gateway.api_id
 }
 
 output "cognito_authorizer_id" {
-  value = aws_apigatewayv2_authorizer.cognito.id
+  value = module.api_gateway.cognito_authorizer_id
 }
 
 output "cognito_user_pool_client_id" {
