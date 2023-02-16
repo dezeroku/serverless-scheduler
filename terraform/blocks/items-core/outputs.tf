@@ -23,7 +23,7 @@ output "front_domain" {
 }
 
 output "front_domain_cert_arn" {
-  value = module.front_domain_cert.certificate_arn
+  value = module.cloudfront.domain_cert_arn
 }
 
 output "auth_domain" {
