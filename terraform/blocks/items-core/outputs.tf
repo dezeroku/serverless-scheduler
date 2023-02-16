@@ -1,9 +1,9 @@
-output "items_dynamodb_name" {
-  value = aws_dynamodb_table.items.name
-}
-
 output "prefix" {
   value = local.prefix
+}
+
+output "items_dynamodb_name" {
+  value = module.dynamodb.table_name
 }
 
 output "base_domain" {
