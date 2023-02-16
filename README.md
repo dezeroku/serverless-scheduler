@@ -48,7 +48,10 @@ There are few "groups" in place.
 
 # How to deploy it?
 
-Situation is a bit messed up at the moment, but in general:
+Each group has its own terraform "blocks", that define parts of the infra.
+The are multiple blocks per group, as terraform handles both the core infra (e.g. `items-infra`), but also code deployments (e.g. `items-front-upload`).
+
+Situation is a bit messed up at the moment, but for `items`:
 
 1. There is terraform module for deploying core infra
 2. There is terraform module for uploading front files
