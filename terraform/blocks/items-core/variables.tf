@@ -25,11 +25,6 @@ variable "api_gateway_api_mapping_key" {
 variable "cognito_deletion_protection" {
   default = "INACTIVE"
   type    = string
-
-  validation {
-    condition     = length(regexall("^(INACTIVE|ACTIVE)$", var.cognito_deletion_protection)) > 0
-    error_message = "ERROR: Valid types are \"INACTIVE\" and \"ACTIVE\"!"
-  }
 }
 
 variable "cognito_dev_user_enable" {

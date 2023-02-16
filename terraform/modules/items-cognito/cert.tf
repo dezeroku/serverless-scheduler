@@ -5,11 +5,6 @@ module "auth_domain_cert" {
 
   source = "../../modules/acm_certificate/"
 
-  domain            = local.auth_domain
+  domain            = var.auth_domain
   route53_cert_zone = var.route53_cert_zone
-}
-
-data "aws_route53_zone" "cert_zone" {
-  name         = var.route53_cert_zone
-  private_zone = false
 }
