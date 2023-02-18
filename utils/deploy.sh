@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+set -euo pipefail
 
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"
