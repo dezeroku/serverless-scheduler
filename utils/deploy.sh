@@ -13,15 +13,6 @@ cd "${RUNDIR}/.."
 [ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"
 
 DEPLOY_TARGET="${1}"
-contains "${DEPLOYABLE_TARGETS} API" "${DEPLOY_TARGET}" || usage
-
-# TODO: convert this to terraform deployment like the rest
-if [[ "${DEPLOY_TARGET}" == "API" ]]; then
-    echo "Starting SLS deployment"
-    pushd serverless
-    DEPLOY_ENV="${DEPLOY_ENV}" serverless deploy
-    popd
-    exit 0
-fi
+contains "${DEPLOYABLE_TARGETS}" "${DEPLOY_TARGET}" || usage
 
 deploy_terraform "${DEPLOY_TARGET}"

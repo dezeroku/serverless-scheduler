@@ -71,7 +71,6 @@ function usage() {
     cat << HEREDOC
 $0 SCOPE
 where SCOPE can be one of:
-- API
 $(echo "${DEPLOYABLE_TARGETS}" | tr ' ' '\n' | sed -e 's/^/- /')
 
 You can also pass DEPLOY_ENV env variable to choose
