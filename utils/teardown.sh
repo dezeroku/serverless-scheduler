@@ -7,7 +7,7 @@ RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
 # shellcheck source=utils/deploy_lib.sh
-. "${RUNDIR}/deploy_lib.sh"
+. "${RUNDIR}/libs/deploy_lib.sh"
 
 [ -z "${1:-}" ] && usage
 [ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"

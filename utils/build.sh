@@ -14,32 +14,24 @@ function usage() {
     cat << HEREDOC
 deploy.sh SCOPE
 where SCOPE can be one of:
-- FULL
-- API
-- FRONT
+- items
+- front
 HEREDOC
 
     exit 1
 }
 
 [ -z "${1:-}" ] && usage
+BUILD_TARGET="${1}"
 
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
-BUILD_API=false
-BUILD_FRONT=false
+# shellcheck source=utils/libs/common.sh
+. "${RUNDIR}/libs/common.sh"
 
-[[ "$1" == "API" ]] && BUILD_API=true
-[[ "$1" == "FRONT" ]] && BUILD_FRONT=true
-[[ "$1" == "FULL" ]] && BUILD_API=true && BUILD_FRONT=true
+contains "items front" "${BUILD_TARGET}" || usage
 
-if [[ "${BUILD_API}" == "true" ]]; then
-    echo "Packaging Lambdas"
-    "${RUNDIR}"/package_lambdas_zips.sh
-fi
-
-if [[ "$BUILD_FRONT" == "true" ]]; then
-    build_front
-fi
+[[ "${BUILD_TARGET}" == "items" ]] && "${RUNDIR}"/package_lambdas_zips.sh "items"
+[[ "${BUILD_TARGET}" == "front" ]] && build_front

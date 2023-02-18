@@ -19,6 +19,8 @@ function package_service() {
     cp "./${service}/.packaging/result/lambda.zip" "${DEPLOY_DIR}/${service}-lambda.zip"
 }
 
-# Package services
-package_service items
-package_service schedulers
+[ -z "${1:-}" ] && echo "You need to provide service name" && exit 1
+
+BUILD_TARGET="${1}"
+
+package_service "${BUILD_TARGET}"
