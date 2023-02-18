@@ -23,5 +23,4 @@ function create_schemas() {
     popd
 }
 
-# TODO: We likely need to create a separate job for validating the commited schemas with generated ones
 create_schemas
