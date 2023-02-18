@@ -6,16 +6,11 @@ DEPLOYMENTS_DIR="./terraform/deployments"
 # Find deployable targets, convert newlines to spaces, remove last space
 DEPLOYABLE_TARGETS="$(find "${DEPLOYMENTS_DIR}" -mindepth 1 -maxdepth 1 -type d | awk -F'/' '{print $(NF)}' | tr '\n' ' ' | head -c -1)"
 
-# shellcheck source=utils/deploy_lib_hooks.sh
-. "${RUNDIR}/deploy_lib_hooks.sh"
+# shellcheck source=utils/libs/common.sh
+. "${RUNDIR}/libs/common.sh"
 
-function echoerr() {
-    echo "$@" 1>&2
-}
-
-function contains() {
-    [[ " $1 " =~ .*\ $2\ .* ]] && return 0 || return 1
-}
+# shellcheck source=utils/libs/deploy_lib_hooks.sh
+. "${RUNDIR}/libs/deploy_lib_hooks.sh"
 
 function deploy_terraform() {
     local deploy_target="${1}"
