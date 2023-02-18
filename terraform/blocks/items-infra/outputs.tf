@@ -38,6 +38,10 @@ output "api_gateway_id" {
   value = module.api_gateway.api_id
 }
 
+output "api_gateway_execution_arn" {
+  value = module.api_gateway.api_execution_arn
+}
+
 output "cognito_authorizer_id" {
   value = module.api_gateway.cognito_authorizer_id
 }
