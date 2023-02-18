@@ -34,4 +34,4 @@ package:
   individually: true
 
 custom:
-  tfOutputs: ${file(../.deployment-temp/${env:DEPLOY_ENV}/terraform/outputs.json)}
+  tfOutputs: ${file(../.deployment-temp/${env:DEPLOY_ENV}/terraform/items-infra-outputs.json)}

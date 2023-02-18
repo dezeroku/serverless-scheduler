@@ -1,37 +1,28 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -euxo pipefail
 
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}/.."
 
-function destroy_terraform_core() {
-    pushd "terraform/deployments/items-infra"
-    terraform workspace select "${DEPLOY_ENV}"
+# shellcheck source=utils/deploy_lib.sh
+. "${RUNDIR}/deploy_lib.sh"
 
-    suffix="-var-file=../global.tfvars.json"
-
-    if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
-        suffix="${suffix} -var-file=${DEPLOY_ENV}.tfvars.json"
-    fi
-
-    if [ -f "${DEPLOY_ENV}-secret-values.tfvars" ]; then
-        suffix="${suffix} -var-file=${DEPLOY_ENV}-secret-values.tfvars"
-    fi
-
-    # shellcheck disable=SC2086 # Intended globbing
-    terraform destroy ${suffix}
-
-    popd
-}
-
+[ -z "${1:-}" ] && usage
 [ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"
 
-pushd serverless
-DEPLOY_ENV="${DEPLOY_ENV}" serverless remove
-popd
+DESTROY_TARGET="${1}"
+contains "${DEPLOYABLE_TARGETS} API" "${DESTROY_TARGET}" || usage
 
-destroy_terraform_core
+# TODO: convert this to terraform deployment like the rest
+if [[ "${DESTROY_TARGET}" == "API" ]]; then
+    echo "Starting SLS deployment"
+    pushd serverless
+    DEPLOY_ENV="${DEPLOY_ENV}" serverless remove
+    popd
+    exit 0
+fi
 
-rm -rf ".deployment-temp/${DEPLOY_ENV}"
+destroy_terraform "${DESTROY_TARGET}"
+rm -rf ".deployment-temp/${DEPLOY_ENV}/terraform/${DESTROY_TARGET}-outputs.json"
