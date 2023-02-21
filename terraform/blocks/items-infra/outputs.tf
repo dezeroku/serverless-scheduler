@@ -22,6 +22,10 @@ output "items_dynamodb_name" {
   value = module.dynamodb.table_name
 }
 
+output "items_dynamodb_stream_arn" {
+  value = module.dynamodb.stream_arn
+}
+
 output "api_domain_cert_arn" {
   value = module.api_gateway.api_domain_cert_arn
 }
