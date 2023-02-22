@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-resource "aws_iam_role" "items" {
+resource "aws_iam_role" "copier" {
   assume_role_policy = jsonencode(
     {
       "Version" = "2012-10-17",
@@ -17,13 +17,13 @@ resource "aws_iam_role" "items" {
       ]
   })
   inline_policy {
-    name   = "monitor-page-items-lambda"
-    policy = data.aws_iam_policy_document.items.json
+    name   = "copier-lambda"
+    policy = data.aws_iam_policy_document.copier.json
   }
 
 }
 
-data "aws_iam_policy_document" "items" {
+data "aws_iam_policy_document" "copier" {
   statement {
     actions = [
       "logs:CreateLogStream",
@@ -43,15 +43,22 @@ data "aws_iam_policy_document" "items" {
 
   statement {
     actions = [
-      "dynamodb:Query",
-      "dynamodb:Scan",
-      "dynamodb:GetItem",
-      "dynamodb:PutItem",
-      "dynamodb:UpdateItem",
-      "dynamodb:DeleteItem"
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:DescribeStream",
+      "dynamodb:ListStreams"
     ]
     resources = [
-      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_name}"
+      var.dynamodb_stream_arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      aws_sqs_queue.output.arn
     ]
   }
 }

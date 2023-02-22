@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 # This is a library that's meant to be sourced
 
+function items-infra-common() {
+    copier_lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/items-lambda.zip")"
+    echo "-var copier_lambda_zip_path=${copier_lambda_zip_path}"
+}
+
+function items-infra-pre-deploy-terraform() {
+    items-infra-common
+}
+
+
+function items-infra-pre-destroy-terraform() {
+    items-infra-common
+}
+
 function items-front-upload-pre-deploy-terraform() {
     local client_pool_id
     client_pool_id="$(jq -r '.items_core.value.cognito_user_pool_client_id' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
