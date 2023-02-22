@@ -74,6 +74,7 @@ files = [
 [package.dependencies]
 botocore-stubs = "*"
 mypy-boto3-dynamodb = {version = ">=1.26.0,<1.27.0", optional = true, markers = "extra == \"dynamodb\""}
+mypy-boto3-sqs = {version = ">=1.26.0,<1.27.0", optional = true, markers = "extra == \"sqs\""}
 types-s3transfer = "*"
 typing-extensions = ">=4.1.0"
 
@@ -1201,6 +1202,21 @@ files = [
 typing-extensions = ">=4.1.0"
 
 [[package]]
+name = "mypy-boto3-sqs"
+version = "1.26.0.post1"
+description = "Type annotations for boto3.SQS 1.26.0 service generated with mypy-boto3-builder 7.11.10"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mypy-boto3-sqs-1.26.0.post1.tar.gz", hash = "sha256:6caead4c906ac4956eebdfeeaa1e08f9df03929a0cefac06122ca88bd7766610"},
+    {file = "mypy_boto3_sqs-1.26.0.post1-py3-none-any.whl", hash = "sha256:72e5dcb12731d83f235f9cf282bf8d87d6757b5e0fda1068726772806ca6f0cc"},
+]
+
+[package.dependencies]
+typing-extensions = ">=4.1.0"
+
+[[package]]
 name = "packaging"
 version = "23.0"
 description = "Core utilities for Python packages"
@@ -1748,4 +1764,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "b5dbd09797a39c5bf170bfb229982b6e522ff888f7f5a8814d9c76ad158a6de3"
+content-hash = "5fd1c7671bfbe6f9815cb3c34562bcb425d24d21b23c8f8b6e917eb17a376bf4"

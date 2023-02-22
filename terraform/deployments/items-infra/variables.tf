@@ -47,3 +47,7 @@ variable "cognito_dev_user_email" {
 variable "cognito_dev_user_password" {
   type = string
 }
+
+variable "copier_lambda_zip_path" {
+  type = string
+}

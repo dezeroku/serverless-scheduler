@@ -57,3 +57,7 @@ output "cognito_user_pool_client_id" {
 output "front_bucket_id" {
   value = module.front_bucket.bucket_id
 }
+
+output "output_fifo_sqs_url" {
+  value = module.output_fifo_sqs.output_fifo_sqs_url
+}
