@@ -1,29 +1,30 @@
 from diagrams import Cluster, Diagram
-from diagrams.aws.compute import ECS, EKS, Lambda
-from diagrams.aws.database import DDB, Redshift
+from diagrams.aws.compute import Lambda
+from diagrams.aws.database import DDB
 from diagrams.aws.engagement import SES
 from diagrams.aws.integration import SNS, SQS, Eventbridge
 from diagrams.aws.network import APIGateway
-from diagrams.aws.storage import S3
-from diagrams.generic.compute import Rack
 from diagrams.programming.framework import React
 
 with Diagram("High Level Overview", show=False, outformat=["png"]):
-    ui_source = React("Web UI")
-    source = APIGateway("Items")
+    with Cluster("front"):
+        ui_source = React("Web UI")
 
-    with Cluster("Items endpoints"):
-        items_endpoints = [
-            Lambda("create"),
-            Lambda("update"),
-            Lambda("delete"),
-            Lambda("get"),
-        ]
+    with Cluster("items"):
+        source = APIGateway("Items")
 
-    items_db = DDB("Items")
-    item_changes_sqs = SQS("FIFO item-changes")
+        with Cluster("Items endpoints"):
+            items_endpoints = [
+                Lambda("create"),
+                Lambda("update"),
+                Lambda("delete"),
+                Lambda("get"),
+            ]
+
+        items_db = DDB("Items")
+        item_changes_sqs = SQS("FIFO item-changes")
+
     item_changes_lambda = Lambda("ScheduleController")
-
     with Cluster("Scheduled Jobs"):
         scheduled_jobs_eventbridge = [
             Eventbridge("ScheduledJob1"),
