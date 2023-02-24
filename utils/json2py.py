@@ -5,7 +5,7 @@ import sys
 
 
 def convert(filename_in, filename_out, var_name):
-    with open(filename_in, "r") as temp:
+    with open(filename_in) as temp:
         content = json.loads(temp.read())
 
     with open(filename_out, "w") as temp:
