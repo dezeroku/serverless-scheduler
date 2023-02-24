@@ -24,14 +24,6 @@ class SchedulerChangeEvent(BaseJob):
 
     timestamp: Union[datetime, None] = None
 
-    @validator("timestamp", pre=True)
-    def parse_flot_to_datetime(cls, v):
-        # pylint: disable=no-self-argument,invalid-name
-        if isinstance(v, int) or isinstance(v, float):
-            return datetime.fromtimestamp(v)
-
-        return v
-
     @validator("scheduled_job", pre=True)
     def parse_dict_to_job(cls, v):
         # pylint: disable=no-self-argument,invalid-name

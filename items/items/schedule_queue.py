@@ -1,14 +1,34 @@
-import json
 import logging
 import os
 
 import boto3
 from mypy_boto3_sqs import SQSClient
 
-# from common.models import HTMLMonitorJob
+from common.models import SchedulerChangeEvent, SchedulerChangeType, parse_dict_to_job
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+
+def dynamodb_to_typed_dict(entry: dict):
+    key_type_mapping = {
+        "S": str,
+        "N": float,
+        "BOOL": lambda x: x in (True, "true"),
+    }
+
+    for key, val in entry.items():
+        match_found = False
+        for map_key, convert_func in key_type_mapping.items():
+            if map_key in val:
+                entry[key] = convert_func(val[map_key])
+                match_found = True
+                break
+
+        if not match_found:
+            raise ValueError(f"Mapping type not found for {val}")
+
+    return entry
 
 
 def add(event, context):
@@ -18,21 +38,40 @@ def add(event, context):
     queue_url = os.environ["OUTPUT_FIFO_SQS_URL"]
 
     handler(records, sqs, queue_url)
-    # return response
-    # return
 
 
 def handler(records, sqs: SQSClient, queue_url: str):
+    scheduler_change_type_map = {
+        "INSERT": SchedulerChangeType.CREATE,
+        "MODIFY": SchedulerChangeType.MODIFY,
+        "REMOVE": SchedulerChangeType.REMOVE,
+    }
+
     for rec in records:
         logger.debug(rec)
-        user_email = rec["dynamodb"]["Keys"]["user_email"]["S"].replace("@", "_")
-        job_id = rec["dynamodb"]["Keys"]["job_id"]["N"]
+        rec["dynamodb"]["Keys"] = dynamodb_to_typed_dict(rec["dynamodb"]["Keys"])
 
-        # TODO: parse the record to proper job representation
-        # Also add a timestamp to the json, so the deduplication doesn't get
-        # too aggresive
+        user_email = rec["dynamodb"]["Keys"]["user_email"]
+        job_id = rec["dynamodb"]["Keys"]["job_id"]
+        timestamp = rec["dynamodb"]["ApproximateCreationDateTime"]
+
+        change_type = scheduler_change_type_map[rec["eventName"]]
+        if change_type == SchedulerChangeType.REMOVE:
+            scheduled_job = None
+        else:
+            new_image = dynamodb_to_typed_dict(rec["dynamodb"]["NewImage"])
+            scheduled_job = parse_dict_to_job(new_image)
+
+        change_event = SchedulerChangeEvent(
+            user_email=user_email,
+            job_id=job_id,
+            change_type=change_type,
+            scheduled_job=scheduled_job,
+            timestamp=timestamp,
+        )
+
         sqs.send_message(
-            MessageBody=json.dumps(rec),
+            MessageBody=change_event.json(),
             QueueUrl=queue_url,
-            MessageGroupId=f"{user_email}-{job_id}"[:127],
+            MessageGroupId=change_event.get_unique_job_id(),
         )
