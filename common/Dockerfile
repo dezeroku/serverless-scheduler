@@ -1,7 +1,7 @@
-FROM public.ecr.aws/lambda/python:3.8 as base
+FROM public.ecr.aws/lambda/python:3.9 as base
 
-RUN yum update && \
-    yum install -y zip
+RUN yum -y update && \
+    yum -y install zip
 
 ENV PATH=$PATH:/root/.local/bin
 RUN curl https://install.python-poetry.org | python3 - --version 1.3.0
@@ -10,7 +10,7 @@ WORKDIR /app/builder
 
 COPY .packaging/temp /app/common
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root --no-dev
+RUN poetry install --no-root --only main
 
 ARG COMPONENT_NAME
 COPY $COMPONENT_NAME $COMPONENT_NAME

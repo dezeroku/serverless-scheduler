@@ -5,7 +5,7 @@ description = "Lambda REST API for managing monitor jobs"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 lambda-decorators = "^0.6.0"
 jsonschema = "^4.7.2"
 pydantic = "^1.10.4"
