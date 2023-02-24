@@ -1,4 +1,4 @@
-from diagrams import Cluster, Diagram
+from diagrams import Cluster, Diagram, Edge
 from diagrams.aws.compute import Lambda
 from diagrams.aws.database import DDB
 from diagrams.aws.engagement import SES
@@ -22,7 +22,8 @@ with Diagram("High Level Overview", show=False, outformat=["png"]):
             ]
 
         items_db = DDB("Items")
-        item_changes_sqs = SQS("FIFO item-changes")
+        items_db_stream_lambda = Lambda("ChangeAnalyzer")
+        item_changes_sqs = SQS("FIFO ScheduleQueue")
 
     item_changes_lambda = Lambda("ScheduleController")
     with Cluster("Scheduled Jobs"):
@@ -47,7 +48,15 @@ with Diagram("High Level Overview", show=False, outformat=["png"]):
     output = SQS("Output")
     mail_sender = SES("SES")
 
-    ui_source >> source >> items_endpoints >> items_db >> item_changes_sqs
+    (
+        ui_source
+        >> source
+        >> items_endpoints
+        >> items_db
+        >> Edge(label="DDB Stream")
+        >> items_db_stream_lambda
+    )
+    items_db_stream_lambda >> Edge(label="SchedulerChangeEvent") >> item_changes_sqs
     (
         item_changes_sqs
         >> item_changes_lambda
