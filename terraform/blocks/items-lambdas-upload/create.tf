@@ -3,7 +3,7 @@ resource "aws_lambda_function" "items_create" {
   function_name    = "${var.prefix}-item-create"
   role             = aws_iam_role.items.arn
   handler          = "items/create.create"
-  runtime          = "python3.8"
+  runtime          = "python3.9"
   source_code_hash = filebase64sha256(var.lambda_zip_path)
   environment {
     variables = {
