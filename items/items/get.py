@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from boto3.dynamodb.conditions import Key
 from lambda_decorators import cors_headers, json_http_resp, json_schema_validator

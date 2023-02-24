@@ -5,7 +5,7 @@ description = "Common utils used in Lambdas"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pydantic = "^1.10.4"
 boto3 = "^1.24.43"
 boto3-stubs = {extras = ["dynamodb"], version = "^1.26.64"}
