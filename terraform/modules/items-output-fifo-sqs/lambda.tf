@@ -3,7 +3,7 @@ resource "aws_lambda_function" "copier" {
   function_name    = "${var.prefix}-schedule-queue-adder"
   role             = aws_iam_role.copier.arn
   handler          = "items/schedule_queue.add"
-  runtime          = "python3.8"
+  runtime          = "python3.9"
   source_code_hash = filebase64sha256(var.lambda_zip_path)
   environment {
     variables = {
