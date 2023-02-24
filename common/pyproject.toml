@@ -23,7 +23,7 @@ hypothesis = "^6.68.2"
 omit = ["tests*"]
 
 [tool.pylint.MASTER]
-py-version = "3.8"
+py-version = "3.9"
 extension-pkg-whitelist = "pydantic"
 load-plugins = [
   "pylint.extensions.code_style",
