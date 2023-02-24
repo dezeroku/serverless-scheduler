@@ -1,20 +1,20 @@
 from datetime import datetime
 from typing import Union
 
-from pydantic import validator
+from pydantic import BaseModel, Extra, validator
 
 from common.models.events.scheduler_change_type import SchedulerChangeType
-from common.models.jobs.base_job import BaseJob
 from common.models.jobs.scheduled_job import ScheduledJob
 from common.models.jobs.utils import parse_dict_to_job
 
 
-class SchedulerChangeEvent(BaseJob):
+class SchedulerChangeEvent(BaseModel):
     """
     Defines event that is sent to "Output" SQS at the end of the "items" flow.
     It's also the input for "schedulers" flow.
     """
 
+    scheduler_id: str
     change_type: SchedulerChangeType
     # Set to none in case of REMOVE event
     # This is duplicated a bit, as the job_id and user_email are also provided in the class itself
@@ -23,6 +23,9 @@ class SchedulerChangeEvent(BaseJob):
     scheduled_job: Union[ScheduledJob, None]
 
     timestamp: Union[datetime, None] = None
+
+    class Config:
+        extra = Extra.forbid
 
     @validator("scheduled_job", pre=True)
     def parse_dict_to_job(cls, v):
