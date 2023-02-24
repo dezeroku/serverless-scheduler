@@ -145,3 +145,17 @@ def test_scheduler_change_event_timestamp_from_datetime(example_user_email):
     )
 
     assert event.timestamp == timestamp
+
+
+def test_scheduler_change_event_timestamp_from_string(example_user_email):
+    timestamp_string = "1970-01-01T00:00:00+00:00"
+    timestamp = datetime.fromisoformat(timestamp_string)
+    event = SchedulerChangeEvent(
+        user_email=example_user_email,
+        job_id=0,
+        change_type=SchedulerChangeType.REMOVE,
+        scheduled_job=None,
+        timestamp=timestamp_string,
+    )
+
+    assert event.timestamp == timestamp

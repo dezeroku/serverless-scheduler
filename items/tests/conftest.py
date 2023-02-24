@@ -3,11 +3,13 @@ import os
 
 import boto3
 import mypy_boto3_dynamodb
+import mypy_boto3_sqs
 import pytest
 from boto3.dynamodb.conditions import Key
-from moto import mock_dynamodb
+from moto import mock_dynamodb, mock_sqs
 
 _EXAMPLE_USER_EMAIL = "user@example.com"
+_EXAMPLE_QUEUE_NAME = "test.fifo"
 
 
 class Helpers:
@@ -95,6 +97,13 @@ class Helpers:
         return table
 
     @staticmethod
+    def empty_mock_sqs(sqs: mypy_boto3_sqs.SQSClient, queue_name):
+        sqs.create_queue(
+            QueueName=queue_name,
+            Attributes={"FifoQueue": "true", "ContentBasedDeduplication": "true"},
+        )
+
+    @staticmethod
     def get_monitor_jobs_for_user(table, user_email):
         return table.query(KeyConditionExpression=Key("user_email").eq(user_email))[
             "Items"
@@ -154,3 +163,18 @@ def mock_db(table_name):
         Helpers.empty_mock_table(dynamodb, table_name)
 
         yield dynamodb
+
+
+@pytest.fixture(name="example_queue_name")
+def example_queue_name_fixture():
+    return _EXAMPLE_QUEUE_NAME
+
+
+@pytest.fixture(name="mock_sqs")
+def mock_sqs_fixture(example_queue_name):
+    with mock_sqs():
+        sqs = boto3.client("sqs")
+
+        Helpers.empty_mock_sqs(sqs, example_queue_name)
+
+        yield sqs
