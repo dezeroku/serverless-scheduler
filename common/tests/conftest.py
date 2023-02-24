@@ -35,8 +35,8 @@ class Helpers:
         }
 
 
-@pytest.fixture
-def helpers():
+@pytest.fixture(name="helpers")
+def helpers_fixture():
     return Helpers
 
 
