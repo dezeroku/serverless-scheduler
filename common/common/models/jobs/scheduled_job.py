@@ -2,7 +2,7 @@ from typing import Union
 
 from pydantic import BaseModel, EmailStr, Extra, validator
 
-from common.models.job_type import JobType
+from common.models.jobs.job_type import JobType
 
 
 class ScheduledJob(BaseModel):
