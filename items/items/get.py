@@ -33,7 +33,7 @@ def handler(table, user_email, pagination=True):
     # By default returns ALL the results, taking pagination into account
     response = table.query(KeyConditionExpression=Key("user_email").eq(user_email))
 
-    monitor_jobs: List[HTMLMonitorJob] = response["Items"]
+    monitor_jobs: list[HTMLMonitorJob] = response["Items"]
 
     if pagination:
         while "LastEvaluatedKey" in response:
