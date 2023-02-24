@@ -21,3 +21,15 @@ variable "lambda_zip_path" {
 variable "dynamodb_name" {
   type = string
 }
+
+variable "output_sqs_url" {
+  type = string
+}
+
+variable "output_sqs_arn" {
+  type = string
+}
+
+variable "dynamodb_stream_arn" {
+  type = string
+}

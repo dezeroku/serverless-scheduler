@@ -58,6 +58,10 @@ output "front_bucket_id" {
   value = module.front_bucket.bucket_id
 }
 
-output "output_fifo_sqs_url" {
-  value = module.output_fifo_sqs.output_fifo_sqs_url
+output "output_sqs_url" {
+  value = module.output_fifo_sqs.output_sqs_url
+}
+
+output "output_sqs_arn" {
+  value = module.output_fifo_sqs.output_sqs_arn
 }

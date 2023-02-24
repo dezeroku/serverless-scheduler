@@ -16,5 +16,4 @@ module "items_core" {
   cognito_dev_user_enable     = var.cognito_dev_user_enable
   cognito_dev_user_email      = var.cognito_dev_user_email
   cognito_dev_user_password   = var.cognito_dev_user_password
-  copier_lambda_zip_path      = var.copier_lambda_zip_path
 }

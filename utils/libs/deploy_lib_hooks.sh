@@ -2,8 +2,7 @@
 # This is a library that's meant to be sourced
 
 function items-infra-common() {
-    copier_lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/items-lambda.zip")"
-    echo "-var copier_lambda_zip_path=${copier_lambda_zip_path}"
+    :
 }
 
 function items-infra-pre-deploy-terraform() {
@@ -46,14 +45,21 @@ function items-lambdas-upload-common() {
     local api_authorizer_id
     local lambda_zip_path
     local dynamodb_name
+    local dynamodb_stream_arn
+    local output_sqs_arn
+    local output_sqs_url
     prefix="$(jq -r '.items_core.value.prefix' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
     api_id="$(jq -r '.items_core.value.api_gateway_id' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
     api_execution_arn="$(jq -r '.items_core.value.api_gateway_execution_arn' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
     api_authorizer_id="$(jq -r '.items_core.value.cognito_authorizer_id' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
     lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/items-lambda.zip")"
+    dynamodb_stream_arn="$(jq -r '.items_core.value.items_dynamodb_stream_arn' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
+    output_sqs_arn="$(jq -r '.items_core.value.output_sqs_arn' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
+    output_sqs_url="$(jq -r '.items_core.value.output_sqs_url' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
+
     dynamodb_name="$(jq -r '.items_core.value.items_dynamodb_name' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
 
-    echo "-var prefix=${prefix} -var api_id=${api_id} -var api_execution_arn=${api_execution_arn} -var api_authorizer_id=${api_authorizer_id} -var lambda_zip_path=${lambda_zip_path} -var dynamodb_name=${dynamodb_name}"
+    echo "-var prefix=${prefix} -var api_id=${api_id} -var api_execution_arn=${api_execution_arn} -var api_authorizer_id=${api_authorizer_id} -var lambda_zip_path=${lambda_zip_path} -var dynamodb_name=${dynamodb_name} -var dynamodb_stream_arn=${dynamodb_stream_arn} -var output_sqs_arn=${output_sqs_arn} -var output_sqs_url=${output_sqs_url}"
 }
 
 function items-lambdas-upload-pre-deploy-terraform() {
