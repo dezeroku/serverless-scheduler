@@ -1,4 +1,5 @@
 import itertools
+from datetime import datetime
 
 import pytest
 from tests.conftest import Helpers
@@ -101,3 +102,46 @@ def test_scheduler_change_event_scheduled_job_presence_allowed_none(
         change_type=change_type,
         scheduled_job=None,
     )
+
+
+def test_scheduler_change_event_none_timestamp(example_user_email):
+    SchedulerChangeEvent(
+        user_email=example_user_email,
+        job_id=0,
+        change_type=SchedulerChangeType.REMOVE,
+        scheduled_job=None,
+        timestamp=None,
+    )
+
+
+@pytest.mark.parametrize(
+    "timestamp_type",
+    [
+        int,
+        float,
+    ],
+)
+def test_scheduler_change_event_timestamp_from_type(example_user_email, timestamp_type):
+    timestamp = 0
+    event = SchedulerChangeEvent(
+        user_email=example_user_email,
+        job_id=0,
+        change_type=SchedulerChangeType.REMOVE,
+        scheduled_job=None,
+        timestamp=timestamp_type(timestamp),
+    )
+
+    assert event.timestamp.timestamp() == timestamp
+
+
+def test_scheduler_change_event_timestamp_from_datetime(example_user_email):
+    timestamp = datetime.fromtimestamp(0)
+    event = SchedulerChangeEvent(
+        user_email=example_user_email,
+        job_id=0,
+        change_type=SchedulerChangeType.REMOVE,
+        scheduled_job=None,
+        timestamp=timestamp,
+    )
+
+    assert event.timestamp == timestamp
