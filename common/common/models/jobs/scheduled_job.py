@@ -1,18 +1,12 @@
-from typing import Union
+from pydantic import validator
 
-from pydantic import BaseModel, EmailStr, Extra, validator
-
+from common.models.jobs.base_job import BaseJob
 from common.models.jobs.job_type import JobType
 
 
-class ScheduledJob(BaseModel):
-    user_email: EmailStr
-    job_id: Union[int, None]  # pylint: disable=invalid-name
+class ScheduledJob(BaseJob):
     sleep_time: int
     job_type: JobType = None
-
-    class Config:
-        extra = Extra.forbid
 
     @validator("sleep_time")
     def sleep_time_must_be_positive(cls, v):

@@ -2,6 +2,7 @@ from enum import Enum
 
 from common.models.jobs.html_monitor_job import HTMLMonitorJob
 from common.models.jobs.job_type import JobType
+from common.models.jobs.scheduled_job import ScheduledJob
 
 
 def map_enum_to_class(entry: Enum):
@@ -16,8 +17,7 @@ def map_enum_to_class(entry: Enum):
 
 
 def parse_dict_to_job(data: dict):
-    job_type = data.get("job_type")
-    if not job_type:
+    if not (job_type := data.get("job_type")):
         raise ValueError("No job_type provided")
 
     try:
