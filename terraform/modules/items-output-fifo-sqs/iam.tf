@@ -17,7 +17,7 @@ resource "aws_iam_role" "copier" {
       ]
   })
   inline_policy {
-    name   = "copier-lambda"
+    name   = "schedule-queue-lambda"
     policy = data.aws_iam_policy_document.copier.json
   }
 

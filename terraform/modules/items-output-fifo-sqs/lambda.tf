@@ -1,8 +1,8 @@
 resource "aws_lambda_function" "copier" {
   filename         = var.lambda_zip_path
-  function_name    = "${var.prefix}-output-sqs-copier"
+  function_name    = "${var.prefix}-schedule-queue-adder"
   role             = aws_iam_role.copier.arn
-  handler          = "items/copier.copier"
+  handler          = "items/schedule_queue.add"
   runtime          = "python3.8"
   source_code_hash = filebase64sha256(var.lambda_zip_path)
   environment {
@@ -16,6 +16,6 @@ resource "aws_lambda_function" "copier" {
 }
 
 resource "aws_cloudwatch_log_group" "copier" {
-  name              = "/aws/lambda/${var.prefix}-output-sqs-copier"
+  name              = "/aws/lambda/${var.prefix}-schedule-queue-adder"
   retention_in_days = 14
 }

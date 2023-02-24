@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def copier(event, context):
+def add(event, context):
     # pylint: disable=unused-argument
     records = event["Records"]
     sqs = boto3.client("sqs")
