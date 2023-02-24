@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union
 
 from pydantic import validator
@@ -20,6 +21,16 @@ class SchedulerChangeEvent(BaseJob):
     # The reasoning behind it is that if you get a REMOVE event, you don't get a scheduled_job
     # object at all and you still need to uniquely identify the EventBridge Scheduler to modify.
     scheduled_job: Union[ScheduledJob, None]
+
+    timestamp: Union[datetime, None] = None
+
+    @validator("timestamp", pre=True)
+    def parse_flot_to_datetime(cls, v):
+        # pylint: disable=no-self-argument,invalid-name
+        if isinstance(v, int) or isinstance(v, float):
+            return datetime.fromtimestamp(v)
+
+        return v
 
     @validator("scheduled_job", pre=True)
     def parse_dict_to_job(cls, v):
