@@ -30,6 +30,8 @@ def handler(records, sqs: SQSClient, queue_url: str, prefix: str):
         job_id = rec["dynamodb"]["Keys"]["job_id"]["N"]
 
         # TODO: parse the record to proper job representation
+        # Also add a timestamp to the json, so the deduplication doesn't get
+        # too aggresive
         sqs.send_message(
             MessageBody=json.dumps(rec),
             QueueUrl=queue_url,
