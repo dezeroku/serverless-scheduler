@@ -14,12 +14,12 @@ def test_data_fetch_empty(empty_mock_db, table_name, db_user):
 
 
 def test_data_fetch_empty_event(
-    helpers, monkeypatch, empty_mock_db, table_name, db_user
+    helpers, monkeypatch, empty_mock_db, table_name, db_user, db_user_email
 ):
     empty_mock_db.Table(table_name)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
-    event = helpers.EventFactory(cognitoEmail=db_user)
+    event = helpers.EventFactory(cognitoEmail=db_user_email, cognitoUsername=db_user)
     context = None
     response = get(event, context)
 
@@ -31,7 +31,7 @@ def test_data_fetch_single_item(empty_mock_db, table_name, db_user, helpers):
     table = empty_mock_db.Table(table_name)
 
     monitor_job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(user_email=db_user)
+        **helpers.html_monitor_job_dict_factory(user_id=db_user)
     )
 
     to_save = monitor_job.dict()
@@ -44,19 +44,19 @@ def test_data_fetch_single_item(empty_mock_db, table_name, db_user, helpers):
 
 
 def test_data_fetch_single_item_event(
-    helpers, monkeypatch, empty_mock_db, table_name, db_user
+    helpers, monkeypatch, empty_mock_db, table_name, db_user, db_user_email
 ):
     table = empty_mock_db.Table(table_name)
 
     monitor_job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(user_email=db_user)
+        **helpers.html_monitor_job_dict_factory(user_id=db_user)
     )
 
     to_save = monitor_job.dict()
     table.put_item(Item=to_save)
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
-    event = helpers.EventFactory(cognitoEmail=db_user)
+    event = helpers.EventFactory(cognitoEmail=db_user_email, cognitoUsername=db_user)
     context = None
     response = get(event, context)
 

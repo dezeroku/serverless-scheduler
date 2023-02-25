@@ -10,14 +10,14 @@ from items.update import handler, update
 def setup(helpers, mock_db_table, db_user):
     # Add a single element to DB to be used later on in tests
     monitor_job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(user_email=db_user, job_id=0)
+        **helpers.html_monitor_job_dict_factory(user_id=db_user, job_id=0)
     )
 
     to_save = monitor_job.dict()
     mock_db_table.put_item(Item=to_save)
 
 
-def test_successful_update(mock_db_table, db_user, helpers):
+def test_successful_update(mock_db_table, db_user, db_user_email, helpers):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
@@ -33,7 +33,7 @@ def test_successful_update(mock_db_table, db_user, helpers):
 
     payload = new_item.dict()
 
-    response = handler(mock_db_table, db_user, item_id, payload)
+    response = handler(mock_db_table, db_user_email, db_user, item_id, payload)
 
     assert response["statusCode"] == 200
 
@@ -45,7 +45,7 @@ def test_successful_update(mock_db_table, db_user, helpers):
 
 
 def test_successful_update_event(
-    helpers, monkeypatch, table_name, mock_db_table, db_user
+    helpers, monkeypatch, table_name, mock_db_table, db_user, db_user_email
 ):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
@@ -64,7 +64,10 @@ def test_successful_update_event(
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        body=payload, cognitoEmail=db_user, pathParameters={"item_id": item_id}
+        body=payload,
+        cognitoUsername=db_user,
+        cognitoEmail=db_user_email,
+        pathParameters={"item_id": item_id},
     )
     context = None
     response = update(event, context)
@@ -78,7 +81,7 @@ def test_successful_update_event(
     assert changed == new_item
 
 
-def test_update_nonexisting(mock_db_table, db_user, helpers):
+def test_update_nonexisting(mock_db_table, db_user_email, db_user, helpers):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
@@ -87,7 +90,7 @@ def test_update_nonexisting(mock_db_table, db_user, helpers):
 
     payload = old_item.dict()
 
-    response = handler(mock_db_table, db_user, item_id, payload)
+    response = handler(mock_db_table, db_user_email, db_user, item_id, payload)
 
     assert response["statusCode"] == 404
 
@@ -97,7 +100,7 @@ def test_update_nonexisting(mock_db_table, db_user, helpers):
 
 
 def test_update_nonexisting_event(
-    helpers, monkeypatch, table_name, mock_db_table, db_user
+    helpers, monkeypatch, table_name, mock_db_table, db_user, db_user_email
 ):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
@@ -109,7 +112,10 @@ def test_update_nonexisting_event(
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        body=payload, cognitoEmail=db_user, pathParameters={"item_id": item_id}
+        body=payload,
+        cognitoUsername=db_user,
+        cognitoEmail=db_user_email,
+        pathParameters={"item_id": item_id},
     )
     context = None
     response = update(event, context)

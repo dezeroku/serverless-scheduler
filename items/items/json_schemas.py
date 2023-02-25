@@ -60,11 +60,15 @@ itemwithid_schema = {
                 },
                 "user_email": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
                 }
             },
             "required": [
                 "job_id",
-                "user_email"
+                "user_email",
+                "user_id"
             ],
             "type": "object"
         }

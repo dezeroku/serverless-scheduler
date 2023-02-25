@@ -1,6 +1,6 @@
 from typing import Union
 
-from pydantic import BaseModel, EmailStr, Extra
+from pydantic import BaseModel, Extra
 
 
 class BaseJob(BaseModel):
@@ -9,7 +9,7 @@ class BaseJob(BaseModel):
     It should be used as a super class for more concrete job definitions.
     """
 
-    user_email: EmailStr
+    user_id: str
     job_id: Union[int, None]  # pylint: disable=invalid-name
 
     def get_unique_job_id(self) -> str:
@@ -18,7 +18,7 @@ class BaseJob(BaseModel):
         """
         if self.job_id is None:
             raise ValueError("Can't get unique job id if job_id is None")
-        return (self.user_email.replace("@", "_") + "-" + str(self.job_id))[:127]
+        return (self.user_id + "-" + str(self.job_id))[:127]
 
     class Config:
         extra = Extra.forbid

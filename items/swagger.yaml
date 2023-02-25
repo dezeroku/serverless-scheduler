@@ -152,8 +152,11 @@ components:
           required:
             - job_id
             - user_email
+            - user_id
           properties:
             job_id:
               type: integer
             user_email:
+              type: string
+            user_id:
               type: string

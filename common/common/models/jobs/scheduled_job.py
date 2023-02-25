@@ -1,4 +1,4 @@
-from pydantic import validator
+from pydantic import EmailStr, validator
 
 from common.models.jobs.base_job import BaseJob
 from common.models.jobs.job_type import JobType
@@ -11,6 +11,9 @@ class ScheduledJob(BaseJob):
     periodically (every n seconds)
     """
 
+    # TODO: this is meant to be a way to contact user
+    # maybe it's worth abstracting away somehow?
+    user_email: EmailStr
     sleep_time: int
     job_type: JobType = None
 

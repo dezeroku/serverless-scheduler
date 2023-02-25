@@ -54,11 +54,12 @@ def minimal_dynamodb_stream_record_html_monitor_job(
         "dynamodb": {
             "ApproximateCreationDateTime": timestamp,
             "Keys": {
-                "user_email": {"S": html_monitor_job.user_email},
+                "user_id": {"S": html_monitor_job.user_id},
                 "job_id": {"N": str(html_monitor_job.job_id)},
             },
             "NewImage": {
                 "job_type": {"S": str(html_monitor_job.job_type.value)},
+                "user_id": {"S": html_monitor_job.user_id},
                 "user_email": {"S": html_monitor_job.user_email},
                 "job_id": {"N": str(html_monitor_job.job_id)},
                 "sleep_time": {"N": str(html_monitor_job.sleep_time)},
@@ -125,7 +126,6 @@ def test_handler_html_monitor_job(
     change_type_str: str,
     number_of_jobs: int,
 ):
-    # pylint: disable=too-many-arguments
     change_type_strs = [change_type_str for _ in range(number_of_jobs)]
     change_types = [change_type for _ in range(number_of_jobs)]
     jobs = [
@@ -191,7 +191,6 @@ def handler_generic_html_monitor_job(
     expected_change_events: list[SchedulerChangeEvent],
     max_number_of_messages: int = 5,
 ):
-    # pylint: disable=too-many-arguments
     queue_url = sqs.get_queue_url(QueueName=queue_name)["QueueUrl"]
 
     assert len(jobs) == len(change_type_strs) == len(expected_change_events)
