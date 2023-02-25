@@ -58,7 +58,7 @@ jobs:
         run: |
           cd ${{ inputs.directory }}
           poetry run coverage run -m pytest
-          poetry run coverage report
+          poetry run coverage report --show-missing
 
   pylint:
     runs-on: ubuntu-latest
