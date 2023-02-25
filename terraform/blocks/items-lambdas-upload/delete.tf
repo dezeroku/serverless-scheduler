@@ -14,27 +14,18 @@ module "lambda_delete" {
   additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
 }
 
-resource "aws_apigatewayv2_integration" "delete" {
-  api_id           = var.api_id
-  integration_type = "AWS_PROXY"
+module "gateway_delete" {
+  providers = {
+    aws = aws
+  }
 
-  integration_method     = "DELETE"
-  integration_uri        = module.lambda_delete.function_arn
-  payload_format_version = "2.0"
-}
+  source = "../../modules/api_gateway_lambda_mapping/"
 
-resource "aws_apigatewayv2_route" "delete" {
-  authorization_type = "JWT"
-  api_id             = var.api_id
-  route_key          = "DELETE /item/delete/{item_id}"
-  authorizer_id      = var.api_authorizer_id
-
-  target = "integrations/${aws_apigatewayv2_integration.delete.id}"
-}
-
-resource "aws_lambda_permission" "delete" {
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda_delete.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_execution_arn}/*"
+  api_id            = var.api_id
+  api_authorizer_id = var.api_authorizer_id
+  api_execution_arn = var.api_execution_arn
+  function_arn      = module.lambda_delete.function_arn
+  function_name     = module.lambda_delete.function_name
+  method            = "DELETE"
+  path              = "/item/delete/{item_id}"
 }

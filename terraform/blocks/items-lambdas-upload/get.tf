@@ -14,27 +14,18 @@ module "lambda_get" {
   additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
 }
 
-resource "aws_apigatewayv2_integration" "get" {
-  api_id           = var.api_id
-  integration_type = "AWS_PROXY"
+module "gateway_get" {
+  providers = {
+    aws = aws
+  }
 
-  integration_method     = "GET"
-  integration_uri        = module.lambda_get.function_arn
-  payload_format_version = "2.0"
-}
+  source = "../../modules/api_gateway_lambda_mapping/"
 
-resource "aws_apigatewayv2_route" "get" {
-  authorization_type = "JWT"
-  api_id             = var.api_id
-  route_key          = "GET /items"
-  authorizer_id      = var.api_authorizer_id
-
-  target = "integrations/${aws_apigatewayv2_integration.get.id}"
-}
-
-resource "aws_lambda_permission" "get" {
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda_get.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_execution_arn}/*"
+  api_id            = var.api_id
+  api_authorizer_id = var.api_authorizer_id
+  api_execution_arn = var.api_execution_arn
+  function_arn      = module.lambda_get.function_arn
+  function_name     = module.lambda_get.function_name
+  method            = "GET"
+  path              = "/items"
 }
