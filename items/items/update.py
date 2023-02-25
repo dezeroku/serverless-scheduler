@@ -4,7 +4,7 @@ import botocore
 from lambda_decorators import cors_headers, json_schema_validator, load_json_body
 
 from common import cognito, utils
-from common.models import HTMLMonitorJob
+from common.models import parse_dict_to_job
 from items.json_schemas import item_schema
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ def handler(table, user_email, user_id, item_id, payload):
     to_update["job_id"] = item_id
     to_update["user_email"] = user_email
     to_update["user_id"] = user_id
-    to_update_dict = HTMLMonitorJob(**to_update).dict()
+    to_update_dict = parse_dict_to_job(to_update).dict()
 
     try:
         table.put_item(

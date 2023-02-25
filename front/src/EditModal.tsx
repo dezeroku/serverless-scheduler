@@ -28,6 +28,7 @@ function EditModal(props: EditModalProps) {
 
     let json: ItemProps["props"] = {
       job_id: parseInt(form.id.value),
+      job_type: "html_monitor_job",
       url: form.url.value,
       sleep_time: parseInt(form.sleep_time.value),
       make_screenshots: form.make_screenshots.checked,
@@ -47,6 +48,7 @@ function EditModal(props: EditModalProps) {
 
     let json: ItemProps["props"] = {
       job_id: id,
+      job_type: "html_monitor_job",
       url: "",
       sleep_time: 0,
       make_screenshots: false,
@@ -68,6 +70,7 @@ function EditModal(props: EditModalProps) {
     if (item == null) {
       temp = {
         job_id: 0,
+        job_type: "html_monitor_job",
         url: "",
         sleep_time: 60,
         make_screenshots: true,

@@ -8,6 +8,8 @@ import pytest
 from boto3.dynamodb.conditions import Key
 from moto import mock_dynamodb, mock_sqs
 
+from common.models import JobType
+
 _EXAMPLE_USER_EMAIL = "user@example.com"
 _EXAMPLE_USER_ID = "unique-user-id"
 _EXAMPLE_QUEUE_NAME = "test.fifo"
@@ -28,6 +30,7 @@ class Helpers:
             "user_email": user_email,
             "user_id": user_id,
             "job_id": job_id,
+            "job_type": JobType.HTML_MONITOR_JOB.value,
             "make_screenshots": make_screenshots,
             "sleep_time": sleep_time,
             "url": url,

@@ -40,6 +40,7 @@ function ItemList(props: ItemListProps) {
           <Item
             key={item.job_id}
             job_id={item.job_id}
+            job_type="html_monitor_job"
             url={item.url}
             sleep_time={item.sleep_time}
             make_screenshots={item.make_screenshots}

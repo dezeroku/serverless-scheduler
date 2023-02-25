@@ -4,7 +4,7 @@ from boto3.dynamodb.conditions import Key
 from lambda_decorators import cors_headers, json_http_resp, json_schema_validator
 
 from common import cognito, utils
-from common.models import HTMLMonitorJob
+from common.models import ScheduledJob
 from items.json_schemas import itemwithid_schema
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def handler(table, user_id, pagination=True):
     # By default returns ALL the results, taking pagination into account
     response = table.query(KeyConditionExpression=Key("user_id").eq(user_id))
 
-    monitor_jobs: list[HTMLMonitorJob] = response["Items"]
+    monitor_jobs: list[ScheduledJob] = response["Items"]
 
     if pagination:
         while "LastEvaluatedKey" in response:
