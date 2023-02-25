@@ -22,7 +22,7 @@ def test_successful_update(mock_db_table, db_user, db_user_email, helpers):
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
-    item_id = old_item.job_id
+    job_id = old_item.job_id
 
     new_item = copy.deepcopy(old_item)
     new_item.sleep_time = old_item.sleep_time + 1
@@ -33,7 +33,7 @@ def test_successful_update(mock_db_table, db_user, db_user_email, helpers):
 
     payload = new_item.dict()
 
-    response = handler(mock_db_table, db_user_email, db_user, item_id, payload)
+    response = handler(mock_db_table, db_user_email, db_user, job_id, payload)
 
     assert response["statusCode"] == 200
 
@@ -51,7 +51,7 @@ def test_successful_update_event(
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
-    item_id = old_item.job_id
+    job_id = old_item.job_id
 
     new_item = copy.deepcopy(old_item)
     new_item.sleep_time = old_item.sleep_time + 1
@@ -67,7 +67,7 @@ def test_successful_update_event(
         body=payload,
         cognitoUsername=db_user,
         cognitoEmail=db_user_email,
-        pathParameters={"item_id": item_id},
+        pathParameters={"job_id": job_id},
     )
     context = None
     response = update(event, context)
@@ -86,11 +86,11 @@ def test_update_nonexisting(mock_db_table, db_user_email, db_user, helpers):
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
-    item_id = old_item.job_id + 1
+    job_id = old_item.job_id + 1
 
     payload = old_item.dict()
 
-    response = handler(mock_db_table, db_user_email, db_user, item_id, payload)
+    response = handler(mock_db_table, db_user_email, db_user, job_id, payload)
 
     assert response["statusCode"] == 404
 
@@ -106,7 +106,7 @@ def test_update_nonexisting_event(
     assert len(monitor_jobs_dicts) == 1
 
     old_item = HTMLMonitorJob(**monitor_jobs_dicts[0])
-    item_id = old_item.job_id + 1
+    job_id = old_item.job_id + 1
 
     payload = old_item.dict()
 
@@ -115,7 +115,7 @@ def test_update_nonexisting_event(
         body=payload,
         cognitoUsername=db_user,
         cognitoEmail=db_user_email,
-        pathParameters={"item_id": item_id},
+        pathParameters={"job_id": job_id},
     )
     context = None
     response = update(event, context)

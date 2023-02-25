@@ -27,5 +27,5 @@ module "gateway_get" {
   function_arn      = module.lambda_get.function_arn
   function_name     = module.lambda_get.function_name
   method            = "GET"
-  path              = "/items"
+  path              = "/jobs"
 }

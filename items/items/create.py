@@ -11,7 +11,7 @@ from lambda_decorators import (
 from common import cognito
 from common.models import parse_dict_to_job
 from items import utils
-from items.json_schemas import item_schema, itemwithid_schema
+from items.json_schemas import job_schema, jobwithid_schema
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,11 +28,11 @@ def get_monitor_job_with_id(body, next_id):
 @json_schema_validator(
     request_schema={
         "type": "object",
-        "properties": {"body": item_schema},
+        "properties": {"body": job_schema},
     },
     response_schema={
         "type": "object",
-        "properties": {"body": itemwithid_schema},
+        "properties": {"body": jobwithid_schema},
     },
 )
 def create(event, context):

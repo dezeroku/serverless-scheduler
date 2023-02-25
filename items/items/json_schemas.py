@@ -1,14 +1,14 @@
 all_schema = {
     "oneOf": [
         {
-            "$ref": "item.json"
+            "$ref": "job.json"
         },
         {
-            "$ref": "itemWithId.json"
+            "$ref": "jobWithId.json"
         }
     ]
 }
-item_schema = {
+job_schema = {
     "$schema": "http://json-schema.org/schema#",
     "description": "Single monitoring job",
     "properties": {
@@ -33,7 +33,7 @@ item_schema = {
     ],
     "type": "object"
 }
-itemwithid_schema = {
+jobwithid_schema = {
     "$schema": "http://json-schema.org/schema#",
     "allOf": [
         {

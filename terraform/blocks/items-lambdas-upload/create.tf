@@ -27,5 +27,5 @@ module "gateway_create" {
   function_arn      = module.lambda_create.function_arn
   function_name     = module.lambda_create.function_name
   method            = "POST"
-  path              = "/item/create"
+  path              = "/job/create"
 }

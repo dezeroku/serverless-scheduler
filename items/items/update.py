@@ -6,7 +6,7 @@ from lambda_decorators import cors_headers, json_schema_validator, load_json_bod
 from common import cognito
 from common.models import parse_dict_to_job
 from items import utils
-from items.json_schemas import item_schema
+from items.json_schemas import job_schema
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -17,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 @json_schema_validator(
     request_schema={
         "type": "object",
-        "properties": {"body": item_schema},
+        "properties": {"body": job_schema},
     }
 )
 def update(event, context):
@@ -25,17 +25,17 @@ def update(event, context):
     user_email = cognito.get_email(event)
     user_id = cognito.get_username(event)
     table = utils.get_dynamo_table()
-    item_id = int(event["pathParameters"]["item_id"])
+    job_id = int(event["pathParameters"]["job_id"])
     payload = event["body"]
 
-    return handler(table, user_email, user_id, item_id, payload)
+    return handler(table, user_email, user_id, job_id, payload)
 
 
-def handler(table, user_email, user_id, item_id, payload):
-    # Update the item kept under `item_id` with
+def handler(table, user_email, user_id, job_id, payload):
+    # Update the item kept under `job_id` with
     # data that was sent in the request
     to_update = payload
-    to_update["job_id"] = item_id
+    to_update["job_id"] = job_id
     to_update["user_email"] = user_email
     to_update["user_id"] = user_id
     to_update_dict = parse_dict_to_job(to_update).dict()
