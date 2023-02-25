@@ -1,7 +1,7 @@
 import json
 
-from common import utils
 from common.models import HTMLMonitorJob
+from items import utils
 from items.get import get, handler
 
 
