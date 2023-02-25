@@ -15,20 +15,20 @@ def delete(event, context):
     # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
     user_id = cognito.get_username(event)
-    item_id = int(event["pathParameters"]["item_id"])
+    job_id = int(event["pathParameters"]["job_id"])
 
-    return handler(table, user_id, item_id)
+    return handler(table, user_id, job_id)
 
 
-def handler(table, user_id, item_id):
-    # Delete entry (assigned to user), identified by item_id, from DB
+def handler(table, user_id, job_id):
+    # Delete entry (assigned to user), identified by job_id, from DB
 
     # ConditionExpression is a dummy way to check if deletion happened or not
     # TODO: is it really cheaper (less operations) than checking via read?
     # Do we even need to do it?
     try:
         table.delete_item(
-            Key={"user_id": user_id, "job_id": item_id},
+            Key={"user_id": user_id, "job_id": job_id},
             ConditionExpression="(attribute_exists(user_id))",
         )
     except botocore.exceptions.ClientError as exc:

@@ -14,7 +14,7 @@ export async function getItemsRaw() {
     },
   };
 
-  return axios.get(API_URL + "/v1/items", config);
+  return axios.get(API_URL + "/v1/jobs", config);
 }
 
 export async function handleCreate(json: ItemProps["props"]) {
@@ -30,7 +30,7 @@ export async function handleCreate(json: ItemProps["props"]) {
   data["sleep_time"] *= 60;
 
   return axios
-    .post(API_URL + "/v1/item/create", data, config)
+    .post(API_URL + "/v1/job/create", data, config)
     .then((response) => {
       console.log("AA");
       if (response.status !== 200) {
@@ -70,7 +70,7 @@ export async function handleDelete(json: ItemProps["props"]) {
   };
 
   return axios
-    .delete(API_URL + "/v1/item/delete/" + json.job_id, config)
+    .delete(API_URL + "/v1/job/delete/" + json.job_id, config)
     .then((response) => {
       console.log("AA");
       if (response.status !== 200) {
@@ -111,7 +111,7 @@ export async function handleUpdate(json: ItemProps["props"]) {
   data["sleep_time"] *= 60;
 
   return axios
-    .put(API_URL + "/v1/item/update/" + json.job_id, data, config)
+    .put(API_URL + "/v1/job/update/" + json.job_id, data, config)
     .then((response) => {
       console.log("AA");
       if (response.status !== 200) {

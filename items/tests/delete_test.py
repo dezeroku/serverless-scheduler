@@ -39,7 +39,7 @@ def test_successful_delete_event(
     event = helpers.EventFactory(
         cognitoUsername=db_user,
         cognitoEmail=db_user_email,
-        pathParameters={"item_id": monitor_job_id},
+        pathParameters={"job_id": monitor_job_id},
     )
     context = None
     response = delete(event, context)
@@ -76,7 +76,7 @@ def test_delete_nonexisting_event(
     event = helpers.EventFactory(
         cognitoUsername=db_user,
         cognitoEmail=db_user_email,
-        pathParameters={"item_id": nonexistent_monitor_job_id},
+        pathParameters={"job_id": nonexistent_monitor_job_id},
     )
     context = None
     response = delete(event, context)

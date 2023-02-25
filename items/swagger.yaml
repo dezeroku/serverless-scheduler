@@ -11,12 +11,12 @@ servers:
   - url: /v1
     description: first api version
 paths:
-  /items:
+  /jobs:
     get:
       security:
         - bearerAuth: []
-      operationId: items_get
-      description: return all items that are monitored by specified user
+      operationId: job_get
+      description: return all jobs that are created by a specified user
       responses:
         200:
           description: list of all monitoring jobs that are assigned to an user_email (obtained via bearerAuth)
@@ -24,13 +24,13 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
-                  $ref: "#/components/schemas/itemWithId"
+                jobs:
+                  $ref: "#/components/schemas/jobWithId"
         401:
           $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
-  #/item/{id}:
+  #/job/{id}:
   #  get:
   #    parameters:
   #      - in: path
@@ -41,7 +41,7 @@ paths:
   #        description: id of the job
   #    security:
   #    - bearerAuth: []
-  #    operationId: item_get
+  #    operationId: job_get
   #    description: get a job from provided id
   #    responses:
   #      200:
@@ -49,12 +49,12 @@ paths:
   #        content:
   #          application/json:
   #            schema:
-  #              $ref: '#/components/schemas/item'
+  #              $ref: '#/components/schemas/job'
   #      401:
   #        $ref: '#/components/responses/UnauthorizedError'
   #      400:
   #        description: bad input parameters
-  /item/update/{id}:
+  /job/update/{id}:
     put:
       parameters:
         - in: path
@@ -65,12 +65,12 @@ paths:
           description: id of the job
       security:
         - bearerAuth: []
-      operationId: item_update
+      operationId: job_update
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/item"
+              $ref: "#/components/schemas/job"
       description: update a job under provided ID
       responses:
         200:
@@ -79,7 +79,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
-  /item/delete/{id}:
+  /job/delete/{id}:
     delete:
       parameters:
         - in: path
@@ -90,7 +90,7 @@ paths:
           description: id of the job
       security:
         - bearerAuth: []
-      operationId: item_delete
+      operationId: job_delete
       description: delete a job under provided ID
       responses:
         200:
@@ -99,16 +99,16 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         400:
           description: bad input parameters
-  /item/create:
+  /job/create:
     post:
       security:
         - bearerAuth: []
-      operationId: item_create
+      operationId: job_create
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/item"
+              $ref: "#/components/schemas/job"
       description: create a job, and return it with id
       responses:
         200:
@@ -116,7 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/itemWithId"
+                $ref: "#/components/schemas/jobWithId"
         401:
           $ref: "#/components/responses/UnauthorizedError"
         400:
@@ -131,7 +131,7 @@ components:
     UnauthorizedError:
       description: Access token is missing or invalid
   schemas:
-    item:
+    job:
       description: Single monitoring job
       required:
         - url
@@ -148,9 +148,9 @@ components:
           type: boolean
         job_type:
           type: string
-    itemWithId:
+    jobWithId:
       allOf:
-        - $ref: "#/components/schemas/item"
+        - $ref: "#/components/schemas/job"
         - type: object
           required:
             - job_id

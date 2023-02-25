@@ -27,5 +27,5 @@ module "gateway_update" {
   function_arn      = module.lambda_update.function_arn
   function_name     = module.lambda_update.function_name
   method            = "PUT"
-  path              = "/item/update/{item_id}"
+  path              = "/job/update/{job_id}"
 }

@@ -27,5 +27,5 @@ module "gateway_delete" {
   function_arn      = module.lambda_delete.function_arn
   function_name     = module.lambda_delete.function_name
   method            = "DELETE"
-  path              = "/item/delete/{item_id}"
+  path              = "/job/delete/{job_id}"
 }

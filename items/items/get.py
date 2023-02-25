@@ -6,7 +6,7 @@ from lambda_decorators import cors_headers, json_http_resp, json_schema_validato
 from common import cognito
 from common.models import ScheduledJob
 from items import utils
-from items.json_schemas import itemwithid_schema
+from items.json_schemas import jobwithid_schema
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -17,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 @json_schema_validator(
     response_schema={
         "type": "array",
-        "items": itemwithid_schema,
+        "items": jobwithid_schema,
     }
 )
 def get(event, context):
