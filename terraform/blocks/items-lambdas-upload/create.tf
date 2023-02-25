@@ -14,27 +14,18 @@ module "lambda_create" {
   additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
 }
 
-resource "aws_apigatewayv2_integration" "create" {
-  api_id           = var.api_id
-  integration_type = "AWS_PROXY"
+module "gateway_create" {
+  providers = {
+    aws = aws
+  }
 
-  integration_method     = "POST"
-  integration_uri        = module.lambda_create.function_arn
-  payload_format_version = "2.0"
-}
+  source = "../../modules/api_gateway_lambda_mapping/"
 
-resource "aws_apigatewayv2_route" "create" {
-  authorization_type = "JWT"
-  api_id             = var.api_id
-  route_key          = "POST /item/create"
-  authorizer_id      = var.api_authorizer_id
-
-  target = "integrations/${aws_apigatewayv2_integration.create.id}"
-}
-
-resource "aws_lambda_permission" "create" {
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda_create.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_execution_arn}/*"
+  api_id            = var.api_id
+  api_authorizer_id = var.api_authorizer_id
+  api_execution_arn = var.api_execution_arn
+  function_arn      = module.lambda_create.function_arn
+  function_name     = module.lambda_create.function_name
+  method            = "POST"
+  path              = "/item/create"
 }
