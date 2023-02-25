@@ -14,7 +14,7 @@ module "lambda_update" {
   additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
 }
 
-resource "aws_apigatewayv2_integration" "items_update" {
+resource "aws_apigatewayv2_integration" "update" {
   api_id           = var.api_id
   integration_type = "AWS_PROXY"
 
@@ -23,16 +23,16 @@ resource "aws_apigatewayv2_integration" "items_update" {
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "items_update" {
+resource "aws_apigatewayv2_route" "update" {
   authorization_type = "JWT"
   api_id             = var.api_id
   route_key          = "PUT /item/update/{item_id}"
   authorizer_id      = var.api_authorizer_id
 
-  target = "integrations/${aws_apigatewayv2_integration.items_update.id}"
+  target = "integrations/${aws_apigatewayv2_integration.update.id}"
 }
 
-resource "aws_lambda_permission" "items_update" {
+resource "aws_lambda_permission" "update" {
   action        = "lambda:InvokeFunction"
   function_name = module.lambda_update.function_name
   principal     = "apigateway.amazonaws.com"
