@@ -5,6 +5,12 @@ from common.models.jobs.job_type import JobType
 
 
 class ScheduledJob(BaseJob):
+    """
+    This class defines the minimum job definition that can be uniquely identified.
+    It should be used as a super class for all the jobs that are meant to be run
+    periodically (every n seconds)
+    """
+
     sleep_time: int
     job_type: JobType = None
 

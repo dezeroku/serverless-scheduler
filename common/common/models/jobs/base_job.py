@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr, Extra
 class BaseJob(BaseModel):
     """
     This class defines the minimum job definition that can be uniquely identified.
-    It should only be used as a super class for more concrete job definitions.
+    It should be used as a super class for more concrete job definitions.
     """
 
     user_email: EmailStr

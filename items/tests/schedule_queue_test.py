@@ -88,8 +88,7 @@ def test_handler_html_monitor_job_different_types(
 
     expected_change_events = [
         SchedulerChangeEvent(
-            user_email=job.user_email,
-            job_id=job.job_id,
+            scheduler_id=job.get_unique_job_id(),
             change_type=change_type,
             scheduled_job=job,
             timestamp=0.0,
@@ -99,8 +98,7 @@ def test_handler_html_monitor_job_different_types(
 
     expected_change_events.append(
         SchedulerChangeEvent(
-            user_email=jobs[-1].user_email,
-            job_id=jobs[-1].job_id,
+            scheduler_id=jobs[-1].get_unique_job_id(),
             change_type=change_types[-1],
             scheduled_job=None,
             timestamp=0.0,
@@ -137,8 +135,7 @@ def test_handler_html_monitor_job(
 
     expected_change_events = [
         SchedulerChangeEvent(
-            user_email=job.user_email,
-            job_id=job.job_id,
+            scheduler_id=job.get_unique_job_id(),
             change_type=change_type,
             scheduled_job=job,
             timestamp=0.0,
@@ -168,8 +165,7 @@ def test_handler_html_monitor_job_remove_multi_messages(
 
     expected_change_events = [
         SchedulerChangeEvent(
-            user_email=job.user_email,
-            job_id=job.job_id,
+            scheduler_id=job.get_unique_job_id(),
             change_type=change_type,
             scheduled_job=None,
             timestamp=0.0,

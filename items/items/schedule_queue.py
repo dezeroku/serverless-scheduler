@@ -4,7 +4,12 @@ import os
 import boto3
 from mypy_boto3_sqs import SQSClient
 
-from common.models import SchedulerChangeEvent, SchedulerChangeType, parse_dict_to_job
+from common.models import (
+    BaseJob,
+    SchedulerChangeEvent,
+    SchedulerChangeType,
+    parse_dict_to_job,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -58,13 +63,16 @@ def handler(records, sqs: SQSClient, queue_url: str):
         change_type = scheduler_change_type_map[rec["eventName"]]
         if change_type == SchedulerChangeType.REMOVE:
             scheduled_job = None
+            # Get job ID using base class
+            base_job = BaseJob(user_email=user_email, job_id=job_id)
+            scheduler_id = base_job.get_unique_job_id()
         else:
             new_image = dynamodb_to_typed_dict(rec["dynamodb"]["NewImage"])
             scheduled_job = parse_dict_to_job(new_image)
+            scheduler_id = scheduled_job.get_unique_job_id()
 
         change_event = SchedulerChangeEvent(
-            user_email=user_email,
-            job_id=job_id,
+            scheduler_id=scheduler_id,
             change_type=change_type,
             scheduled_job=scheduled_job,
             timestamp=timestamp,
@@ -73,5 +81,5 @@ def handler(records, sqs: SQSClient, queue_url: str):
         sqs.send_message(
             MessageBody=change_event.json(),
             QueueUrl=queue_url,
-            MessageGroupId=change_event.get_unique_job_id(),
+            MessageGroupId=scheduler_id,
         )
