@@ -22,25 +22,27 @@ logger.setLevel(logging.DEBUG)
 def update(event, context):
     # pylint: disable=unused-argument
     user_email = cognito.get_email(event)
+    user_id = cognito.get_username(event)
     table = utils.get_dynamo_table()
     item_id = int(event["pathParameters"]["item_id"])
     payload = event["body"]
 
-    return handler(table, user_email, item_id, payload)
+    return handler(table, user_email, user_id, item_id, payload)
 
 
-def handler(table, user_email, item_id, payload):
+def handler(table, user_email, user_id, item_id, payload):
     # Update the item kept under `item_id` with
     # data that was sent in the request
     to_update = payload
     to_update["job_id"] = item_id
     to_update["user_email"] = user_email
+    to_update["user_id"] = user_id
     to_update_dict = HTMLMonitorJob(**to_update).dict()
 
     try:
         table.put_item(
             Item=to_update_dict,
-            ConditionExpression="(attribute_exists(user_email))",
+            ConditionExpression="(attribute_exists(user_id))",
         )
     except botocore.exceptions.ClientError as exc:
         # duplicated code with delete

@@ -9,6 +9,7 @@ from boto3.dynamodb.conditions import Key
 from moto import mock_dynamodb, mock_sqs
 
 _EXAMPLE_USER_EMAIL = "user@example.com"
+_EXAMPLE_USER_ID = "unique-user-id"
 _EXAMPLE_QUEUE_NAME = "test.fifo"
 
 
@@ -17,6 +18,7 @@ class Helpers:
     def html_monitor_job_dict_factory(
         *,
         user_email=_EXAMPLE_USER_EMAIL,
+        user_id=_EXAMPLE_USER_ID,
         job_id=1,
         make_screenshots=True,
         sleep_time=1,
@@ -24,6 +26,7 @@ class Helpers:
     ):
         return {
             "user_email": user_email,
+            "user_id": user_id,
             "job_id": job_id,
             "make_screenshots": make_screenshots,
             "sleep_time": sleep_time,
@@ -41,6 +44,7 @@ class Helpers:
         pathParameters=None,
         body=None,
         cognitoEmail=None,
+        cognitoUsername=None,
     ):
         # pylint: disable=invalid-name,too-many-arguments
 
@@ -71,6 +75,8 @@ class Helpers:
                 )
 
             temp = {"jwt": {"claims": {"email": cognitoEmail}}}
+            if cognitoUsername:
+                temp["jwt"]["claims"]["cognito:username"] = cognitoUsername
             # https://stackoverflow.com/a/11416002 :)
             # Modifying requestContext indirectly here, causes the change to be
             # "remembered"
@@ -84,11 +90,11 @@ class Helpers:
         table = dynamodb.create_table(
             TableName=table_name,
             KeySchema=[
-                {"AttributeName": "user_email", "KeyType": "HASH"},
+                {"AttributeName": "user_id", "KeyType": "HASH"},
                 {"AttributeName": "job_id", "KeyType": "RANGE"},
             ],
             AttributeDefinitions=[
-                {"AttributeName": "user_email", "AttributeType": "S"},
+                {"AttributeName": "user_id", "AttributeType": "S"},
                 {"AttributeName": "job_id", "AttributeType": "N"},
             ],
             BillingMode="PAY_PER_REQUEST",
@@ -104,10 +110,8 @@ class Helpers:
         )
 
     @staticmethod
-    def get_monitor_jobs_for_user(table, user_email):
-        return table.query(KeyConditionExpression=Key("user_email").eq(user_email))[
-            "Items"
-        ]
+    def get_monitor_jobs_for_user(table, user_id):
+        return table.query(KeyConditionExpression=Key("user_id").eq(user_id))["Items"]
 
 
 @pytest.fixture(name="helpers")
@@ -127,6 +131,11 @@ def aws_credentials():
 
 @pytest.fixture(name="db_user")
 def db_user_fixture():
+    return _EXAMPLE_USER_ID
+
+
+@pytest.fixture(name="db_user_email")
+def db_user_email_fixture():
     return _EXAMPLE_USER_EMAIL
 
 

@@ -28,7 +28,7 @@ def test_successful_delete(mock_db_table, db_user, helpers):
 
 
 def test_successful_delete_event(
-    monkeypatch, helpers, table_name, mock_db_table, db_user
+    monkeypatch, helpers, table_name, mock_db_table, db_user, db_user_email
 ):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
@@ -37,7 +37,9 @@ def test_successful_delete_event(
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        cognitoEmail=db_user, pathParameters={"item_id": monitor_job_id}
+        cognitoUsername=db_user,
+        cognitoEmail=db_user_email,
+        pathParameters={"item_id": monitor_job_id},
     )
     context = None
     response = delete(event, context)
@@ -63,7 +65,7 @@ def test_delete_nonexisting(mock_db_table, db_user, helpers):
 
 
 def test_delete_nonexisting_event(
-    monkeypatch, helpers, table_name, mock_db_table, db_user
+    monkeypatch, helpers, table_name, mock_db_table, db_user, db_user_email
 ):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
@@ -72,7 +74,9 @@ def test_delete_nonexisting_event(
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
-        cognitoEmail=db_user, pathParameters={"item_id": nonexistent_monitor_job_id}
+        cognitoUsername=db_user,
+        cognitoEmail=db_user_email,
+        pathParameters={"item_id": nonexistent_monitor_job_id},
     )
     context = None
     response = delete(event, context)

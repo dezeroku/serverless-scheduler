@@ -38,18 +38,20 @@ def create(event, context):
     # pylint: disable=unused-argument
     table = utils.get_dynamo_table()
     user_email = cognito.get_email(event)
+    user_id = cognito.get_username(event)
     payload = event["body"]
     payload["user_email"] = user_email
+    payload["user_id"] = user_id
 
-    response = handler(table, user_email, payload)
+    response = handler(table, user_id, payload)
     # TODO: is the output here correct or should I jsonify it?
     # response["body"] = json.dumps(response["body"])
     return response
 
 
-def handler(table, user_email, payload):
+def handler(table, user_id, payload):
     response = table.query(
-        KeyConditionExpression=Key("user_email").eq(user_email),
+        KeyConditionExpression=Key("user_id").eq(user_id),
         ScanIndexForward=False,
         Limit=1,
     )

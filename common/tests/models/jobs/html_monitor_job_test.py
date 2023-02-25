@@ -40,9 +40,12 @@ def test_monitor_job_schema_load_url_validates(in_data, helpers):
         }
     ],
 )
-def test_monitor_job_schema_proper_load(in_data, helpers, example_user_email):
+def test_monitor_job_schema_proper_load(
+    in_data, helpers, example_user_email, example_user_id
+):
     data = HTMLMonitorJob(**helpers.html_monitor_job_dict_factory(**in_data))
     assert data.dict() == {
+        "user_id": example_user_id,
         "user_email": example_user_email,
         "job_id": 1,
         "make_screenshots": True,

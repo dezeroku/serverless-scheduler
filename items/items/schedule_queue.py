@@ -56,7 +56,7 @@ def handler(records, sqs: SQSClient, queue_url: str):
         logger.debug(rec)
         rec["dynamodb"]["Keys"] = dynamodb_to_typed_dict(rec["dynamodb"]["Keys"])
 
-        user_email = rec["dynamodb"]["Keys"]["user_email"]
+        user_id = rec["dynamodb"]["Keys"]["user_id"]
         job_id = rec["dynamodb"]["Keys"]["job_id"]
         timestamp = rec["dynamodb"]["ApproximateCreationDateTime"]
 
@@ -64,7 +64,7 @@ def handler(records, sqs: SQSClient, queue_url: str):
         if change_type == SchedulerChangeType.REMOVE:
             scheduled_job = None
             # Get job ID using base class
-            base_job = BaseJob(user_email=user_email, job_id=job_id)
+            base_job = BaseJob(user_id=user_id, job_id=job_id)
             scheduler_id = base_job.get_unique_job_id()
         else:
             new_image = dynamodb_to_typed_dict(rec["dynamodb"]["NewImage"])

@@ -57,7 +57,9 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
     assert body["job_id"] == 1
 
 
-def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_user):
+def test_creation_handler_event(
+    helpers, monkeypatch, mock_db, table_name, db_user, db_user_email
+):
     to_create = HTMLMonitorJob(
         **helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
@@ -71,7 +73,9 @@ def test_creation_handler_event(helpers, monkeypatch, mock_db, table_name, db_us
     payload = to_create.dict()
     del payload["user_email"]
 
-    event = helpers.EventFactory(body=payload, cognitoEmail=db_user)
+    event = helpers.EventFactory(
+        body=payload, cognitoEmail=db_user_email, cognitoUsername=db_user
+    )
     context = None
     response = create(event, context)
 
