@@ -22,7 +22,7 @@ common = { path = "../common/", develop = true }
 pylint = "^2.15.9"
 
 [tool.coverage.run]
-omit = ["*tests*"]
+omit = ["*tests*", "*common*"]
 
 [tool.pylint.MASTER]
 py-version = "3.9"
