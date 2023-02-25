@@ -12,6 +12,9 @@ item_schema = {
     "$schema": "http://json-schema.org/schema#",
     "description": "Single monitoring job",
     "properties": {
+        "job_type": {
+            "type": "string"
+        },
         "make_screenshots": {
             "type": "boolean"
         },
@@ -25,7 +28,8 @@ item_schema = {
     "required": [
         "url",
         "sleep_time",
-        "make_screenshots"
+        "make_screenshots",
+        "job_type"
     ],
     "type": "object"
 }
@@ -36,6 +40,9 @@ itemwithid_schema = {
             "$schema": "http://json-schema.org/schema#",
             "description": "Single monitoring job",
             "properties": {
+                "job_type": {
+                    "type": "string"
+                },
                 "make_screenshots": {
                     "type": "boolean"
                 },
@@ -49,7 +56,8 @@ itemwithid_schema = {
             "required": [
                 "url",
                 "sleep_time",
-                "make_screenshots"
+                "make_screenshots",
+                "job_type"
             ],
             "type": "object"
         },

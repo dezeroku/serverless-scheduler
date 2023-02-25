@@ -9,7 +9,7 @@ from lambda_decorators import (
 )
 
 from common import cognito, utils
-from common.models import HTMLMonitorJob
+from common.models import parse_dict_to_job
 from items.json_schemas import item_schema, itemwithid_schema
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger.setLevel(logging.DEBUG)
 
 def get_monitor_job_with_id(body, next_id):
     body["job_id"] = next_id
-    return HTMLMonitorJob(**body)
+    return parse_dict_to_job(body)
 
 
 @cors_headers
@@ -65,7 +65,7 @@ def handler(table, user_id, payload):
         # the same user come at the same time.
         # Not a big change for that, but it WILL be annoying
         # probably better to use UUIDs or check for conflicts at the creation time?
-        next_id = HTMLMonitorJob(**last_monitor_job_result.pop()).job_id + 1
+        next_id = parse_dict_to_job(last_monitor_job_result.pop()).job_id + 1
 
     to_add = get_monitor_job_with_id(payload, next_id)
     to_add_dict = to_add.dict()

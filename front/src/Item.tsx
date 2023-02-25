@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 type ItemProps = {
   job_id: number;
+  job_type: string;
   url: string;
   sleep_time: number;
   make_screenshots: boolean;

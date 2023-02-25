@@ -137,6 +137,7 @@ components:
         - url
         - sleep_time
         - make_screenshots
+        - job_type
       type: object
       properties:
         url:
@@ -145,6 +146,8 @@ components:
           type: integer
         make_screenshots:
           type: boolean
+        job_type:
+          type: string
     itemWithId:
       allOf:
         - $ref: "#/components/schemas/item"
