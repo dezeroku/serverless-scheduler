@@ -33,5 +33,8 @@ cd "${RUNDIR}/.."
 
 contains "items front" "${BUILD_TARGET}" || usage
 
-[[ "${BUILD_TARGET}" == "items" ]] && "${RUNDIR}"/package_lambdas_zips.sh "items"
-[[ "${BUILD_TARGET}" == "front" ]] && build_front
+if [[ "${BUILD_TARGET}" == "items" ]]; then
+    "${RUNDIR}"/package_lambdas_zips.sh "items"
+elif [[ "${BUILD_TARGET}" == "front" ]]; then
+    build_front
+fi
