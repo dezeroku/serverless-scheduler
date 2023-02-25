@@ -1,43 +1,8 @@
-resource "aws_iam_role" "items" {
-  assume_role_policy = jsonencode(
-    {
-      "Version" = "2012-10-17",
-      "Statement" = [
-        {
-          "Action" = "sts:AssumeRole",
-          "Principal" = {
-            "Service" = "lambda.amazonaws.com"
-          },
-          "Effect" = "Allow",
-          "Sid"    = ""
-        }
-      ]
-  })
-  inline_policy {
-    name   = "monitor-page-items-lambda"
-    policy = data.aws_iam_policy_document.items.json
-  }
-
+resource "aws_iam_policy" "ddb_access" {
+  policy = data.aws_iam_policy_document.ddb_access.json
 }
 
-data "aws_iam_policy_document" "items" {
-  statement {
-    actions = [
-      "logs:CreateLogStream",
-      "logs:CreateLogGroup"
-    ]
-    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.prefix}*:*"]
-  }
-
-  statement {
-    actions = [
-      "logs:PutLogEvents"
-    ]
-    resources = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.prefix}*:*:*"
-    ]
-  }
-
+data "aws_iam_policy_document" "ddb_access" {
   statement {
     actions = [
       "dynamodb:Query",
@@ -49,6 +14,33 @@ data "aws_iam_policy_document" "items" {
     ]
     resources = [
       "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_name}"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "schedule_queue" {
+  policy = data.aws_iam_policy_document.schedule_queue.json
+}
+
+data "aws_iam_policy_document" "schedule_queue" {
+  statement {
+    actions = [
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:DescribeStream",
+      "dynamodb:ListStreams"
+    ]
+    resources = [
+      var.dynamodb_stream_arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      var.output_sqs_arn
     ]
   }
 }
