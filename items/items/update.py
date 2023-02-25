@@ -3,8 +3,9 @@ import logging
 import botocore
 from lambda_decorators import cors_headers, json_schema_validator, load_json_body
 
-from common import cognito, utils
+from common import cognito
 from common.models import parse_dict_to_job
+from items import utils
 from items.json_schemas import item_schema
 
 logger = logging.getLogger(__name__)
