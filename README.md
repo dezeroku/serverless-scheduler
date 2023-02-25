@@ -13,9 +13,9 @@ This repo should be treated as a fun project, not something you should rely on.
 
 ![High Level Overview](docs/diagrams/created/high_level_overview.png?raw=true "High Level Overview")
 
-- Frontend - React
-- CRUD - api-gateway + Lambdas on backend, writing to `Items` dynamodb
-- Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `item-changes` (to not block)
+- Frontend - React (`front` directory)
+- CRUD - api-gateway + Lambdas on backend, writing to `Items` dynamodb (`items` microservice)
+- Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `item-changes` (part of `items`)
 - FIFO SQS `item-changes` consumer, owning a set of EventBridge Schedulers that are modified according to incoming DB changes
 - EventBridge Schedulers inserting events to an SNS `Distribution`
 - SQSs attached to SNS `Distribution` getting the produced events from `Distribution` SNS based on job type (e.g. html handler vs checking port on some host being open)
