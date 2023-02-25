@@ -1,31 +1,25 @@
-resource "aws_lambda_function" "items_get" {
-  filename         = var.lambda_zip_path
-  function_name    = "${var.prefix}-items-get"
-  role             = aws_iam_role.items.arn
-  handler          = "items/get.get"
-  runtime          = "python3.9"
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
-  environment {
-    variables = {
-      DYNAMO_DB = var.dynamodb_name
-    }
+module "lambda_get" {
+  providers = {
+    aws = aws
   }
-  timeout    = 6
-  depends_on = [aws_cloudwatch_log_group.items_get]
-}
 
-resource "aws_cloudwatch_log_group" "items_get" {
-  name              = "/aws/lambda/${var.prefix}-items-get"
-  retention_in_days = 14
-}
+  source = "../../modules/lambda_function/"
 
+  lambda_zip_path = var.lambda_zip_path
+  function_name   = "${var.prefix}-items-get"
+  handler         = "items/get.get"
+  environment = {
+    DYNAMO_DB = var.dynamodb_name
+  }
+  additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
+}
 
 resource "aws_apigatewayv2_integration" "items_get" {
   api_id           = var.api_id
   integration_type = "AWS_PROXY"
 
   integration_method     = "GET"
-  integration_uri        = aws_lambda_function.items_get.arn
+  integration_uri        = module.lambda_get.function_arn
   payload_format_version = "2.0"
 }
 
@@ -40,7 +34,7 @@ resource "aws_apigatewayv2_route" "items_get" {
 
 resource "aws_lambda_permission" "items_get" {
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.items_get.function_name
+  function_name = module.lambda_get.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${var.api_execution_arn}/*"
 }

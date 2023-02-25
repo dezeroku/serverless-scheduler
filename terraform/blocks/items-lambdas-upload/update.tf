@@ -1,22 +1,17 @@
-resource "aws_lambda_function" "items_update" {
-  filename         = var.lambda_zip_path
-  function_name    = "${var.prefix}-item-update"
-  role             = aws_iam_role.items.arn
-  handler          = "items/update.update"
-  runtime          = "python3.9"
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
-  environment {
-    variables = {
-      DYNAMO_DB = var.dynamodb_name
-    }
+module "lambda_update" {
+  providers = {
+    aws = aws
   }
-  timeout    = 6
-  depends_on = [aws_cloudwatch_log_group.items_update]
-}
 
-resource "aws_cloudwatch_log_group" "items_update" {
-  name              = "/aws/lambda/${var.prefix}-item-update"
-  retention_in_days = 14
+  source = "../../modules/lambda_function/"
+
+  lambda_zip_path = var.lambda_zip_path
+  function_name   = "${var.prefix}-item-update"
+  handler         = "items/update.update"
+  environment = {
+    DYNAMO_DB = var.dynamodb_name
+  }
+  additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
 }
 
 resource "aws_apigatewayv2_integration" "items_update" {
@@ -24,7 +19,7 @@ resource "aws_apigatewayv2_integration" "items_update" {
   integration_type = "AWS_PROXY"
 
   integration_method     = "PUT"
-  integration_uri        = aws_lambda_function.items_update.arn
+  integration_uri        = module.lambda_update.function_arn
   payload_format_version = "2.0"
 }
 
@@ -39,7 +34,7 @@ resource "aws_apigatewayv2_route" "items_update" {
 
 resource "aws_lambda_permission" "items_update" {
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.items_update.function_name
+  function_name = module.lambda_update.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${var.api_execution_arn}/*"
 }
