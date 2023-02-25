@@ -48,6 +48,17 @@ There are few "groups" in place.
 
 # How to deploy it?
 
+## TL;DR
+
+Prepare your own `<DEPLOY_ENV>-secret-values.tfvars` files for directories in `terraform/deployments` and then run
+
+```
+./utils/complete_build.sh
+./utils/complete_deploy.sh
+```
+
+## Deploying specific parts of the system
+
 Each group has its own terraform "blocks", that define parts of the infra.
 The are multiple blocks per group, as terraform handles both the core infra (e.g. `items-infra`), but also code deployments (e.g. `items-front-upload`).
 
