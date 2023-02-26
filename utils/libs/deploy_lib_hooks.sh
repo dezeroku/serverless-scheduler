@@ -21,18 +21,16 @@ function get_tf_output_var() {
 function schedulers-lambdas-upload-common() {
     local prefix
     local lambda_zip_path
-    local input_sqs_queue_url
     local input_sqs_queue_arn
-    local distribution_sns_topic_name
     local distribution_sns_topic_arn
+    local schedulers_group
 
     prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
     lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/schedulers-lambda.zip")"
-    input_sqs_queue_url="$(get_tf_output_var '.items_core.value.output_sqs_url' 'items-infra')"
     input_sqs_queue_arn="$(get_tf_output_var '.items_core.value.output_sqs_arn' 'items-infra')"
-    distribution_sns_topic_name="$(get_tf_output_var '.distribution_sns.value.sns_topic_name' 'distribution-sns')"
     distribution_sns_topic_arn="$(get_tf_output_var '.distribution_sns.value.sns_topic_arn' 'distribution-sns')"
-    echo "-var prefix=${prefix} -var lambda_zip_path=${lambda_zip_path} -var input_sqs_queue_url=${input_sqs_queue_url} -var input_sqs_queue_arn=${input_sqs_queue_arn} -var distribution_sns_topic_name=${distribution_sns_topic_name} -var distribution_sns_topic_arn=${distribution_sns_topic_arn}"
+    schedulers_group="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
+    echo "-var prefix=${prefix} -var lambda_zip_path=${lambda_zip_path} -var input_sqs_queue_arn=${input_sqs_queue_arn} -var distribution_sns_topic_arn=${distribution_sns_topic_arn} -var schedulers_group=${schedulers_group}"
 }
 
 function schedulers-lambdas-upload-pre-deploy-terraform() {
