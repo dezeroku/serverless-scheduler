@@ -7,4 +7,5 @@ RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}"
 
 ./build.sh items
-./build.sh front
+./build.sh items-front
+./build.sh schedulers
