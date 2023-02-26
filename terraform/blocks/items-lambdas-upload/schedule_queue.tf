@@ -12,6 +12,8 @@ module "lambda_schedule_queue" {
     OUTPUT_FIFO_SQS_URL = var.output_sqs_url
   }
   additional_policy_arns = { schedule_queue = aws_iam_policy.schedule_queue.arn }
+  # Max batch-size=100, let's allow 5 seconds per execution
+  timeout = 500
 }
 
 resource "aws_lambda_event_source_mapping" "schedule_queue" {

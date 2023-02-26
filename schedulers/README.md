@@ -11,5 +11,4 @@ Scheduler's name is provided as part of the input event, similarly the operation
 
 # Configuration (env variables)
 
-- `INPUT_SQS_URL` - what SQS queue should be monitored for incoming events
-- `DISTRIBUTION_SNS_TOPIC` - what topic should the schedulers emit events to
+- `DISTRIBUTION_SNS_TOPIC_ARN` - what topic should the schedulers emit events to
