@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "schedulers"
 version = "0.1.0"
-description = "DynamoDB streams based jobs scheduler"
+description = "EventBridge Schedulers controller"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -18,15 +18,28 @@ common = { path = "../common/", develop = true }
 pylint = "^2.15.9"
 
 [tool.coverage.run]
-omit = ["tests*"]
+omit = ["*tests*", "*common*"]
+
+[tool.pylint.MASTER]
+py-version = "3.9"
+extension-pkg-whitelist = "pydantic"
+load-plugins = [
+  "pylint.extensions.code_style",
+  "pylint.extensions.typing",
+]
 
 [tool.pylint.'MESSAGES CONTROL']
-# Ignore the docstring warnings
-disable = 'C0114,C0115,C0116'
+disable = 'missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods,fixme'
+
+[tool.pylint.design]
+max-args = 8
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+plugins = "pydantic.mypy"
 
 [virtualenvs]
 create = true
