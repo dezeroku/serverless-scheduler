@@ -10,3 +10,4 @@ cd "${RUNDIR}"
 ./deploy.sh items-lambdas-upload
 ./deploy.sh items-front-upload
 ./deploy.sh distribution-sns
+./deploy.sh schedulers-lambdas-upload
