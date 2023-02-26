@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 # This is a library that's meant to be sourced
 
+function distribution-sns-common() {
+    local prefix
+    prefix="$(jq -r '.items_core.value.prefix' < "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/items-infra-outputs.json")"
+    echo "-var prefix=${prefix}"
+}
+
+function distribution-sns-pre-deploy-terraform() {
+    distribution-sns-common
+}
+
+function distribution-sns-pre-destroy-terraform() {
+    distribution-sns-common
+}
+
 function items-infra-common() {
     :
 }

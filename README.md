@@ -15,9 +15,10 @@ This repo should be treated as a fun project, not something you should rely on.
 
 - Frontend - React (`front` directory)
 - CRUD - api-gateway + Lambdas on backend, writing to `Items` dynamodb (`items` microservice)
-- Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `item-changes` (part of `items`)
-- FIFO SQS `item-changes` consumer, owning a set of EventBridge Schedulers that are modified according to incoming DB changes
-- EventBridge Schedulers inserting events to an SNS `Distribution`
+- Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `schedule-queue` (part of `items`)
+- FIFO SQS `schedule-queue` consumer (`schedulers`), owning a set of EventBridge Schedulers that are modified according to incoming DB changes
+- SNS topic `Distribution` (only terraform files, `distribution-sns`)
+- EventBridge Schedulers inserting events to the above SNS topic (managed by `schedulers` microservice)
 - SQSs attached to SNS `Distribution` getting the produced events from `Distribution` SNS based on job type (e.g. html handler vs checking port on some host being open)
 - Finally real "checker" lambdas consuming events from SQSs (keeping temporary state in S3 if needed)
 - Real "checker" lambdas inserting the (potential) notification events to `Output` SQS (or should it be SNS)
