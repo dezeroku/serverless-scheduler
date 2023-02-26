@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-function build_front() {
+function build_items_front() {
     ## Build the actual static front delivery
     pushd ./front
     echo "Starting front build"
@@ -15,7 +15,8 @@ function usage() {
 deploy.sh SCOPE
 where SCOPE can be one of:
 - items
-- front
+- schedulers
+- items-front
 HEREDOC
 
     exit 1
@@ -31,10 +32,12 @@ cd "${RUNDIR}/.."
 # shellcheck source=utils/libs/common.sh
 . "${RUNDIR}/libs/common.sh"
 
-contains "items front" "${BUILD_TARGET}" || usage
+contains "items items-front schedulers" "${BUILD_TARGET}" || usage
 
 if [[ "${BUILD_TARGET}" == "items" ]]; then
     "${RUNDIR}"/package_lambdas_zips.sh "items"
-elif [[ "${BUILD_TARGET}" == "front" ]]; then
-    build_front
+elif [[ "${BUILD_TARGET}" == "schedulers" ]]; then
+    "${RUNDIR}"/package_lambdas_zips.sh "schedulers"
+elif [[ "${BUILD_TARGET}" == "items-front" ]]; then
+    build_items_front
 fi
