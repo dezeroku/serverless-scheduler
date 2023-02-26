@@ -25,15 +25,17 @@ with Diagram("High Level Overview", show=False, outformat=["png"]):
         items_db_stream_lambda = Lambda("ChangeAnalyzer")
         item_changes_sqs = SQS("FIFO ScheduleQueue")
 
-    item_changes_lambda = Lambda("ScheduleController")
-    with Cluster("Scheduled Jobs"):
-        scheduled_jobs_eventbridge = [
-            Eventbridge("ScheduledJob1"),
-            Eventbridge("ScheduledJob2"),
-            Eventbridge("ScheduledJob3"),
-        ]
+    with Cluster("schedulers"):
+        item_changes_lambda = Lambda("ScheduleController")
+        with Cluster("Scheduled Jobs"):
+            scheduled_jobs_eventbridge = [
+                Eventbridge("ScheduledJob1"),
+                Eventbridge("ScheduledJob2"),
+                Eventbridge("ScheduledJob3"),
+            ]
 
-    distribution_sns = SNS("Distribution")
+    with Cluster("distribution"):
+        distribution_sns = SNS("Distribution")
     # potential_outside_source = Rack("Outside triggerer")
 
     with Cluster("Job Handlers"):
@@ -61,9 +63,12 @@ with Diagram("High Level Overview", show=False, outformat=["png"]):
         item_changes_sqs
         >> item_changes_lambda
         >> scheduled_jobs_eventbridge
+        >> Edge(label="ScheduledJob")
         >> distribution_sns
     )
-    distribution_sns >> job_handlers_sqs
+    for index, handler in enumerate(job_handlers_sqs):
+        distribution_sns >> Edge(label=f"job_type = JobType{index + 1}") >> handler
+
     for sqs, handler in zip(job_handlers_sqs, job_handlers_lambdas):
         sqs >> handler
         handler >> output
