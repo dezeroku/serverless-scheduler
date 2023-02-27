@@ -1,8 +1,13 @@
 import os
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 import boto3
-from mypy_boto3_dynamodb import ServiceResource
+
+if TYPE_CHECKING:
+    from mypy_boto3_dynamodb import ServiceResource
+else:
+    ServiceResource = object
 
 
 # https://github.com/boto/boto3/issues/369

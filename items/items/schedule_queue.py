@@ -1,8 +1,8 @@
 import logging
 import os
+from typing import TYPE_CHECKING
 
 import boto3
-from mypy_boto3_sqs import SQSClient
 
 from common.models import (
     BaseJob,
@@ -10,6 +10,12 @@ from common.models import (
     SchedulerChangeType,
     parse_dict_to_job,
 )
+
+if TYPE_CHECKING:
+    from mypy_boto3_sqs import SQSClient
+else:
+    SQSClient = object
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
