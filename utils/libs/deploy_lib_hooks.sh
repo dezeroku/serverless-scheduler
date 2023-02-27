@@ -18,19 +18,38 @@ function get_tf_output_var() {
     echo "${output}"
 }
 
+function common-lambda-layer-upload-common() {
+    local prefix
+    local layer_zip_path
+
+    prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
+    layer_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/common-lambda.zip")"
+    echo "-var prefix=${prefix} -var layer_zip_path=${layer_zip_path}"
+}
+
+function common-lambda-layer-upload-pre-deploy-terraform() {
+    common-lambda-layer-upload-common
+}
+
+function common-lambda-layer-upload-pre-destroy-terraform() {
+    common-lambda-layer-upload-common
+}
+
 function schedulers-lambdas-upload-common() {
     local prefix
+    local common_layer_arn
     local lambda_zip_path
     local input_sqs_queue_arn
     local distribution_sns_topic_arn
     local schedulers_group
 
     prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
+    common_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'common-lambda-layer-upload')"
     lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/schedulers-lambda.zip")"
     input_sqs_queue_arn="$(get_tf_output_var '.items_core.value.output_sqs_arn' 'items-infra')"
     distribution_sns_topic_arn="$(get_tf_output_var '.distribution_sns.value.sns_topic_arn' 'distribution-sns')"
     schedulers_group="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
-    echo "-var prefix=${prefix} -var lambda_zip_path=${lambda_zip_path} -var input_sqs_queue_arn=${input_sqs_queue_arn} -var distribution_sns_topic_arn=${distribution_sns_topic_arn} -var schedulers_group=${schedulers_group}"
+    echo "-var prefix=${prefix} -var common_layer_arn=${common_layer_arn} -var lambda_zip_path=${lambda_zip_path} -var input_sqs_queue_arn=${input_sqs_queue_arn} -var distribution_sns_topic_arn=${distribution_sns_topic_arn} -var schedulers_group=${schedulers_group}"
 }
 
 function schedulers-lambdas-upload-pre-deploy-terraform() {
@@ -98,6 +117,7 @@ function items-lambdas-upload-common() {
     local prefix
     local api_id
     local api_authorizer_id
+    local common_layer_arn
     local lambda_zip_path
     local dynamodb_name
     local dynamodb_stream_arn
@@ -107,6 +127,7 @@ function items-lambdas-upload-common() {
     api_id="$(get_tf_output_var '.items_core.value.api_gateway_id' 'items-infra')"
     api_execution_arn="$(get_tf_output_var '.items_core.value.api_gateway_execution_arn' 'items-infra')"
     api_authorizer_id="$(get_tf_output_var '.items_core.value.cognito_authorizer_id' 'items-infra')"
+    common_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'common-lambda-layer-upload')"
     lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/items-lambda.zip")"
     dynamodb_stream_arn="$(get_tf_output_var '.items_core.value.items_dynamodb_stream_arn' 'items-infra')"
     output_sqs_arn="$(get_tf_output_var '.items_core.value.output_sqs_arn' 'items-infra')"
@@ -114,7 +135,7 @@ function items-lambdas-upload-common() {
 
     dynamodb_name="$(get_tf_output_var '.items_core.value.items_dynamodb_name' 'items-infra')"
 
-    echo "-var prefix=${prefix} -var api_id=${api_id} -var api_execution_arn=${api_execution_arn} -var api_authorizer_id=${api_authorizer_id} -var lambda_zip_path=${lambda_zip_path} -var dynamodb_name=${dynamodb_name} -var dynamodb_stream_arn=${dynamodb_stream_arn} -var output_sqs_arn=${output_sqs_arn} -var output_sqs_url=${output_sqs_url}"
+    echo "-var prefix=${prefix} -var api_id=${api_id} -var api_execution_arn=${api_execution_arn} -var api_authorizer_id=${api_authorizer_id} -var common_layer_arn=${common_layer_arn} -var lambda_zip_path=${lambda_zip_path} -var dynamodb_name=${dynamodb_name} -var dynamodb_stream_arn=${dynamodb_stream_arn} -var output_sqs_arn=${output_sqs_arn} -var output_sqs_url=${output_sqs_url}"
 }
 
 function items-lambdas-upload-pre-deploy-terraform() {

@@ -17,7 +17,8 @@ module "lambda_schedule_controller" {
     scheduler_access = aws_iam_policy.schedule_controller_scheduler.arn,
   pass_role = aws_iam_policy.schedule_controller_pass_role.arn }
   # Max batch-size=10, let's allow 6 seconds per execution
-  timeout = 60
+  timeout    = 60
+  layer_arns = [var.common_layer_arn]
 }
 
 resource "aws_lambda_event_source_mapping" "schedule_queue" {

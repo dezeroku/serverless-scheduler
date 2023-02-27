@@ -10,6 +10,8 @@ resource "aws_lambda_function" "lambda" {
   }
   timeout    = var.timeout
   depends_on = [aws_cloudwatch_log_group.lambda]
+
+  layers = var.layer_arns
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {

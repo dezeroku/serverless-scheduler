@@ -12,6 +12,7 @@ module "lambda_create" {
     DYNAMO_DB = var.dynamodb_name
   }
   additional_policy_arns = { ddb_access = aws_iam_policy.ddb_access.arn }
+  layer_arns             = [var.common_layer_arn]
 }
 
 module "gateway_create" {
