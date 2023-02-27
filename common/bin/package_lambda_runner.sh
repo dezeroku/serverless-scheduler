@@ -18,4 +18,12 @@ if [[ ! "$PWD" == "${DOCKERFILE_DIR}" ]]; then
   cp "${DOCKERFILE_DIR}/poetry.lock" .packaging/temp
 fi
 
-docker buildx build . --target zip -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output type=local,dest=./.packaging/work
+# If INTERMEDIATE_PACKAGING==true you need to also run package_lambda_concatenate.sh to get a proper zip
+# If it's set to true, it's assumed that you either use a Lambda layer for the 'common' package or you don't use the common package at all
+if [[ "${INTERMEDIATE_PACKAGING:-false}" == "true" ]]; then
+    output_dir="./.packaging/work"
+else
+    output_dir="./.packaging/result"
+fi
+
+docker buildx build . --target zip -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output "type=local,dest=${output_dir}"
