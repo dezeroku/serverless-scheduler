@@ -10,5 +10,5 @@ export COMPONENT_NAME=schedulers
 "${RUNDIR}/../../common/bin/package_lambda_entrypoint"
 
 # Package
-"${RUNDIR}/../../common/bin/package_lambda_runner.sh"
+INTERMEDIATE_PACKAGING=true "${RUNDIR}/../../common/bin/package_lambda_runner.sh"
 "${RUNDIR}/../../common/bin/package_lambda_concatenate.sh"

@@ -6,4 +6,4 @@ pushd "${RUNDIR}/.."
 
 export COMPONENT_NAME=common
 
-"${RUNDIR}/../../common/bin/package_lambda_runner.sh"
+INTERMEDIATE_PACKAGING=true "${RUNDIR}/../../common/bin/package_lambda_runner.sh"
