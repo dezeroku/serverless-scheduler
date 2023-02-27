@@ -3,8 +3,7 @@ import logging
 import botocore.exceptions
 from lambda_decorators import cors_headers
 
-from common import cognito
-from items import utils
+from items import cognito, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
