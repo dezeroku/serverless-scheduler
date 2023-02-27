@@ -8,9 +8,8 @@ from lambda_decorators import (
     load_json_body,
 )
 
-from common import cognito
 from common.models import parse_dict_to_job
-from items import utils
+from items import cognito, utils
 from items.json_schemas import job_schema, jobwithid_schema
 
 logger = logging.getLogger(__name__)
