@@ -6,9 +6,5 @@ pushd "${RUNDIR}/.."
 
 export COMPONENT_NAME=schedulers
 
-# Make sure that common is in place
-"${RUNDIR}/../../common/bin/package_lambda_entrypoint"
-
 # Package
-INTERMEDIATE_PACKAGING=true "${RUNDIR}/../../common/bin/package_lambda_runner.sh"
-"${RUNDIR}/../../common/bin/package_lambda_concatenate.sh"
+"${RUNDIR}/../../common/bin/package_lambda_runner.sh"

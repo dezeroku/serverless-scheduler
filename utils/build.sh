@@ -14,6 +14,7 @@ function usage() {
     cat << HEREDOC
 deploy.sh SCOPE
 where SCOPE can be one of:
+- common
 - items
 - schedulers
 - items-front
@@ -32,9 +33,11 @@ cd "${RUNDIR}/.."
 # shellcheck source=utils/libs/common.sh
 . "${RUNDIR}/libs/common.sh"
 
-contains "items items-front schedulers" "${BUILD_TARGET}" || usage
+contains "common items items-front schedulers" "${BUILD_TARGET}" || usage
 
-if [[ "${BUILD_TARGET}" == "items" ]]; then
+if [[ "${BUILD_TARGET}" == "common" ]]; then
+    "${RUNDIR}"/package_lambdas_zips.sh "common"
+elif [[ "${BUILD_TARGET}" == "items" ]]; then
     "${RUNDIR}"/package_lambdas_zips.sh "items"
 elif [[ "${BUILD_TARGET}" == "schedulers" ]]; then
     "${RUNDIR}"/package_lambdas_zips.sh "schedulers"
