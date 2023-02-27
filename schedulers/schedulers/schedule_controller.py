@@ -1,12 +1,17 @@
 import json
 import logging
 import os
+from typing import TYPE_CHECKING
 
 import boto3
-from mypy_boto3_scheduler import EventBridgeSchedulerClient
 
 from common.models import SchedulerChangeEvent, SchedulerChangeType
 from schedulers.scheduler_manager import SchedulerManager
+
+if TYPE_CHECKING:
+    from mypy_boto3_scheduler import EventBridgeSchedulerClient
+else:
+    EventBridgeSchedulerClient = object
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

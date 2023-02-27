@@ -2,10 +2,14 @@
 # as moto doesn't support EventBridge Scheduler at the time this is being written
 
 import math
-
-from mypy_boto3_scheduler import EventBridgeSchedulerClient
+from typing import TYPE_CHECKING
 
 from common.models import ScheduledJob
+
+if TYPE_CHECKING:
+    from mypy_boto3_scheduler import EventBridgeSchedulerClient
+else:
+    EventBridgeSchedulerClient = object
 
 
 class SchedulerManager:
