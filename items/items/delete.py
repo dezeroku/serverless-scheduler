@@ -1,9 +1,9 @@
 import logging
 
 import botocore.exceptions
-from lambda_decorators import cors_headers
 
 from items import cognito, utils
+from items.libs.lambda_decorators import cors_headers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
