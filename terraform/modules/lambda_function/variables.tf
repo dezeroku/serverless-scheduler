@@ -30,3 +30,8 @@ variable "additional_policy_arns" {
   default = {}
   # e.g. {access = "some_arn"}
 }
+
+variable "layer_arns" {
+  type    = list(string)
+  default = []
+}

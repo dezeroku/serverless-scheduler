@@ -13,7 +13,8 @@ module "lambda_schedule_queue" {
   }
   additional_policy_arns = { schedule_queue = aws_iam_policy.schedule_queue.arn }
   # Max batch-size=100, let's allow 5 seconds per execution
-  timeout = 500
+  timeout    = 500
+  layer_arns = [var.common_layer_arn]
 }
 
 resource "aws_lambda_event_source_mapping" "schedule_queue" {

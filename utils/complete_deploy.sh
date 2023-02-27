@@ -7,6 +7,7 @@ RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}"
 
 ./deploy.sh items-infra
+./deploy.sh common-lambda-layer-upload
 ./deploy.sh items-lambdas-upload
 ./deploy.sh items-front-upload
 ./deploy.sh distribution-sns

@@ -14,6 +14,10 @@ variable "api_authorizer_id" {
   type = string
 }
 
+variable "common_layer_arn" {
+  type = string
+}
+
 variable "lambda_zip_path" {
   type = string
 }
