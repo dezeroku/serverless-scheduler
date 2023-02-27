@@ -8,9 +8,7 @@ authors = ["dezeroku <dezeroku@gmail.com>"]
 python = "^3.9"
 lambda-decorators = "^0.6.0"
 jsonschema = "^4.7.2"
-pydantic = "^1.10.4"
 boto3-stubs = {extras = ["dynamodb", "sqs"], version = "^1.26.64"}
-boto3 = "^1.26.79"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -21,6 +19,7 @@ common = { path = "../common/", develop = true }
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.15.9"
+boto3 = "^1.26.80"
 
 [tool.coverage.run]
 omit = ["*tests*", "*common*"]
