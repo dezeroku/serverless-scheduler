@@ -11,6 +11,7 @@ DEPLOY_DIR=".deployment-temp/lambda-zips"
 rm -rf "${DEPLOY_DIR}"
 popd
 
+./build.sh common
 ./build.sh items
 ./build.sh items-front
 ./build.sh schedulers
