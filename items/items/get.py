@@ -1,11 +1,15 @@
 import logging
 
 from boto3.dynamodb.conditions import Key
-from lambda_decorators import cors_headers, json_http_resp, json_schema_validator
 
 from common.models import ScheduledJob
 from items import cognito, utils
 from items.json_schemas import jobwithid_schema
+from items.libs.lambda_decorators import (
+    cors_headers,
+    json_http_resp,
+    json_schema_validator,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

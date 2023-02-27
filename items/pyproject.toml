@@ -6,8 +6,11 @@ authors = ["dezeroku <dezeroku@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-lambda-decorators = "^0.6.0"
 jsonschema = "^4.7.2"
+# https://github.com/dschep/lambda-decorators is copied directly
+# This is done that way because `lambda-decorators` explicitly define
+# dependency on boto3, which we want to get from a Lambda layer (via
+# `common` package) and not specify here
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -31,6 +34,7 @@ load-plugins = [
   "pylint.extensions.code_style",
   "pylint.extensions.typing",
 ]
+ignore-patterns = '.*lambda_decorators\.py'
 
 [tool.pylint.'MESSAGES CONTROL']
 disable = 'missing-module-docstring,missing-class-docstring,missing-function-docstring,too-few-public-methods,fixme'
