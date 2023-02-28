@@ -24,6 +24,19 @@ jobs:
       python-version: ${{ matrix.cfg.python-version }}
       directory: ${{ matrix.cfg.component }}
 
+  package-lambdas:
+    needs: test-components
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
+          - component: "items"
+          - component: "common"
+          - component: "schedulers"
+    uses: ./.github/workflows/package-lambda.yml
+    with:
+      component: ${{ matrix.cfg.component }}
+
   pre-commit:
     runs-on: ubuntu-latest
     env:

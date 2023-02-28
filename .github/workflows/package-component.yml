@@ -1,0 +1,32 @@
+---
+name: Prepare .zip to be used in Lambda for a single component
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        required: true
+        type: string
+
+  workflow_call:
+    inputs:
+      component:
+        required: true
+        type: string
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Create the package
+        run: |
+          ./utils/build.sh ${{ inputs.component }}
+      - name: Upload the package
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          # TODO: improve the layout of deployment dir so all the build artifacts (including frontend)
+          # will end up in a single place
+          path: |
+            .deployment-temp/lambda-zips/
