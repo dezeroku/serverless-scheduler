@@ -7,7 +7,7 @@ dev:
 	docker run -it -p 3000:3000 -v $$PWD:/dev_mount node:16.5.0 /bin/bash -c "cd /dev_mount; /bin/sh"
 
 build:
-	docker run --user $(shell id -u) -v $$PWD:/dev_mount node:16.5.0 /bin/bash -c "cd /dev_mount; npm install && npm run build && npm run prepare-dist"
+	./build.sh
 
 mock_api: .mock_api_container_id
 
