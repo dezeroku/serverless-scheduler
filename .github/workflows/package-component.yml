@@ -25,6 +25,7 @@ jobs:
       - name: Upload the package
         uses: actions/upload-artifact@v3
         with:
-          name: deployment-temp_build
+          name: build
           path: |
             .deployment-temp/build
+          if-no-files-found: error
