@@ -15,4 +15,9 @@ DOCKERFILE_DIR="$(readlink -f "$(dirname "$0")/..")"
 # shellcheck disable=SC2086 # Intended globbing
 cp ${DOCKERFILE_DIR}/.packaging/work/*.whl "${PWD}/.packaging/work"
 
-docker buildx build . --target concatenate -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output type=local,dest=./.packaging/result
+if [[ "${GHA_DOCKER_CACHING:-false}" == "true" ]]; then
+    EXTRA_ARGS="--cache-to type=gha --cache-from type=gha"
+fi
+
+# shellcheck disable=SC2086 # Intended globbing
+docker buildx build . --target concatenate -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output type=local,dest=./.packaging/result ${EXTRA_ARGS:-}

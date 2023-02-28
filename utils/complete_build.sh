@@ -11,6 +11,7 @@ cd "${RUNDIR}"
 
 pushd ".."
 rm -rf "${DEPLOY_DIR}"
+mkdir -p "${DEPLOY_DIR}"
 popd
 
 ./build.sh common

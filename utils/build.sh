@@ -38,6 +38,13 @@ cd "${RUNDIR}/.."
 
 contains "common items items-front schedulers" "${BUILD_TARGET}" || usage
 
+# This is specifically for CI use
+if [[ "${GHA_DOCKER_CACHING:-false}" == "true" ]]; then
+    export GHA_DOCKER_CACHING="true"
+else
+    export GHA_DOCKER_CACHING="false"
+fi
+
 if [[ "${BUILD_TARGET}" == "common" ]]; then
     "${RUNDIR}"/package_lambdas_zips.sh "common"
 elif [[ "${BUILD_TARGET}" == "items" ]]; then

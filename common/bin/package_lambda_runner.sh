@@ -26,7 +26,13 @@ else
     output_dir="./.packaging/result"
 fi
 
+if [[ "${GHA_DOCKER_CACHING:-false}" == "true" ]]; then
+    EXTRA_ARGS="--cache-to type=gha --cache-from type=gha"
+fi
+
 # You may want to use CUSTOM_PACKAGING_DIRECTORY when you want to package the zip to a directory with some prefix
 # e.g. in case of Lambda layers that use python, the final zip should be unpacked to /opt/python, but without the `python` prefix it
 # will land just in /opt
-docker buildx build . --target zip -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "CUSTOM_PACKAGING_DIRECTORY=${CUSTOM_PACKAGING_DIRECTORY:-}" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output "type=local,dest=${output_dir}"
+#
+# shellcheck disable=SC2086 # Intended globbing
+docker buildx build . --target zip -f "${DOCKERFILE_DIR}/Dockerfile" --build-arg "CUSTOM_PACKAGING_DIRECTORY=${CUSTOM_PACKAGING_DIRECTORY:-}" --build-arg "COMPONENT_NAME=${COMPONENT_NAME}" --output "type=local,dest=${output_dir}" ${EXTRA_ARGS:-}
