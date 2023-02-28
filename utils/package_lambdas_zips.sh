@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-RUNDIR="$(readlink -f "$(dirname "$0")")"
-
 set -euo pipefail
 
+RUNDIR="$(readlink -f "$(dirname "$0")")"
 pushd "${RUNDIR}/.."
 
+# shellcheck source=utils/libs/common.sh
+. "${RUNDIR}/libs/common.sh"
+
+
 # Prepare dir
-DEPLOY_DIR=".deployment-temp/lambda-zips"
 mkdir -p "${DEPLOY_DIR}"
 
 function package_service() {

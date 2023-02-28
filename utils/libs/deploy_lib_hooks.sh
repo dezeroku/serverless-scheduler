@@ -23,7 +23,7 @@ function common-lambda-layer-upload-common() {
     local layer_zip_path
 
     prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
-    layer_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/common-lambda.zip")"
+    layer_zip_path="$(readlink -f "${DEPLOY_DIR}/common-lambda.zip")"
     echo "-var prefix=${prefix} -var layer_zip_path=${layer_zip_path}"
 }
 
@@ -45,7 +45,7 @@ function schedulers-lambdas-upload-common() {
 
     prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
     common_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'common-lambda-layer-upload')"
-    lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/schedulers-lambda.zip")"
+    lambda_zip_path="$(readlink -f "${DEPLOY_DIR}/schedulers-lambda.zip")"
     input_sqs_queue_arn="$(get_tf_output_var '.items_core.value.output_sqs_arn' 'items-infra')"
     distribution_sns_topic_arn="$(get_tf_output_var '.distribution_sns.value.sns_topic_arn' 'distribution-sns')"
     schedulers_group="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
@@ -128,7 +128,7 @@ function items-lambdas-upload-common() {
     api_execution_arn="$(get_tf_output_var '.items_core.value.api_gateway_execution_arn' 'items-infra')"
     api_authorizer_id="$(get_tf_output_var '.items_core.value.cognito_authorizer_id' 'items-infra')"
     common_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'common-lambda-layer-upload')"
-    lambda_zip_path="$(readlink -f "${RUNDIR}/../.deployment-temp/lambda-zips/items-lambda.zip")"
+    lambda_zip_path="$(readlink -f "${DEPLOY_DIR}/items-lambda.zip")"
     dynamodb_stream_arn="$(get_tf_output_var '.items_core.value.items_dynamodb_stream_arn' 'items-infra')"
     output_sqs_arn="$(get_tf_output_var '.items_core.value.output_sqs_arn' 'items-infra')"
     output_sqs_url="$(get_tf_output_var '.items_core.value.output_sqs_url' 'items-infra')"

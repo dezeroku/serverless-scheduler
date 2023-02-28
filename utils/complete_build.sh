@@ -6,8 +6,10 @@ set -euo pipefail
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 cd "${RUNDIR}"
 
+# shellcheck source=utils/libs/common.sh
+. "${RUNDIR}/libs/common.sh"
+
 pushd ".."
-DEPLOY_DIR=".deployment-temp/lambda-zips"
 rm -rf "${DEPLOY_DIR}"
 popd
 
