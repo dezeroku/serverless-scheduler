@@ -1,2 +1,7 @@
 #!/usr/bin/env bash
-exec docker run -it --user "$(id -u)" -v "$PWD:/dev_mount" node:16.5.0 /bin/bash -c "cd /dev_mount; npm ci && npm run build && npm run prepare-dist"
+set -euo pipefail
+
+rm -rf .packaging
+
+output_dir="./.packaging/result"
+docker buildx build . --target build-files --output "type=local,dest=${output_dir}"
