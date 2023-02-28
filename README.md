@@ -1,28 +1,31 @@
 # Page Monitor
 
 AWS based serverless solution for running scheduled tasks coming from different sources.
-The main use at the moment is monitoring websites for changes in HTML, where jobs can be set through a provided UI.
-When an HTML change is detected user is notified via an email.
+The main use at the moment is monitoring websites for changes in HTML, however it's easy to extend it with whatever functionality you'd like to have.
 
-This is very much a work in progress at the moment and most of the things don't work (in reality there is only CRUD in place for now).
-For a similar thing but working and in K8S look at `k8s` branch of this repo.
-In reality if you don't need it to run in a cluster or scale to the moon your best bet is a widely recognized project such as [changedetection.io](https://github.com/dgtlmoon/changedetection.io).
-This repo should be treated as a fun project, not something you should rely on.
+The only requirement is for the input JSON to match `ScheduledJob` definition from `common` package + you need to write your handler listening to the events from SNS topic.
+
+This is very much a work in progress at the moment, especially the frontend requires a redesign (to easily allow more job types to be supported).
+The scheduling part is done though, it only needs an example HTML monitor listener to be written.
+
+For a similar thing but hardcoded to a single JobType and deployable in Kubernetes cluster look at `k8s` branch of this repo.
+
+In reality if you don't need it to run in a cluster or scale to the moon your best bet is to use a widely recognized project such as [changedetection.io](https://github.com/dgtlmoon/changedetection.io).
+Don't use this in production :D
 
 # High level overview
 
 ![High Level Overview](docs/diagrams/created/high_level_overview.png?raw=true "High Level Overview")
 
-- Frontend - React (`front` directory)
-- CRUD - api-gateway + Lambdas on backend, writing to `Items` dynamodb (`items` microservice)
-- Dynamodb Streams - reading changes in `Items` DB and passing these to FIFO SQS `schedule-queue` (part of `items`)
-- FIFO SQS `schedule-queue` consumer (`schedulers`), owning a set of EventBridge Schedulers that are modified according to incoming DB changes
-- SNS topic `Distribution` (only terraform files, `distribution-sns`)
-- EventBridge Schedulers inserting events to the above SNS topic (managed by `schedulers` microservice)
-- SQSs attached to SNS `Distribution` getting the produced events from `Distribution` SNS based on job type (e.g. html handler vs checking port on some host being open)
-- Finally real "checker" lambdas consuming events from SQSs (keeping temporary state in S3 if needed)
-- Real "checker" lambdas inserting the (potential) notification events to `Output` SQS (or should it be SNS)
-- `Output` events are consumed by a Lambda reponsible for outgoing communication
+There are few packages worth mentioning that together make the application:
+
+1. `common` package which defines the schemas for all the communication between services
+2. `items` microservice, which exposes REST API and accepts objects that match `ScheduledJob` definitions from `common`.
+   The data is then kept in DynamoDB
+3. `front`end for the above API
+4. `schedulers` which monitors the DynamoDB changes and manages schedulers that periodically issue events to an SNS topic.
+5. `html-monitor-implementation` which is an example implementation of an SNS topic listener (it only collects events that match `job_type=='html_monitor_job'`).
+   Based on this one you can write your own checkers that do whatever you want
 
 There is probably a bit of over-engineering here, but the idea is to make it as asynchronous as possible and not block at any point.
 
