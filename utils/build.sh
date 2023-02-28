@@ -9,7 +9,7 @@ function build_items_front() {
     ./build.sh
     echo "Copying files to ${DEPLOY_DIR}/front"
     mkdir -p "${DEPLOY_DIR}/front"
-    cp -r ./build/* "${DEPLOY_DIR}/front"
+    cp -r ./.packaging/result/* "${DEPLOY_DIR}/front"
     popd
 }
 

@@ -1,26 +1,17 @@
 FROM node:16.5.0 as base
+
 WORKDIR /app
+
+COPY ./tsconfig.json ./
+COPY ./prepare-dist ./.env ./env.sh ./
+COPY ./public ./public
 COPY ./package.json ./package-lock.json ./
-RUN npm install
-COPY . ./
+RUN npm ci
 
-FROM base as test
-ENV CI=true
-RUN npm test
+COPY ./src ./src
 
-FROM base as build
-RUN npm run build
+RUN npm run build && \
+    npm run prepare-dist
 
-FROM nginx:1.21-alpine as production
-RUN apk add --no-cache bash
-COPY --from=build /app/build /usr/share/nginx/html
-
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
-
-WORKDIR /usr/share/nginx/html
-COPY ./env.sh ./.env ./
-
-EXPOSE 80
-
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
+FROM scratch as build-files
+COPY --from=base /app/build .
