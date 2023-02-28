@@ -1,5 +1,5 @@
 ---
-name: Run tests and package components if they pass
+name: Run tests and package components
 
 on:
   push:
