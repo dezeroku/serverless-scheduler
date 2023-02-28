@@ -87,6 +87,15 @@ function items-infra-pre-destroy-terraform() {
     items-infra-common
 }
 
+function items-front-upload-common() {
+    local bucket_name
+    local build_dir_path
+    bucket_name="$(get_tf_output_var '.items_core.value.front_bucket_id' 'items-infra')"
+    build_dir_path="${DEPLOY_DIR}/front"
+
+    echo "-var front_bucket_name=${bucket_name} -var build_dir_path=${build_dir_path}"
+}
+
 function items-front-upload-pre-deploy-terraform() {
     local client_pool_id
 
@@ -97,19 +106,13 @@ function items-front-upload-pre-deploy-terraform() {
     fi
 
     echoerr "Updating front/build/.env with new values"
-    sed -i "s/CLIENT_POOL_ID: \".*\"/CLIENT_POOL_ID: \"${client_pool_id}\"/" "${RUNDIR}/../front/build/env-config.js"
+    sed -i "s/CLIENT_POOL_ID: \".*\"/CLIENT_POOL_ID: \"${client_pool_id}\"/" "${DEPLOY_DIR}/front/env-config.js"
 
-    local bucket_name
-    bucket_name="$(get_tf_output_var '.items_core.value.front_bucket_id' 'items-infra')"
-
-    echo "-var front_bucket_name=${bucket_name}"
+    items-front-upload-common
 }
 
 function items-front-upload-pre-destroy-terraform() {
-    local bucket_name
-    bucket_name="$(get_tf_output_var '.items_core.value.front_bucket_id' 'items-infra')"
-
-    echo "-var front_bucket_name=${bucket_name}"
+    items-front-upload-common
 }
 
 
