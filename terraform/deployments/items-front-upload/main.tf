@@ -6,4 +6,5 @@ module "front_upload" {
   source = "../../blocks/items-front-upload/"
 
   front_bucket_name = var.front_bucket_name
+  build_dir_path    = var.build_dir_path
 }

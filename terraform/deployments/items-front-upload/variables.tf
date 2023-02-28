@@ -11,6 +11,9 @@ variable "service" {
 }
 
 variable "front_bucket_name" {
-  type        = string
-  description = "Bucket to upload the front files to"
+  type = string
+}
+
+variable "build_dir_path" {
+  type = string
 }
