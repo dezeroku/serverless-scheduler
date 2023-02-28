@@ -8,10 +8,6 @@ pushd "${RUNDIR}/.."
 # shellcheck source=utils/libs/common.sh
 . "${RUNDIR}/libs/common.sh"
 
-
-# Prepare dir
-mkdir -p "${DEPLOY_DIR}"
-
 function package_service() {
     local service
     service="${1}"
