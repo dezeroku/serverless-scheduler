@@ -9,4 +9,5 @@ function contains() {
     [[ " $1 " =~ .*\ $2\ .* ]] && return 0 || return 1
 }
 
-export DEPLOY_DIR="${RUNDIR}/../.deployment-temp/build"
+DEPLOY_DIR="$(readlink -f "${RUNDIR}/../.deployment-temp/build")"
+export DEPLOY_DIR

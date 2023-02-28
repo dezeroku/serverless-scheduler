@@ -33,6 +33,7 @@ jobs:
           - component: "items"
           - component: "common"
           - component: "schedulers"
+          - component: "items-front"
     uses: ./.github/workflows/package-component.yml
     with:
       component: ${{ matrix.cfg.component }}
