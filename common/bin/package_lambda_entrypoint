@@ -6,4 +6,10 @@ pushd "${RUNDIR}/.."
 
 export COMPONENT_NAME=common
 
+if [ -z ${CUSTOM_PACKAGING_DIRECTORY:+x} ]; then
+    # We assume that 'common' is being packaged as a Lamba layer,
+    # not a sub-package to be used in another build further down the line
+    export CUSTOM_PACKAGING_DIRECTORY="python"
+fi
+
 "${RUNDIR}/../../common/bin/package_lambda_runner.sh"

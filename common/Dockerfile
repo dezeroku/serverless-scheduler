@@ -17,10 +17,11 @@ COPY $COMPONENT_NAME $COMPONENT_NAME
 
 RUN poetry build -f wheel
 
-RUN poetry run pip install --upgrade -t lambda-package dist/*.whl && \
-    cd lambda-package && \
-    zip -r /lambda.zip . -x '*.pyc' && \
-    mv ../dist/*.whl /
+ARG CUSTOM_PACKAGING_DIRECTORY
+RUN poetry run pip install --upgrade -t lambda-package/$CUSTOM_PACKAGING_DIRECTORY dist/*.whl && \
+        cd lambda-package && \
+        zip -r /lambda.zip . -x '*.pyc' && \
+        mv ../dist/*.whl /
 
 FROM scratch as zip
 COPY --from=base /lambda.zip .
