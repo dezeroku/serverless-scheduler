@@ -16,7 +16,7 @@ DOCKERFILE_DIR="$(readlink -f "$(dirname "$0")/..")"
 cp ${DOCKERFILE_DIR}/.packaging/work/*.whl "${PWD}/.packaging/work"
 
 if [[ "${GHA_DOCKER_CACHING:-false}" == "true" ]]; then
-    EXTRA_ARGS="--cache-to type=gha --cache-from type=gha"
+    EXTRA_ARGS="--cache-to type=gha,mode=max --cache-from type=gha"
 fi
 
 # shellcheck disable=SC2086 # Intended globbing
