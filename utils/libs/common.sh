@@ -8,3 +8,5 @@ function echoerr() {
 function contains() {
     [[ " $1 " =~ .*\ $2\ .* ]] && return 0 || return 1
 }
+
+export DEPLOY_DIR="${RUNDIR}/../.deployment-temp/build"

@@ -6,7 +6,10 @@ function build_items_front() {
     ## Build the actual static front delivery
     pushd ./front
     echo "Starting front build"
-    make build
+    ./build.sh
+    echo "Copying files to ${DEPLOY_DIR}/front"
+    mkdir -p "${DEPLOY_DIR}/front"
+    cp -r ./build/* "${DEPLOY_DIR}/front"
     popd
 }
 
