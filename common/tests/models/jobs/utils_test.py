@@ -1,13 +1,12 @@
 import pytest
 
-from common.models import HTMLMonitorJob, JobType, parse_dict_to_job
-from common.models.jobs.utils import map_enum_to_class
+# Pylint doesn't respect the plugin thingy :/
+# pylint: disable=no-name-in-module
+from common.models import JobType, TestJob, map_enum_to_class, parse_dict_to_job
 
 
 def test_parse_dict_to_job_no_job_type(helpers):
-    job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(), job_type=JobType.HTML_MONITOR_JOB
-    )
+    job = TestJob(**helpers.test_job_dict_factory(), job_type=JobType.TEST)
 
     job_data = job.dict()
     del job_data["job_type"]
@@ -17,9 +16,7 @@ def test_parse_dict_to_job_no_job_type(helpers):
 
 
 def test_parse_dict_to_job_non_existent_job_type(helpers):
-    job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(), job_type=JobType.HTML_MONITOR_JOB
-    )
+    job = TestJob(**helpers.test_job_dict_factory(), job_type=JobType.TEST)
 
     job_data = job.dict()
 
@@ -34,10 +31,8 @@ def test_parse_dict_to_job_non_existent_job_type(helpers):
         parse_dict_to_job(job_data)
 
 
-def test_parse_dict_to_job_html_monitor_job(helpers):
-    job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(), job_type=JobType.HTML_MONITOR_JOB
-    )
+def test_parse_dict_to_job_test_job(helpers):
+    job = TestJob(**helpers.test_job_dict_factory(), job_type=JobType.TEST)
 
     job_data = job.dict()
 

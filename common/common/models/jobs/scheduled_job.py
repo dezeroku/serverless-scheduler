@@ -1,7 +1,8 @@
+from enum import Enum
+
 from pydantic import EmailStr, validator
 
 from common.models.jobs.base_job import BaseJob
-from common.models.jobs.job_type import JobType
 
 
 class ScheduledJob(BaseJob):
@@ -14,8 +15,9 @@ class ScheduledJob(BaseJob):
     # TODO: this is meant to be a way to contact user
     # maybe it's worth abstracting away somehow?
     user_email: EmailStr
+    # TODO: this should also be generalized to something like "ScheduleConfig"
     sleep_time: int
-    job_type: JobType = None
+    job_type: Enum = None
 
     @validator("sleep_time")
     def sleep_time_must_be_positive(cls, v):

@@ -2,7 +2,7 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis.strategies import integers
 
-from common.models.jobs.base_job import BaseJob
+from common.models import BaseJob
 
 
 def test_get_unique_job_id_none_job_id(example_user_id):
