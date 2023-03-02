@@ -9,6 +9,10 @@ function contains() {
     [[ " $1 " =~ .*\ $2\ .* ]] && return 0 || return 1
 }
 
+function sanitize_plugin_name() {
+    local service="${1}"
+    echo "${service}" | tr '/' '-'
+}
 
 CORE_TARGETS="common items items-front schedulers"
 PLUGINS_DIR="${RUNDIR}/../plugins"
