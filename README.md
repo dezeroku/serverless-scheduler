@@ -96,10 +96,13 @@ Namely:
 1. Plugin defines `bin/package_lambda_entrypoint` script, that outputs the zip generated for a project to `.packaging/result/lambda.zip` file. It's up to the developer to define if this script will rely on `serverless-scheduler`'s build system that's used for core packages or define their own logic.
 2. Plugin defines `terraform` directory, that contains all the logic needs to deploy the project.
    The following variables should be accepted:
-3. `aws_region` - in what region to deploy
-4. `prefix` - what value to prefix the deployed objects' names with
-5. `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
-6. `distribution_sns_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
+   -. `aws_region` - in what region to deploy
+   -. `service` - to be used in tags as 'Service'
+   -. `stage` - to be used in tags as 'Stage'
+   -. `prefix` - what value to prefix the deployed objects' names with
+   -. `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
+   -. `distribution_sns_topic_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
+   -. `common_layer_arn` - (optional support) ARN of the Lambda layer with `common` package. This is really only usable with Python based plugins
 
 The reference implementation can be seen in abovementioned `plugins/serverless-scheduler-html-checker`.
 

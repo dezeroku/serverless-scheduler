@@ -13,7 +13,8 @@ function package_service() {
     service="${1}"
     ./"${service}/bin/package_lambda_entrypoint"
 
-    cp "./${service}/.packaging/result/lambda.zip" "${DEPLOY_DIR}/${service}-lambda.zip"
+    service_zip_name="$(echo "${service}" | tr '/' '-')"
+    cp "./${service}/.packaging/result/lambda.zip" "${DEPLOY_DIR}/${service_zip_name}-lambda.zip"
 }
 
 [ -z "${1:-}" ] && echo "You need to provide service name" && exit 1

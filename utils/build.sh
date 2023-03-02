@@ -19,15 +19,13 @@ deploy.sh SCOPE
 where SCOPE can be one of:
 - common
 - items
-- schedulers
 - items-front
+- schedulers
+$(echo "${AVAILABLE_PLUGINS}" | tr ' ' '\n' | sed -e 's/^/- /')
 HEREDOC
 
     exit 1
 }
-
-[ -z "${1:-}" ] && usage
-BUILD_TARGET="${1}"
 
 # Start in root of the repo
 RUNDIR="$(readlink -f "$(dirname "$0")")"
@@ -36,7 +34,10 @@ cd "${RUNDIR}/.."
 # shellcheck source=utils/libs/common.sh
 . "${RUNDIR}/libs/common.sh"
 
-contains "common items items-front schedulers" "${BUILD_TARGET}" || usage
+[ -z "${1:-}" ] && usage
+BUILD_TARGET="${1}"
+
+contains "common items items-front schedulers ${AVAILABLE_PLUGINS}" "${BUILD_TARGET}" || usage
 
 # This is specifically for CI use
 if [[ "${GHA_DOCKER_CACHING:-false}" == "true" ]]; then
@@ -45,12 +46,8 @@ else
     export GHA_DOCKER_CACHING="false"
 fi
 
-if [[ "${BUILD_TARGET}" == "common" ]]; then
-    "${RUNDIR}"/package_lambdas_zips.sh "common"
-elif [[ "${BUILD_TARGET}" == "items" ]]; then
-    "${RUNDIR}"/package_lambdas_zips.sh "items"
-elif [[ "${BUILD_TARGET}" == "schedulers" ]]; then
-    "${RUNDIR}"/package_lambdas_zips.sh "schedulers"
-elif [[ "${BUILD_TARGET}" == "items-front" ]]; then
+if [[ "${BUILD_TARGET}" == "items-front" ]]; then
     build_items_front
+else
+    "${RUNDIR}"/package_lambdas_zips.sh "${BUILD_TARGET}"
 fi
