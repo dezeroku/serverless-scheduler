@@ -1,0 +1,6 @@
+[submodule "serverless-scheduler-html-checker"]
+	path = serverless-scheduler-html-checker
+	url = git@github.com:dezeroku/serverless-scheduler-html-checker.git
+[submodule "plugins/serverless-scheduler-html-checker"]
+	path = plugins/serverless-scheduler-html-checker
+	url = git@github.com:dezeroku/serverless-scheduler-html-checker.git
