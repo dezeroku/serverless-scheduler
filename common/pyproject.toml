@@ -3,6 +3,7 @@ name = "common"
 version = "0.1.0"
 description = "Common utils used in Lambdas"
 authors = ["dezeroku <dezeroku@gmail.com>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"

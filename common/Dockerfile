@@ -11,6 +11,7 @@ WORKDIR /app/builder
 COPY .packaging/temp /app/common
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-root --only main
+COPY README.md .
 
 ARG COMPONENT_NAME
 COPY $COMPONENT_NAME $COMPONENT_NAME
