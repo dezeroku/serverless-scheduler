@@ -85,3 +85,23 @@ DEPLOY_ENV=<ENV> ./utils/deploy.sh items-infra
 DEPLOY_ENV=<ENV> ./utils/deploy.sh items-front-upload
 DEPLOY_ENV=<ENV> ./utils/deploy.sh items-lambdas-upload
 ```
+
+## Plugins
+
+While the core functionality (scheduler + UI) is defined in this repo, handlers for different job types should be kept in `plugins/<specific plugin>` directory, e.g. for `HTMLMonitorJob` consumer there is `plugins/serverless-scheduler-html-checker` directory (git submodule).
+
+These plugins are expected to follow common project structure, so they work seamlessly with existing build system.
+Namely:
+
+1. Plugin defines `bin/package_lambda_entrypoint` script, that outputs the zip generated for a project to `.packaging/result/lambda.zip` file. It's up to the developer to define if this script will rely on `serverless-scheduler`'s build system that's used for core packages or define their own logic.
+2. Plugin defines `terraform` directory, that contains all the logic needs to deploy the project.
+   The following variables should be accepted:
+3. `aws_region` - in what region to deploy
+4. `prefix` - what value to prefix the deployed objects' names with
+5. `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
+6. `distribution_sns_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
+
+The reference implementation can be seen in abovementioned `plugins/serverless-scheduler-html-checker`.
+
+It's up to the user to define if the consumer should use SQS as a "buffer" before consuming the event by Lambda or not.
+In practice the consumer doesn't even have to be a Lambda function, although it's recommended for keeping the whole model serverless.
