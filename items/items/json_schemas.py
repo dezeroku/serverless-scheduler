@@ -15,20 +15,12 @@ job_schema = {
         "job_type": {
             "type": "string"
         },
-        "make_screenshots": {
-            "type": "boolean"
-        },
         "sleep_time": {
             "type": "integer"
-        },
-        "url": {
-            "type": "string"
         }
     },
     "required": [
-        "url",
         "sleep_time",
-        "make_screenshots",
         "job_type"
     ],
     "type": "object"
@@ -43,20 +35,12 @@ jobwithid_schema = {
                 "job_type": {
                     "type": "string"
                 },
-                "make_screenshots": {
-                    "type": "boolean"
-                },
                 "sleep_time": {
                     "type": "integer"
-                },
-                "url": {
-                    "type": "string"
                 }
             },
             "required": [
-                "url",
                 "sleep_time",
-                "make_screenshots",
                 "job_type"
             ],
             "type": "object"

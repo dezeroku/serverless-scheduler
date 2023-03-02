@@ -134,18 +134,12 @@ components:
     job:
       description: Single monitoring job
       required:
-        - url
         - sleep_time
-        - make_screenshots
         - job_type
       type: object
       properties:
-        url:
-          type: string
         sleep_time:
           type: integer
-        make_screenshots:
-          type: boolean
         job_type:
           type: string
     jobWithId:
