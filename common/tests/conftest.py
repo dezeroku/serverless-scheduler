@@ -21,23 +21,9 @@ class Helpers:
         }
 
     @staticmethod
-    def html_monitor_job_dict_factory(
-        *,
-        user_email=_EXAMPLE_USER_EMAIL,
-        user_id=_EXAMPLE_USER_ID,
-        job_id=1,
-        make_screenshots=True,
-        sleep_time=1,
-        url="http://example.com",
-    ):
-        return {
-            "user_email": user_email,
-            "user_id": user_id,
-            "job_id": job_id,
-            "make_screenshots": make_screenshots,
-            "sleep_time": sleep_time,
-            "url": url,
-        }
+    def test_job_dict_factory(*args, **kwargs):
+        temp = Helpers.scheduled_job_dict_factory(*args, **kwargs)
+        return temp
 
 
 @pytest.fixture(name="helpers")
