@@ -2,22 +2,49 @@
 # This is a library that's meant to be sourced
 # This is all assumed to be running from the root of repository
 # RUNDIR is assumed to point to this directory
-DEPLOYMENTS_DIR="./terraform/deployments"
-# Find deployable targets, convert newlines to spaces, remove last space
-DEPLOYABLE_TARGETS="$(find "${DEPLOYMENTS_DIR}" -mindepth 1 -maxdepth 1 -type d | awk -F'/' '{print $(NF)}' | tr '\n' ' ' | head -c -1)"
 
 # shellcheck source=utils/libs/common.sh
 . "${RUNDIR}/libs/common.sh"
 
+DEPLOYMENTS_DIR="./terraform/deployments"
+# Just a hardcoded list to make sure that order is correct for complete_deploy.sh
+DEPLOYABLE_TARGETS="items-infra common-lambda-layer-upload items-lambdas-upload items-front-upload distribution-sns schedulers-lambdas-upload ${AVAILABLE_PLUGINS}"
+
 # shellcheck source=utils/libs/deploy_lib_hooks.sh
 . "${RUNDIR}/libs/deploy_lib_hooks.sh"
 
+
 function deploy_terraform() {
     local deploy_target="${1}"
-    pushd "${DEPLOYMENTS_DIR}/${deploy_target}" || exit 1
+    if [[ "${deploy_target}" =~ plugins/.* ]]; then
+        deploy_terraform_impl "$(sanitize_plugin_name "${deploy_target}")" "${PLUGINS_DIR}/${deploy_target#"plugins/"}/terraform" "true"
+    else
+        deploy_terraform_impl "${deploy_target}" "${DEPLOYMENTS_DIR}/${deploy_target}" "false"
+    fi
+}
+
+function destroy_terraform() {
+    local destroy_target="${1}"
+    if [[ "${destroy_target}" =~ plugins/.* ]]; then
+        destroy_terraform_impl "$(sanitize_plugin_name "${destroy_target}")" "${PLUGINS_DIR}/${destroy_target#"plugins/"}/terraform" "true"
+    else
+        destroy_terraform_impl "${destroy_target}" "${DEPLOYMENTS_DIR}/${destroy_target}" "false"
+    fi
+}
+
+function deploy_terraform_impl() {
+    local deploy_target="${1}"
+    local deployment_dir="${2}"
+    local is_plugin="${3}"
+
+    pushd "${deployment_dir}" || exit 1
 
     terraform workspace select "${DEPLOY_ENV}"
-    suffix="-var-file=../global.tfvars.json"
+    if [[ "${is_plugin}" == "false" ]]; then
+        suffix="-var-file=../global.tfvars.json"
+    else
+        suffix=""
+    fi
 
     if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
         suffix="${suffix} -var-file=${DEPLOY_ENV}.tfvars.json"
@@ -25,6 +52,11 @@ function deploy_terraform() {
 
     if [ -f "${DEPLOY_ENV}-secret-values.tfvars" ]; then
         suffix="${suffix} -var-file=${DEPLOY_ENV}-secret-values.tfvars"
+    fi
+
+    if [[ "${is_plugin}" == "true" ]]; then
+        echo "Running plugin-terraform-common for ${deploy_target}"
+        suffix="${suffix} $(plugin-terraform-common "${deploy_target}")"
     fi
 
     if [[ "$(type -t "${deploy_target}-pre-deploy-terraform")" == function ]]; then
@@ -36,17 +68,25 @@ function deploy_terraform() {
     terraform apply ${suffix}
 
     mkdir -p "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform"
-    terraform output -json > "../../../.deployment-temp/${DEPLOY_ENV}/terraform/${deploy_target}-outputs.json"
+    terraform output -json > "${RUNDIR}/../.deployment-temp/${DEPLOY_ENV}/terraform/${deploy_target}-outputs.json"
 
     popd || exit 1
 }
 
-function destroy_terraform() {
+function destroy_terraform_impl() {
     local destroy_target="${1}"
-    pushd "${DEPLOYMENTS_DIR}/${destroy_target}" || exit 1
+    local deployment_dir="${2}"
+    local is_plugin="${3}"
+
+    pushd "${deployment_dir}" || exit 1
 
     terraform workspace select "${DEPLOY_ENV}"
-    suffix="-var-file=../global.tfvars.json"
+
+    if [[ "${is_plugin}" == "false" ]]; then
+        suffix="-var-file=../global.tfvars.json"
+    else
+        suffix=""
+    fi
 
     if [ -f "${DEPLOY_ENV}.tfvars.json" ]; then
         suffix="${suffix} -var-file=${DEPLOY_ENV}.tfvars.json"
@@ -54,6 +94,11 @@ function destroy_terraform() {
 
     if [ -f "${DEPLOY_ENV}-secret-values.tfvars" ]; then
         suffix="${suffix} -var-file=${DEPLOY_ENV}-secret-values.tfvars"
+    fi
+
+    if [[ "${is_plugin}" == "true" ]]; then
+        echo "Running plugin-terraform-common for ${destroy_target}"
+        suffix="${suffix} $(plugin-terraform-common "${destroy_target}")"
     fi
 
     if [[ "$(type -t "${destroy_target}-pre-destroy-terraform")" == function ]]; then

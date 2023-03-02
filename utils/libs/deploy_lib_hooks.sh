@@ -18,6 +18,26 @@ function get_tf_output_var() {
     echo "${output}"
 }
 
+function plugin-terraform-common() {
+    local target="${1}"
+    local aws_region
+    local service
+    local stage
+    local prefix
+    local common_layer_arn
+    local lambda_zip_path
+    local distribution_sns_topic_arn
+
+    aws_region="$(get_tf_output_var '.aws_region.value' 'items-infra')"
+    service="$(get_tf_output_var '.service.value' 'items-infra')"
+    stage="$(get_tf_output_var '.stage.value' 'items-infra')"
+    prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
+    common_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'common-lambda-layer-upload')"
+    lambda_zip_path="$(readlink -f "${DEPLOY_DIR}/${target}-lambda.zip")"
+    distribution_sns_topic_arn="$(get_tf_output_var '.distribution_sns.value.sns_topic_arn' 'distribution-sns')"
+    echo "-var aws_region=${aws_region} -var service=${service} -var stage=${stage} -var prefix=${prefix} -var common_layer_arn=${common_layer_arn} -var lambda_zip_path=${lambda_zip_path} -var distribution_sns_topic_arn=${distribution_sns_topic_arn}"
+}
+
 function common-lambda-layer-upload-common() {
     local prefix
     local layer_zip_path
