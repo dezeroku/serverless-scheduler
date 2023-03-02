@@ -108,3 +108,8 @@ The reference implementation can be seen in abovementioned `plugins/serverless-s
 
 It's up to the user to define if the consumer should use SQS as a "buffer" before consuming the event by Lambda or not.
 In practice the consumer doesn't even have to be a Lambda function, although it's recommended for keeping the whole model serverless.
+
+## TODO
+
+1. Get JobType and job's class definition directly from the plugin, instead of from the `common` package.
+   This is basically the last thing (except frontend) that needs to be generalized for the `plugins` to be fully drop-in
