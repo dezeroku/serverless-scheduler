@@ -15,13 +15,9 @@ function build_items_front() {
 
 function usage() {
     cat << HEREDOC
-deploy.sh SCOPE
+build.sh SCOPE
 where SCOPE can be one of:
-- common
-- items
-- items-front
-- schedulers
-$(echo "${AVAILABLE_PLUGINS}" | tr ' ' '\n' | sed -e 's/^/- /')
+$(echo "${BUILD_TARGETS}" | tr ' ' '\n' | sed -e 's/^/- /')
 HEREDOC
 
     exit 1
@@ -37,7 +33,7 @@ cd "${RUNDIR}/.."
 [ -z "${1:-}" ] && usage
 BUILD_TARGET="${1}"
 
-contains "common items items-front schedulers ${AVAILABLE_PLUGINS}" "${BUILD_TARGET}" || usage
+contains "${BUILD_TARGETS}" "${BUILD_TARGET}" || usage
 
 # This is specifically for CI use
 if [[ "${GHA_DOCKER_CACHING:-false}" == "true" ]]; then

@@ -10,9 +10,14 @@ function contains() {
 }
 
 
-PLUGINS_DIR="./plugins"
-AVAILABLE_PLUGINS="$(find "${PLUGINS_DIR}" -mindepth 1 -maxdepth 1 -type d | tr '\n' ' ' | sed 's#./##' | head -c -1)"
+CORE_TARGETS="common items items-front schedulers"
+PLUGINS_DIR="${RUNDIR}/../plugins"
+AVAILABLE_PLUGINS="$(find "${PLUGINS_DIR}" -mindepth 1 -maxdepth 1 -type d | sed "s#${RUNDIR}/../##" | tr '\n' ' ' | head -c -1)"
+
+BUILD_TARGETS="${CORE_TARGETS} ${AVAILABLE_PLUGINS}"
+export CORE_TARGETS
 export AVAILABLE_PLUGINS
+export BUILD_TARGETS
 
 DEPLOY_DIR="${RUNDIR}/../.deployment-temp/build"
 mkdir -p "${DEPLOY_DIR}"

@@ -14,7 +14,6 @@ rm -rf "${DEPLOY_DIR}"
 mkdir -p "${DEPLOY_DIR}"
 popd
 
-./build.sh common
-./build.sh items
-./build.sh items-front
-./build.sh schedulers
+for x in ${BUILD_TARGETS}; do
+    ./build.sh "${x}"
+done
