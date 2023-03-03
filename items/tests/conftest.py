@@ -25,12 +25,13 @@ class Helpers:
         make_screenshots=True,
         sleep_time=1,
         url="http://example.com",
+        job_type="html_monitor_job",
     ):
         return {
             "user_email": user_email,
             "user_id": user_id,
             "job_id": job_id,
-            "job_type": JobType.HTML_MONITOR_JOB.value,
+            "job_type": job_type,
             "make_screenshots": make_screenshots,
             "sleep_time": sleep_time,
             "url": url,
