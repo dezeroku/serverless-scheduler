@@ -5,11 +5,8 @@ import pytest
 from tests.conftest import Helpers
 
 from common.models.events import SchedulerChangeEvent, SchedulerChangeType
-
-# Pylint doesn't respect the plugin thingy :/
-# pylint: disable=no-name-in-module
 from common.models.jobs import ScheduledJob
-from common.models.plugins import JobType, TestJob
+from common.models.plugins import JobType, parse_dict_to_job
 
 
 @pytest.fixture(name="example_scheduler_id")
@@ -27,7 +24,7 @@ def example_scheduler_id_fixture():
         ],
         [
             ScheduledJob(**Helpers.scheduled_job_dict_factory(), job_type=JobType.TEST),
-            TestJob(**Helpers.test_job_dict_factory(), job_type=JobType.TEST),
+            parse_dict_to_job(Helpers.test_job_dict_factory()),
         ],
     ),
 )
