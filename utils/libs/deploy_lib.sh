@@ -8,7 +8,7 @@
 
 DEPLOYMENTS_DIR="./terraform/deployments"
 # Just a hardcoded list to make sure that order is correct for complete_deploy.sh
-DEPLOYABLE_TARGETS="items-infra common-lambda-layer-upload items-lambdas-upload items-front-upload distribution-sns schedulers-lambdas-upload ${AVAILABLE_PLUGINS}"
+DEPLOYABLE_TARGETS="items-infra common-lambda-layer-upload plugins-lambda-layer-upload items-lambdas-upload items-front-upload distribution-sns schedulers-lambdas-upload ${AVAILABLE_PLUGINS}"
 
 # shellcheck source=utils/libs/deploy_lib_hooks.sh
 . "${RUNDIR}/libs/deploy_lib_hooks.sh"

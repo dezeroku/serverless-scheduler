@@ -10,6 +10,7 @@ module "lambdas_upload" {
   api_execution_arn   = var.api_execution_arn
   api_authorizer_id   = var.api_authorizer_id
   common_layer_arn    = var.common_layer_arn
+  plugins_layer_arn   = var.plugins_layer_arn
   lambda_zip_path     = var.lambda_zip_path
   dynamodb_name       = var.dynamodb_name
   dynamodb_stream_arn = var.dynamodb_stream_arn
