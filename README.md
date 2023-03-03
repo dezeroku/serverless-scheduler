@@ -103,6 +103,10 @@ Namely:
    -. `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
    -. `distribution_sns_topic_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
    -. `common_layer_arn` - (optional support) ARN of the Lambda layer with `common` package. This is really only usable with Python based plugins
+3. Plugin's build script outputs a python package to `.packaging/results/lambda.zip` that contains `plugin_export` subpackage, which exports:
+
+- `ENUM_MAPPING` - dict from `str` to `str`, keys are ENUM identifiers, while values are string identifiers, e.g. `HTMLMonitorJob`: `html_monitor_job`
+- `CLASS_MAPPING` - dict from `str` to `class`, keys are string identifiers (values from `ENUM_MAPPING`), while values are classes that map to a jobType
 
 The reference implementation can be seen in abovementioned `plugins/serverless-scheduler-html-checker`.
 
