@@ -4,7 +4,7 @@
 import math
 from typing import TYPE_CHECKING
 
-from common.models import ScheduledJob
+from common.models.jobs import ScheduledJob
 
 if TYPE_CHECKING:
     from mypy_boto3_scheduler import EventBridgeSchedulerClient

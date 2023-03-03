@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import boto3
 
-from common.models import SchedulerChangeEvent, SchedulerChangeType
+from common.models.events import SchedulerChangeEvent, SchedulerChangeType
 from schedulers.scheduler_manager import SchedulerManager
 
 if TYPE_CHECKING:
