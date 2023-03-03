@@ -2,7 +2,7 @@ import logging
 
 from boto3.dynamodb.conditions import Key
 
-from common.models import ScheduledJob
+from common.models.jobs import ScheduledJob
 from items import cognito, utils
 from items.json_schemas import jobwithid_schema
 from items.libs.lambda_decorators import (

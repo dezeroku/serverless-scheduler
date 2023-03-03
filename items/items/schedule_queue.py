@@ -4,12 +4,9 @@ from typing import TYPE_CHECKING
 
 import boto3
 
-from common.models import (
-    BaseJob,
-    SchedulerChangeEvent,
-    SchedulerChangeType,
-    parse_dict_to_job,
-)
+from common.models.events import SchedulerChangeEvent, SchedulerChangeType
+from common.models.jobs import BaseJob
+from common.models.plugins import parse_dict_to_job
 
 if TYPE_CHECKING:
     from mypy_boto3_sqs import SQSClient

@@ -1,6 +1,6 @@
 import json
 
-from common.models import HTMLMonitorJob
+from common.models.plugins import parse_dict_to_job
 from items.create import create, get_monitor_job_with_id, handler
 
 
@@ -13,8 +13,8 @@ def test_get_monitor_job_with_id(helpers):
 
 
 def test_creation_handler(mock_db, table_name, db_user, helpers):
-    to_create = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(
+    to_create = parse_dict_to_job(
+        helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
         )
     )
@@ -32,8 +32,8 @@ def test_creation_handler(mock_db, table_name, db_user, helpers):
 
 
 def test_double_creation_handler(mock_db, table_name, db_user, helpers):
-    to_create = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(
+    to_create = parse_dict_to_job(
+        helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
         )
     )
@@ -46,10 +46,12 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
 
     body = response
     assert "job_id" in body
+    assert "job_type" in body
     assert body["job_id"] is not None
     assert isinstance(body["job_id"], int)
     assert body["job_id"] == 0
 
+    payload = to_create.dict()
     # Add second time
     response = handler(table, db_user, payload)
 
@@ -60,8 +62,8 @@ def test_double_creation_handler(mock_db, table_name, db_user, helpers):
 def test_creation_handler_event(
     helpers, monkeypatch, mock_db, table_name, db_user, db_user_email
 ):
-    to_create = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(
+    to_create = parse_dict_to_job(
+        helpers.html_monitor_job_dict_factory(
             job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
         )
     )

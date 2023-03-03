@@ -3,7 +3,10 @@ import json
 import pytest
 from mypy_boto3_sqs import SQSClient
 
-from common.models import HTMLMonitorJob, SchedulerChangeEvent, SchedulerChangeType
+from common.models.events import SchedulerChangeEvent, SchedulerChangeType
+
+# pylint: disable=no-name-in-module
+from common.models.plugins import HTMLMonitorJob, parse_dict_to_job
 from items.schedule_queue import dynamodb_to_typed_dict, handler
 
 
@@ -82,9 +85,9 @@ def test_handler_html_monitor_job_different_types(
         SchedulerChangeType.REMOVE,
     ]
     jobs = [
-        HTMLMonitorJob(**helpers.html_monitor_job_dict_factory(job_id=0)),
-        HTMLMonitorJob(**helpers.html_monitor_job_dict_factory(job_id=0)),
-        HTMLMonitorJob(**helpers.html_monitor_job_dict_factory(job_id=0)),
+        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=0)),
+        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=0)),
+        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=0)),
     ]
 
     expected_change_events = [
@@ -129,7 +132,7 @@ def test_handler_html_monitor_job(
     change_type_strs = [change_type_str for _ in range(number_of_jobs)]
     change_types = [change_type for _ in range(number_of_jobs)]
     jobs = [
-        HTMLMonitorJob(**helpers.html_monitor_job_dict_factory(job_id=x))
+        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=x))
         for x in range(number_of_jobs)
     ]
 
@@ -159,7 +162,7 @@ def test_handler_html_monitor_job_remove_multi_messages(
     change_type_strs = ["REMOVE" for _ in range(number_of_jobs)]
     change_types = [SchedulerChangeType.REMOVE for _ in range(number_of_jobs)]
     jobs = [
-        HTMLMonitorJob(**helpers.html_monitor_job_dict_factory(job_id=x))
+        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=x))
         for x in range(number_of_jobs)
     ]
 

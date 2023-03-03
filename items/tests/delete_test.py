@@ -1,6 +1,6 @@
 import pytest
 
-from common.models import HTMLMonitorJob
+from common.models.plugins import parse_dict_to_job
 from items.delete import delete, handler
 
 
@@ -9,7 +9,7 @@ def setup(mock_db_table, helpers):
     # Add a single element to DB to be used later on in tests
     monitor_job = helpers.html_monitor_job_dict_factory(job_id=123)
 
-    to_save = HTMLMonitorJob(**monitor_job).dict()
+    to_save = parse_dict_to_job(monitor_job).dict()
     mock_db_table.put_item(Item=to_save)
 
 
@@ -17,7 +17,7 @@ def test_successful_delete(mock_db_table, db_user, helpers):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
-    monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id
+    monitor_job_id = parse_dict_to_job(monitor_jobs_dicts[0]).job_id
 
     response = handler(mock_db_table, db_user, monitor_job_id)
 
@@ -33,7 +33,7 @@ def test_successful_delete_event(
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
-    monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id
+    monitor_job_id = parse_dict_to_job(monitor_jobs_dicts[0]).job_id
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(
@@ -54,7 +54,7 @@ def test_delete_nonexisting(mock_db_table, db_user, helpers):
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
-    nonexistent_monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id + 1
+    nonexistent_monitor_job_id = parse_dict_to_job(monitor_jobs_dicts[0]).job_id + 1
 
     response = handler(mock_db_table, db_user, nonexistent_monitor_job_id)
 
@@ -70,7 +70,7 @@ def test_delete_nonexisting_event(
     monitor_jobs_dicts = helpers.get_monitor_jobs_for_user(mock_db_table, db_user)
     assert len(monitor_jobs_dicts) == 1
 
-    nonexistent_monitor_job_id = HTMLMonitorJob(**monitor_jobs_dicts[0]).job_id + 1
+    nonexistent_monitor_job_id = parse_dict_to_job(monitor_jobs_dicts[0]).job_id + 1
 
     monkeypatch.setenv("DYNAMO_DB", table_name)
     event = helpers.EventFactory(

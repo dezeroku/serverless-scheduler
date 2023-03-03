@@ -1465,6 +1465,20 @@ botocore = ">=1.12.36,<2.0a.0"
 crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
+name = "serverless-scheduler-html-checker"
+version = "0.1.0"
+description = "HTMLMonitorJob consumer for serverless-scheduler project. It consumes the 'html_monitor_job' events and check if the last call's obtained HTML is different than the current one."
+category = "dev"
+optional = false
+python-versions = "^3.9"
+files = []
+develop = true
+
+[package.source]
+type = "directory"
+url = "../plugins/serverless-scheduler-html-checker"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -1696,4 +1710,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "39838e1ae634205444386c7b1d5a41ec5cd6c22c7069191867bcefcd50632f61"
+content-hash = "fcfaee3ba80c68e16126d98a3540599dc22d4cc57cf19c6afe21eaeb2128d9de"
