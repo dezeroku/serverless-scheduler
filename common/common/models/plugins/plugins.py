@@ -18,6 +18,7 @@ def discover_plugins(plugins_prefix):
         for _, name, _ in pkgutil.iter_modules()
         if name.startswith(plugins_prefix)
     }
+    print(discovered_plugins)
     enum_mapping_all = {}
     class_mapping_all = {}
     for plugin in discovered_plugins.values():

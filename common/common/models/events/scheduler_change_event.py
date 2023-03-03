@@ -3,9 +3,9 @@ from typing import Union
 
 from pydantic import BaseModel, Extra, validator
 
-from common.models import parse_dict_to_job
 from common.models.events.scheduler_change_type import SchedulerChangeType
 from common.models.jobs.scheduled_job import ScheduledJob
+from common.models.plugins import parse_dict_to_job
 
 
 class SchedulerChangeEvent(BaseModel):

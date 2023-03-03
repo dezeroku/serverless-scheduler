@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from common.models import ScheduledJob
+from common.models.jobs import ScheduledJob
 
 
 @pytest.mark.parametrize(

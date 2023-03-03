@@ -2,7 +2,7 @@ import pytest
 
 # Pylint doesn't respect the plugin thingy :/
 # pylint: disable=no-name-in-module
-from common.models import JobType, TestJob, map_enum_to_class, parse_dict_to_job
+from common.models.plugins import JobType, TestJob, map_enum_to_class, parse_dict_to_job
 
 
 def test_parse_dict_to_job_no_job_type(helpers):
