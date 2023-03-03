@@ -8,7 +8,9 @@ DOCKERFILE_DIR="$(readlink -f "$(dirname "$0")/..")"
 
 [ -z "${COMPONENT_NAME}" ] && echo "You have to provide COMPONENT_NAME" && exit 1
 
-rm -rf ./.packaging
+if [[ "${SKIP_PACKAGING_REMOVAL:-false}" != "true" ]]; then
+    rm -rf ./.packaging
+fi
 
 # Dirty hack to work around common relative path until https://github.com/python-poetry/poetry/issues/668 gets proper solution
 mkdir -p .packaging/temp

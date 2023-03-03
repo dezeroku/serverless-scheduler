@@ -14,7 +14,7 @@ function sanitize_plugin_name() {
     echo "${service}" | tr '/' '-'
 }
 
-CORE_TARGETS="common items items-front schedulers"
+CORE_TARGETS="common items items-front schedulers plugins-interface"
 PLUGINS_DIR="${RUNDIR}/../plugins"
 AVAILABLE_PLUGINS="$(find "${PLUGINS_DIR}" -mindepth 1 -maxdepth 1 -type d | sed "s#${RUNDIR}/../##" | tr '\n' ' ' | head -c -1)"
 

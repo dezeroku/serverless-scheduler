@@ -1,0 +1,5 @@
+.*
+!plugins_interface
+!poetry.lock
+!pyproject.toml
+!.packaging/temp
