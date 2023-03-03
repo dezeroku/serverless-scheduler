@@ -4,10 +4,12 @@ from datetime import datetime
 import pytest
 from tests.conftest import Helpers
 
+from common.models.events import SchedulerChangeEvent, SchedulerChangeType
+
 # Pylint doesn't respect the plugin thingy :/
 # pylint: disable=no-name-in-module
-from common.models import JobType, ScheduledJob, TestJob
-from common.models.events import SchedulerChangeEvent, SchedulerChangeType
+from common.models.jobs import ScheduledJob
+from common.models.plugins import JobType, TestJob
 
 
 @pytest.fixture(name="example_scheduler_id")
