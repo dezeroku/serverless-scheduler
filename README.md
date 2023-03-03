@@ -1,4 +1,4 @@
-# Page Monitor
+# Serverless Scheduler
 
 AWS based serverless solution for running scheduled tasks coming from different sources.
 The main use at the moment is monitoring websites for changes in HTML, however it's easy to extend it with whatever functionality you'd like to have.
