@@ -6,17 +6,17 @@ from common.models.plugins import JobType, TestJob, map_enum_to_class, parse_dic
 
 
 def test_parse_dict_to_job_no_job_type(helpers):
-    job = TestJob(**helpers.test_job_dict_factory(), job_type=JobType.TEST)
+    job = parse_dict_to_job(helpers.test_job_dict_factory())
 
     job_data = job.dict()
     del job_data["job_type"]
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         parse_dict_to_job(job_data)
 
 
 def test_parse_dict_to_job_non_existent_job_type(helpers):
-    job = TestJob(**helpers.test_job_dict_factory(), job_type=JobType.TEST)
+    job = parse_dict_to_job(helpers.test_job_dict_factory())
 
     job_data = job.dict()
 
@@ -32,7 +32,9 @@ def test_parse_dict_to_job_non_existent_job_type(helpers):
 
 
 def test_parse_dict_to_job_test_job(helpers):
-    job = TestJob(**helpers.test_job_dict_factory(), job_type=JobType.TEST)
+    data = helpers.test_job_dict_factory()
+    del data["job_type"]
+    job = TestJob(**data, job_type=JobType.TEST)
 
     job_data = job.dict()
 
