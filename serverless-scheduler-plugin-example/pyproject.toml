@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "serverless-scheduler-plugin-example"
+version = "0.1.0"
+description = "Reference implementation of a plugin for serverless-scheduler"
+authors = ["dezeroku <dezeroku@gmail.com>"]
+readme = "README.md"
+packages = [{include = "serverless_scheduler_plugin_example"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+common = { path = "../common/", develop = true }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
