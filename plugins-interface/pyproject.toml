@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "plugins-interface"
+version = "0.1.0"
+description = "Meta-package for collecting API definitions for serverless-scheduler-*"
+authors = ["dezeroku <dezeroku@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+serverless-scheduler-html-checker = { path = "../plugins/serverless-scheduler-html-checker", develop = true }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[virtualenvs]
+create = true
+in-project = true

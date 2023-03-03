@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNDIR="$(readlink -f "$(dirname "$0")")"
+pushd "${RUNDIR}/.."
+
+export COMPONENT_NAME=plugins_interface
+
+rm -rf ".packaging"
+
+# TODO: this is very naive
+# At the very least, maybe let's build packages for the plugins and use that?
+# Right now, we are just copying everything as-it and using it during the build
+mkdir -p ".packaging/temp"
+cp -r "${RUNDIR}/../../plugins" ".packaging/temp/plugins"
+
+# Package
+SKIP_PACKAGING_REMOVAL=true "${RUNDIR}/../../common/bin/package_lambda_runner.sh"
