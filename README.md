@@ -96,19 +96,22 @@ Namely:
 1. Plugin defines `bin/package_lambda_entrypoint` script, that outputs the zip generated for a project to `.packaging/result/lambda.zip` file. It's up to the developer to define if this script will rely on `serverless-scheduler`'s build system that's used for core packages or define their own logic.
 2. Plugin defines `terraform` directory, that contains all the logic needs to deploy the project.
    The following variables should be accepted:
-   -. `aws_region` - in what region to deploy
-   -. `service` - to be used in tags as 'Service'
-   -. `stage` - to be used in tags as 'Stage'
-   -. `prefix` - what value to prefix the deployed objects' names with
-   -. `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
-   -. `distribution_sns_topic_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
-   -. `common_layer_arn` - (optional support) ARN of the Lambda layer with `common` package. This is really only usable with Python based plugins
+
+- `aws_region` - in what region to deploy
+- `service` - to be used in tags as 'Service'
+- `stage` - to be used in tags as 'Stage'
+- `prefix` - what value to prefix the deployed objects' names with
+- `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
+- `distribution_sns_topic_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
+- `common_layer_arn` - (optional support) ARN of the Lambda layer with `common` package. This is really only usable with Python based plugins
+
 3. Plugin's build script outputs a python package to `.packaging/results/lambda.zip` that contains `plugin_export` subpackage, which exports:
 
 - `ENUM_MAPPING` - dict from `str` to `str`, keys are ENUM identifiers, while values are string identifiers, e.g. `HTMLMonitorJob`: `html_monitor_job`
 - `CLASS_MAPPING` - dict from `str` to `class`, keys are string identifiers (values from `ENUM_MAPPING`), while values are classes that map to a jobType
 
-The reference implementation can be seen in abovementioned `plugins/serverless-scheduler-html-checker`.
+The reference implementation can be seen in previously mentioned `plugins/serverless-scheduler-html-checker`.
+`serverless-scheduler-plugin-example` can also be treated as such, even though there's no real logic defined in it.
 
 It's up to the user to define if the consumer should use SQS as a "buffer" before consuming the event by Lambda or not.
 In practice the consumer doesn't even have to be a Lambda function, although it's recommended for keeping the whole model serverless.
