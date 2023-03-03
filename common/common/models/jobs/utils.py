@@ -13,7 +13,6 @@ def parse_dict_to_job_factory(job_type_enum: Enum, map_enum_to_class):
         else:
             job_type_value = job_type
 
-        print(type(job_type_value))
         job_class = map_enum_to_class(job_type_value)
         return job_class(**data, job_type=job_type_value)
 
