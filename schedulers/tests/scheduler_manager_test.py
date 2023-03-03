@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from common.models import ScheduledJob
+from common.models.jobs import ScheduledJob
 from schedulers.scheduler_manager import SchedulerManager
 
 
