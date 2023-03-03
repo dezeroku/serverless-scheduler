@@ -2,7 +2,7 @@ import logging
 
 from boto3.dynamodb.conditions import Key
 
-from common.models import parse_dict_to_job
+from common.models.plugins import parse_dict_to_job
 from items import cognito, utils
 from items.json_schemas import job_schema, jobwithid_schema
 from items.libs.lambda_decorators import (

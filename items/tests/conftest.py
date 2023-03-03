@@ -8,7 +8,7 @@ import pytest
 from boto3.dynamodb.conditions import Key
 from moto import mock_dynamodb, mock_sqs
 
-from common.models import JobType
+from common.models.plugins import JobType
 
 _EXAMPLE_USER_EMAIL = "user@example.com"
 _EXAMPLE_USER_ID = "unique-user-id"

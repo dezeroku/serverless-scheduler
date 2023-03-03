@@ -1,6 +1,6 @@
 import json
 
-from common.models import HTMLMonitorJob
+from common.models.plugins import parse_dict_to_job
 from items import utils
 from items.get import get, handler
 
@@ -30,8 +30,8 @@ def test_data_fetch_empty_event(
 def test_data_fetch_single_item(empty_mock_db, table_name, db_user, helpers):
     table = empty_mock_db.Table(table_name)
 
-    monitor_job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(user_id=db_user)
+    monitor_job = parse_dict_to_job(
+        helpers.html_monitor_job_dict_factory(user_id=db_user)
     )
 
     to_save = monitor_job.dict()
@@ -48,8 +48,8 @@ def test_data_fetch_single_item_event(
 ):
     table = empty_mock_db.Table(table_name)
 
-    monitor_job = HTMLMonitorJob(
-        **helpers.html_monitor_job_dict_factory(user_id=db_user)
+    monitor_job = parse_dict_to_job(
+        helpers.html_monitor_job_dict_factory(user_id=db_user)
     )
 
     to_save = monitor_job.dict()
