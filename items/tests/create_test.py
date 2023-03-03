@@ -82,7 +82,6 @@ def test_creation_handler_event(
     response = create(event, context)
 
     assert response["statusCode"] == 200
-    print(response)
 
     body = json.loads(response["body"])
     assert "job_id" in body
