@@ -19,22 +19,16 @@ if [[ ! "$PWD" == "${DOCKERFILE_DIR}" ]]; then
     cp "${DOCKERFILE_DIR}/pyproject.toml" .packaging/temp/common
     cp "${DOCKERFILE_DIR}/poetry.lock" .packaging/temp/common
 
-    # For plugins ../../
+    # For plugins (../../ reference) to be used in builds
     cp "${DOCKERFILE_DIR}/pyproject.toml" .packaging/temp
     cp "${DOCKERFILE_DIR}/poetry.lock" .packaging/temp
 fi
 
-# Insert plugins, because they might be used in development
-# TODO: do we reall want to allow it in the build process?
+# Insert test plugin, as it's referenced as a test variable
+# Don't insert any of the "real" plugins, as we don't want them to be used in testing/build process
 mkdir -p ".packaging/temp/serverless-scheduler-plugin-example"
 cp "${DOCKERFILE_DIR}/../serverless-scheduler-plugin-example/pyproject.toml" .packaging/temp/serverless-scheduler-plugin-example
 cp "${DOCKERFILE_DIR}/../serverless-scheduler-plugin-example/poetry.lock" .packaging/temp/serverless-scheduler-plugin-example
-for plugin in "${DOCKERFILE_DIR}"/../plugins/*; do
-    plugin="$(basename "${plugin}")"
-    mkdir -p ".packaging/temp/plugins/${plugin}"
-    cp "${DOCKERFILE_DIR}/../plugins/${plugin}/pyproject.toml" ".packaging/temp/plugins/${plugin}"
-    cp "${DOCKERFILE_DIR}/../plugins/${plugin}/poetry.lock" ".packaging/temp/plugins/${plugin}"
-done;
 
 # If INTERMEDIATE_PACKAGING==true you need to also run package_lambda_concatenate.sh to get a proper zip
 # If it's set to true, it's assumed that you either use a Lambda layer for the 'common' package or you don't use the common package at all
