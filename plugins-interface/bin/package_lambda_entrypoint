@@ -14,5 +14,8 @@ rm -rf ".packaging"
 mkdir -p ".packaging/temp"
 cp -r "${RUNDIR}/../../plugins" ".packaging/temp/plugins"
 
+# It's a Lambda layer
+export CUSTOM_PACKAGING_DIRECTORY="python"
+
 # Package
 SKIP_PACKAGING_REMOVAL=true "${RUNDIR}/../../common/bin/package_lambda_runner.sh"
