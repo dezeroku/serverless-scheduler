@@ -7,7 +7,7 @@ from items.delete import delete, handler
 @pytest.fixture(autouse=True)
 def setup(mock_db_table, helpers):
     # Add a single element to DB to be used later on in tests
-    monitor_job = helpers.html_monitor_job_dict_factory(job_id=123)
+    monitor_job = helpers.test_job_dict_factory(job_id=123)
 
     to_save = parse_dict_to_job(monitor_job).dict()
     mock_db_table.put_item(Item=to_save)

@@ -10,7 +10,7 @@ from items.update import handler, update
 def setup(helpers, mock_db_table, db_user):
     # Add a single element to DB to be used later on in tests
     monitor_job = parse_dict_to_job(
-        helpers.html_monitor_job_dict_factory(user_id=db_user, job_id=0)
+        helpers.test_job_dict_factory(user_id=db_user, job_id=0)
     )
 
     to_save = monitor_job.dict()
@@ -26,10 +26,8 @@ def test_successful_update(mock_db_table, db_user, db_user_email, helpers):
 
     new_item = copy.deepcopy(old_item)
     new_item.sleep_time = old_item.sleep_time + 1
-    new_item.make_screenshots = not old_item.make_screenshots
 
     assert new_item.sleep_time != old_item.sleep_time
-    assert new_item.make_screenshots != old_item.make_screenshots
 
     payload = new_item.dict()
 
@@ -55,10 +53,8 @@ def test_successful_update_event(
 
     new_item = copy.deepcopy(old_item)
     new_item.sleep_time = old_item.sleep_time + 1
-    new_item.make_screenshots = not old_item.make_screenshots
 
     assert new_item.sleep_time != old_item.sleep_time
-    assert new_item.make_screenshots != old_item.make_screenshots
 
     payload = new_item.dict()
 

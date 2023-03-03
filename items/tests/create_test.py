@@ -5,7 +5,7 @@ from items.create import create, get_monitor_job_with_id, handler
 
 
 def test_get_monitor_job_with_id(helpers):
-    base = helpers.html_monitor_job_dict_factory(job_id=1)
+    base = helpers.test_job_dict_factory(job_id=1)
     del base["job_id"]
 
     result = get_monitor_job_with_id(base, 2)
@@ -14,9 +14,7 @@ def test_get_monitor_job_with_id(helpers):
 
 def test_creation_handler(mock_db, table_name, db_user, helpers):
     to_create = parse_dict_to_job(
-        helpers.html_monitor_job_dict_factory(
-            job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
-        )
+        helpers.test_job_dict_factory(job_id=None, sleep_time=5)
     )
 
     table = mock_db.Table(table_name)
@@ -33,9 +31,7 @@ def test_creation_handler(mock_db, table_name, db_user, helpers):
 
 def test_double_creation_handler(mock_db, table_name, db_user, helpers):
     to_create = parse_dict_to_job(
-        helpers.html_monitor_job_dict_factory(
-            job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
-        )
+        helpers.test_job_dict_factory(job_id=None, sleep_time=5)
     )
 
     table = mock_db.Table(table_name)
@@ -63,9 +59,7 @@ def test_creation_handler_event(
     helpers, monkeypatch, mock_db, table_name, db_user, db_user_email
 ):
     to_create = parse_dict_to_job(
-        helpers.html_monitor_job_dict_factory(
-            job_id=None, make_screenshots=True, sleep_time=5, url="http://example.com"
-        )
+        helpers.test_job_dict_factory(job_id=None, sleep_time=5)
     )
 
     mock_db.Table(table_name)

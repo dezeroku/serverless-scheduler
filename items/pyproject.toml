@@ -22,7 +22,7 @@ moto = "^3.1.16"
 boto3-stubs = {extras = ["dynamodb", "sqs"], version = "^1.26.64"}
 boto3 = "^1.26.80"
 common = { path = "../common/", develop = true }
-serverless-scheduler-html-checker = { path = "../plugins/serverless-scheduler-html-checker", develop = true }
+serverless-scheduler-plugin-example = { path = "../serverless-scheduler-plugin-example", develop = true }
 
 [tool.coverage.run]
 omit = ["*tests*", "*common*"]
