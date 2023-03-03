@@ -43,7 +43,7 @@ function plugins-lambda-layer-upload-common() {
     local layer_zip_path
 
     prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
-    layer_zip_path="$(readlink -f "${DEPLOY_DIR}/plugins-lambda.zip")"
+    layer_zip_path="$(readlink -f "${DEPLOY_DIR}/plugins-interface-lambda.zip")"
     echo "-var prefix=${prefix} -var layer_zip_path=${layer_zip_path}"
 }
 
