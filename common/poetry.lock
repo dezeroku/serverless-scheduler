@@ -554,6 +554,20 @@ botocore = ">=1.12.36,<2.0a.0"
 crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
+name = "serverless-scheduler-plugin-example"
+version = "0.1.0"
+description = "Reference implementation of a plugin for serverless-scheduler"
+category = "dev"
+optional = false
+python-versions = "^3.9"
+files = []
+develop = true
+
+[package.source]
+type = "directory"
+url = "../serverless-scheduler-plugin-example"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -707,4 +721,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "80b0888f8e056d7a04bf020f608ec27b338029a2e2026d24ea9bd46fac8c3623"
+content-hash = "0c12a7192d4ea3a9b6031de4b6ca85b64a25893861be31ba8b276286283e6d78"
