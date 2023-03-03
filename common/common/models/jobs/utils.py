@@ -11,6 +11,7 @@ def parse_dict_to_job_factory(job_type_enum: Enum, map_enum_to_class):
         except ValueError as exc:
             raise ValueError("Incorrect job_type provided") from exc
 
+        print(type(job_type_value))
         job_class = map_enum_to_class(job_type_value)
         return job_class(**data)
 

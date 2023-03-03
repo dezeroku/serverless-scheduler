@@ -11,12 +11,7 @@ _PLUGINS_SEARCH_PREFIX = os.getenv(
 
 _PLUGINS_ENUM_MAPPING, _PLUGINS_CLASS_MAPPING = discover_plugins(_PLUGINS_SEARCH_PREFIX)
 
-
-class StrEnum(str, Enum):
-    pass
-
-
-JobType = StrEnum("JobType", _PLUGINS_ENUM_MAPPING)
+JobType = Enum("JobType", _PLUGINS_ENUM_MAPPING)
 
 # Convert the class mapping, so map_enum_to_class recognizes enum values, not strings
 _PLUGINS_CLASS_MAPPING = {JobType(k): v for k, v in _PLUGINS_CLASS_MAPPING.items()}
