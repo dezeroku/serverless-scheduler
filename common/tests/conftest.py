@@ -21,9 +21,9 @@ class Helpers:
         }
 
     @staticmethod
-    def test_job_dict_factory(*args, **kwargs):
+    def test_job_dict_factory(*args, job_type="test", **kwargs):
         temp = Helpers.scheduled_job_dict_factory(*args, **kwargs)
-        temp["job_type"] = "test"
+        temp["job_type"] = job_type
         return temp
 
 
