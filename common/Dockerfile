@@ -8,7 +8,10 @@ RUN curl https://install.python-poetry.org | python3 - --version 1.3.0
 
 WORKDIR /app/builder
 
-COPY .packaging/temp /app/common
+COPY .packaging/temp /app/
+# TODO: this is a dirty hack for building plugins
+# fix it
+COPY .packaging/temp /
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-root --only main
 COPY README.md .
