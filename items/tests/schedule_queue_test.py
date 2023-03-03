@@ -6,7 +6,7 @@ from mypy_boto3_sqs import SQSClient
 from common.models.events import SchedulerChangeEvent, SchedulerChangeType
 
 # pylint: disable=no-name-in-module
-from common.models.plugins import HTMLMonitorJob, parse_dict_to_job
+from common.models.plugins import TestJob, parse_dict_to_job
 from items.schedule_queue import dynamodb_to_typed_dict, handler
 
 
@@ -45,8 +45,8 @@ def test_dynamodb_to_typed_dict_nonexistent_type():
         dynamodb_to_typed_dict({"field1": {"NON-EXISTENT-TYPE": 0}})
 
 
-def minimal_dynamodb_stream_record_html_monitor_job(
-    event_name: str, html_monitor_job: HTMLMonitorJob, timestamp=0.0
+def minimal_dynamodb_stream_record_test_job(
+    event_name: str, test_job: TestJob, timestamp=0.0
 ):
     allowed_event_names = ("MODIFY", "INSERT", "REMOVE")
     if event_name not in allowed_event_names:
@@ -57,23 +57,21 @@ def minimal_dynamodb_stream_record_html_monitor_job(
         "dynamodb": {
             "ApproximateCreationDateTime": timestamp,
             "Keys": {
-                "user_id": {"S": html_monitor_job.user_id},
-                "job_id": {"N": str(html_monitor_job.job_id)},
+                "user_id": {"S": test_job.user_id},
+                "job_id": {"N": str(test_job.job_id)},
             },
             "NewImage": {
-                "job_type": {"S": str(html_monitor_job.job_type.value)},
-                "user_id": {"S": html_monitor_job.user_id},
-                "user_email": {"S": html_monitor_job.user_email},
-                "job_id": {"N": str(html_monitor_job.job_id)},
-                "sleep_time": {"N": str(html_monitor_job.sleep_time)},
-                "url": {"S": str(html_monitor_job.url)},
-                "make_screenshots": {"BOOL": html_monitor_job.make_screenshots},
+                "job_type": {"S": str(test_job.job_type.value)},
+                "user_id": {"S": test_job.user_id},
+                "user_email": {"S": test_job.user_email},
+                "job_id": {"N": str(test_job.job_id)},
+                "sleep_time": {"N": str(test_job.sleep_time)},
             },
         },
     }
 
 
-def test_handler_html_monitor_job_different_types(
+def test_handler_test_job_different_types(
     helpers,
     mock_sqs: SQSClient,
     example_queue_name: str,
@@ -85,9 +83,9 @@ def test_handler_html_monitor_job_different_types(
         SchedulerChangeType.REMOVE,
     ]
     jobs = [
-        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=0)),
-        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=0)),
-        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=0)),
+        parse_dict_to_job(helpers.test_job_dict_factory(job_id=0)),
+        parse_dict_to_job(helpers.test_job_dict_factory(job_id=0)),
+        parse_dict_to_job(helpers.test_job_dict_factory(job_id=0)),
     ]
 
     expected_change_events = [
@@ -109,7 +107,7 @@ def test_handler_html_monitor_job_different_types(
         )
     )
 
-    handler_generic_html_monitor_job(
+    handler_generic_test_job(
         mock_sqs, example_queue_name, jobs, change_type_strs, expected_change_events
     )
 
@@ -121,7 +119,7 @@ def test_handler_html_monitor_job_different_types(
         (SchedulerChangeType.CREATE, "INSERT", 5),
     ],
 )
-def test_handler_html_monitor_job(
+def test_handler_test_job(
     helpers,
     mock_sqs: SQSClient,
     example_queue_name: str,
@@ -132,7 +130,7 @@ def test_handler_html_monitor_job(
     change_type_strs = [change_type_str for _ in range(number_of_jobs)]
     change_types = [change_type for _ in range(number_of_jobs)]
     jobs = [
-        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=x))
+        parse_dict_to_job(helpers.test_job_dict_factory(job_id=x))
         for x in range(number_of_jobs)
     ]
 
@@ -145,7 +143,7 @@ def test_handler_html_monitor_job(
         )
         for job, change_type in zip(jobs, change_types)
     ]
-    handler_generic_html_monitor_job(
+    handler_generic_test_job(
         mock_sqs,
         example_queue_name,
         jobs,
@@ -156,13 +154,13 @@ def test_handler_html_monitor_job(
 
 
 @pytest.mark.parametrize("number_of_jobs", range(1, 5))
-def test_handler_html_monitor_job_remove_multi_messages(
+def test_handler_test_job_remove_multi_messages(
     helpers, mock_sqs: SQSClient, example_queue_name: str, number_of_jobs: int
 ):
     change_type_strs = ["REMOVE" for _ in range(number_of_jobs)]
     change_types = [SchedulerChangeType.REMOVE for _ in range(number_of_jobs)]
     jobs = [
-        parse_dict_to_job(helpers.html_monitor_job_dict_factory(job_id=x))
+        parse_dict_to_job(helpers.test_job_dict_factory(job_id=x))
         for x in range(number_of_jobs)
     ]
 
@@ -176,7 +174,7 @@ def test_handler_html_monitor_job_remove_multi_messages(
         for job, change_type in zip(jobs, change_types)
     ]
 
-    handler_generic_html_monitor_job(
+    handler_generic_test_job(
         mock_sqs,
         example_queue_name,
         jobs,
@@ -186,10 +184,10 @@ def test_handler_html_monitor_job_remove_multi_messages(
     )
 
 
-def handler_generic_html_monitor_job(
+def handler_generic_test_job(
     sqs: SQSClient,
     queue_name: str,
-    jobs: list[HTMLMonitorJob],
+    jobs: list[TestJob],
     change_type_strs: list[str],
     expected_change_events: list[SchedulerChangeEvent],
     max_number_of_messages: int = 5,
@@ -199,7 +197,7 @@ def handler_generic_html_monitor_job(
     assert len(jobs) == len(change_type_strs) == len(expected_change_events)
 
     records = [
-        minimal_dynamodb_stream_record_html_monitor_job(change_type_str, x)
+        minimal_dynamodb_stream_record_test_job(change_type_str, x)
         for change_type_str, x in zip(change_type_strs, jobs)
     ]
 

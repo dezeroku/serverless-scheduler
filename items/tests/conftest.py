@@ -8,8 +8,6 @@ import pytest
 from boto3.dynamodb.conditions import Key
 from moto import mock_dynamodb, mock_sqs
 
-from common.models.plugins import JobType
-
 _EXAMPLE_USER_EMAIL = "user@example.com"
 _EXAMPLE_USER_ID = "unique-user-id"
 _EXAMPLE_QUEUE_NAME = "test.fifo"
@@ -17,24 +15,20 @@ _EXAMPLE_QUEUE_NAME = "test.fifo"
 
 class Helpers:
     @staticmethod
-    def html_monitor_job_dict_factory(
+    def test_job_dict_factory(
         *,
         user_email=_EXAMPLE_USER_EMAIL,
         user_id=_EXAMPLE_USER_ID,
         job_id=1,
-        make_screenshots=True,
         sleep_time=1,
-        url="http://example.com",
-        job_type="html_monitor_job",
+        job_type="test",
     ):
         return {
             "user_email": user_email,
             "user_id": user_id,
             "job_id": job_id,
             "job_type": job_type,
-            "make_screenshots": make_screenshots,
             "sleep_time": sleep_time,
-            "url": url,
         }
 
     @staticmethod
