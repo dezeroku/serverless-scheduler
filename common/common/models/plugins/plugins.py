@@ -25,4 +25,6 @@ def discover_plugins(plugins_prefix):
         enum_mapping_all = enum_mapping_all | plugin.ENUM_MAPPING
         class_mapping_all = class_mapping_all | plugin.CLASS_MAPPING
 
+    print(enum_mapping_all)
+    print(class_mapping_all)
     return enum_mapping_all, class_mapping_all
