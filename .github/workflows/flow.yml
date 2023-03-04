@@ -34,6 +34,7 @@ jobs:
           - component: "common"
           - component: "schedulers"
           - component: "items-front"
+          - component: "plugins-interface"
     uses: ./.github/workflows/package-component.yml
     with:
       component: ${{ matrix.cfg.component }}
