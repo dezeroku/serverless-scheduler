@@ -16,7 +16,7 @@ pytest = "^7.1.2"
 coverage = {extras = ["toml"], version = "^6.4.2"}
 pylint = "^2.15.9"
 hypothesis = "^6.68.2"
-serverless-scheduler-plugin-example = { path = "../serverless-scheduler-plugin-example", develop = true }
+serverless-scheduler-plugin-example-api = { path = "../serverless-scheduler-plugin-example-api", develop = true }
 
 [tool.coverage.run]
 omit = ["tests*"]

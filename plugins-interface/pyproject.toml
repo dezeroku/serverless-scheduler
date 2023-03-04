@@ -7,7 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-serverless-scheduler-html-checker = { path = "../plugins/serverless-scheduler-html-checker", develop = true }
+serverless-scheduler-html-checker-api = { path = "../plugins/serverless-scheduler-html-checker/serverless-scheduler-html-checker-api", develop = true }
+
+[tool.poetry.group.dev.dependencies]
+serverless-scheduler-plugin-example-api = { path = "../serverless-scheduler-plugin-example-api", develop = true }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

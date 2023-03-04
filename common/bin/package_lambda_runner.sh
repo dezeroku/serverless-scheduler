@@ -26,9 +26,9 @@ fi
 
 # Insert test plugin, as it's referenced as a test variable
 # Don't insert any of the "real" plugins, as we don't want them to be used in testing/build process
-mkdir -p ".packaging/temp/serverless-scheduler-plugin-example"
-cp "${DOCKERFILE_DIR}/../serverless-scheduler-plugin-example/pyproject.toml" .packaging/temp/serverless-scheduler-plugin-example
-cp "${DOCKERFILE_DIR}/../serverless-scheduler-plugin-example/poetry.lock" .packaging/temp/serverless-scheduler-plugin-example
+mkdir -p ".packaging/temp/serverless-scheduler-plugin-example-api"
+cp "${DOCKERFILE_DIR}/../serverless-scheduler-plugin-example-api/pyproject.toml" .packaging/temp/serverless-scheduler-plugin-example-api
+cp "${DOCKERFILE_DIR}/../serverless-scheduler-plugin-example-api/poetry.lock" .packaging/temp/serverless-scheduler-plugin-example-api
 
 # If INTERMEDIATE_PACKAGING==true you need to also run package_lambda_concatenate.sh to get a proper zip
 # If it's set to true, it's assumed that you either use a Lambda layer for the 'common' package or you don't use the common package at all

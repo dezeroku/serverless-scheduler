@@ -105,13 +105,13 @@ Namely:
 - `distribution_sns_topic_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
 - `common_layer_arn` - (optional support) ARN of the Lambda layer with `common` package. This is really only usable with Python based plugins
 
-3. Plugin's build script outputs a python package to `.packaging/results/lambda.zip` that contains `plugin_export` subpackage, which exports:
+3. Plugin's directory contains a `<plugin-name>-api` python package that contains `plugin_export` subpackage, which exports:
 
 - `ENUM_MAPPING` - dict from `str` to `str`, keys are ENUM identifiers, while values are string identifiers, e.g. `HTMLMonitorJob`: `html_monitor_job`
 - `CLASS_MAPPING` - dict from `str` to `class`, keys are string identifiers (values from `ENUM_MAPPING`), while values are classes that map to a jobType
 
 The reference implementation can be seen in previously mentioned `plugins/serverless-scheduler-html-checker`.
-`serverless-scheduler-plugin-example` can also be treated as such, even though there's no real logic defined in it.
+`serverless-scheduler-plugin-example` can be treated as an example of just the API part, even though there's no real logic defined in it.
 
 It's up to the user to define if the consumer should use SQS as a "buffer" before consuming the event by Lambda or not.
 In practice the consumer doesn't even have to be a Lambda function, although it's recommended for keeping the whole model serverless.

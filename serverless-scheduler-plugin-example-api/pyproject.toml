@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "serverless-scheduler-plugin-example"
+name = "serverless-scheduler-plugin-example-api"
 version = "0.1.0"
-description = "Reference implementation of a plugin for serverless-scheduler"
+description = "Reference implementation of a plugin API for serverless-scheduler"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 readme = "README.md"
-packages = [{include = "serverless_scheduler_plugin_example"}]
+packages = [{include = "serverless_scheduler_plugin_example_api"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"

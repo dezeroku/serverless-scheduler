@@ -16,7 +16,7 @@ def discover_plugins(plugins_prefix):
     discovered_plugins = {
         name: importlib.import_module(name + ".plugin_export")
         for _, name, _ in pkgutil.iter_modules()
-        if name.startswith(plugins_prefix)
+        if name.startswith(plugins_prefix) and name.endswith("_api")
     }
     print(discovered_plugins)
     enum_mapping_all = {}
