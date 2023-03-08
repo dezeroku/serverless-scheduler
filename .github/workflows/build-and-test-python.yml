@@ -57,8 +57,7 @@ jobs:
       - name: Run pytest
         run: |
           cd ${{ inputs.directory }}
-          poetry run coverage run -m pytest tests
-          poetry run coverage report --show-missing
+          ./bin/run-coverage
 
   pylint:
     runs-on: ubuntu-latest
@@ -78,4 +77,4 @@ jobs:
       - name: Run pylint
         run: |
           cd ${{ inputs.directory }}
-          poetry run pylint ./${{ inputs.directory }} ./tests
+          ./bin/run-pylint
