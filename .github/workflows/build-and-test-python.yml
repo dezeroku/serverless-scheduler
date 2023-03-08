@@ -9,6 +9,12 @@ on:
       python-version:
         required: true
         type: string
+      plugin-name:
+        # If it's set to a non-empty string
+        # it's assumed that a plugin is being tested via this flow
+        required: false
+        default: ""
+        type: string
 
   workflow_call:
     inputs:
@@ -18,12 +24,30 @@ on:
       python-version:
         required: true
         type: string
+      plugin-name:
+        # If it's set to a non-empty string
+        # it's assumed that a plugin is being tested via this flow
+        required: false
+        default: ""
+        type: string
 jobs:
   poetry-install:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name != "" }}
+        with:
+          repository: dezeroku/monitor-page
+          ref: aws-poc
+      - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name != "" }}
+        with:
+          path: plugins/${{ inputs.plugin-name }}
+
+      - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name == "" }}
+
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -45,6 +69,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name != "" }}
+        with:
+          repository: dezeroku/monitor-page
+          ref: aws-poc
+      - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name != "" }}
+        with:
+          path: plugins/${{ inputs.plugin-name }}
+
+      - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name == "" }}
+
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -66,6 +102,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name != "" }}
+        with:
+          repository: dezeroku/monitor-page
+          ref: aws-poc
+      - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name != "" }}
+        with:
+          path: plugins/${{ inputs.plugin-name }}
+
+      - uses: actions/checkout@v3
+        if: ${{ inputs.plugin-name == "" }}
+
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
