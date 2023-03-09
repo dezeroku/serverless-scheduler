@@ -104,6 +104,7 @@ Namely:
 - `lambda_zip_path` - path to zip file that should be used by the consumer Lambda (build system will automatically insert the zip built in step 1.)
 - `distribution_sns_topic_arn` - ARN of the SNS topic that deployment should monitor for incoming events with matching job_type
 - `common_layer_arn` - (optional support) ARN of the Lambda layer with `common` package. This is really only usable with Python based plugins
+- `plugins_layer_arn` - (optional support) ARN of the Lambda layer with `plugins-interface` package. This is really only usable with Python based plugins
 
 3. Plugin's directory contains a `<plugin-name>-api` python package that exports package following `serverless-scheduler-<>-api` naming scheme and contains `plugin_export` subpackage, which exports:
 

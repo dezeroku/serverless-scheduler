@@ -25,6 +25,7 @@ function plugin-terraform-common() {
     local stage
     local prefix
     local common_layer_arn
+    local plugins_layer_arn
     local lambda_zip_path
     local distribution_sns_topic_arn
 
@@ -33,9 +34,10 @@ function plugin-terraform-common() {
     stage="$(get_tf_output_var '.stage.value' 'items-infra')"
     prefix="$(get_tf_output_var '.items_core.value.prefix' 'items-infra')"
     common_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'common-lambda-layer-upload')"
+    plugins_layer_arn="$(get_tf_output_var '.layer_upload.value.layer_arn' 'plugins-lambda-layer-upload')"
     lambda_zip_path="$(readlink -f "${DEPLOY_DIR}/${target}-lambda.zip")"
     distribution_sns_topic_arn="$(get_tf_output_var '.distribution_sns.value.sns_topic_arn' 'distribution-sns')"
-    echo "-var aws_region=${aws_region} -var service=${service} -var stage=${stage} -var prefix=${prefix} -var common_layer_arn=${common_layer_arn} -var lambda_zip_path=${lambda_zip_path} -var distribution_sns_topic_arn=${distribution_sns_topic_arn}"
+    echo "-var aws_region=${aws_region} -var service=${service} -var stage=${stage} -var prefix=${prefix} -var common_layer_arn=${common_layer_arn} -var plugins_layer_arn=${plugins_layer_arn} -var lambda_zip_path=${lambda_zip_path} -var distribution_sns_topic_arn=${distribution_sns_topic_arn}"
 }
 
 function plugins-lambda-layer-upload-common() {
