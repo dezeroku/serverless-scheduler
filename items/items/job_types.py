@@ -1,6 +1,6 @@
 import logging
 
-from common.models.plugins import PLUGINS_ALL_CLASSES_LIST
+from common.models.plugins import PLUGINS_CLASS_MAPPING
 from items.libs.lambda_decorators import cors_headers, json_http_resp
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ def get(event, context) -> dict:
     return handler()
 
 
-def handler() -> list[dict]:
+def handler() -> dict:
     # Get all the classes from plugins and
     # report their schemas as a list
-    return list(map(lambda x: x.schema(), PLUGINS_ALL_CLASSES_LIST))
+    return {k.value: v.schema() for k, v in PLUGINS_CLASS_MAPPING.items()}
