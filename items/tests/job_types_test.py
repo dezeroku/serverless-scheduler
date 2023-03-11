@@ -8,7 +8,7 @@ from items.job_types import get, handler
 def test_job_types_get():
     job_types = handler()
 
-    assert job_types == [TestJob.schema()]
+    assert job_types == {"test": TestJob.schema()}
 
 
 def test_job_types_get_event():
@@ -18,4 +18,4 @@ def test_job_types_get_event():
 
     job_types = json.loads(result.get("body"))  # pylint: disable=no-member
 
-    assert job_types == [TestJob.schema()]
+    assert job_types == {"test": TestJob.schema()}
