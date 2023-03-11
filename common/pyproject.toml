@@ -19,7 +19,7 @@ hypothesis = "^6.68.2"
 serverless-scheduler-plugin-example-api = { path = "../serverless-scheduler-plugin-example-api", develop = true }
 
 [tool.coverage.run]
-omit = ["tests*"]
+omit = ["tests*", "*serverless-scheduler-plugin-example-api*"]
 
 [tool.pylint.MASTER]
 py-version = "3.9"
