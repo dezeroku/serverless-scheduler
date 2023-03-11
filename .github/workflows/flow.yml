@@ -75,7 +75,7 @@ jobs:
       - name: Check if swagger .py json schemas are up-to-date with swagger.yaml
         run: |
           pipx install openapi2jsonschema
-          utils/test_json_schemas_updated.sh
+          bash -x utils/test_json_schemas_updated.sh
 
   diagrams-png-generation:
     runs-on: ubuntu-latest
@@ -91,4 +91,4 @@ jobs:
 
       - name: Check if .py diagrams are up-to-date with generated .pngs
         run: |
-          GHA_DOCKER_CACHING=true utils/test_diagrams_are_up_to_date.sh
+          GHA_DOCKER_CACHING=true bash -x utils/test_diagrams_are_up_to_date.sh
