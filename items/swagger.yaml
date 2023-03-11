@@ -11,6 +11,24 @@ servers:
   - url: /v1
     description: first api version
 paths:
+  /job_types:
+    get:
+      security:
+        - bearerAuth: []
+      operationId: job_types
+      description: return all job_types that are supported via plugins
+      responses:
+        200:
+          description: list of all job_types that are supported via plugins
+          content:
+            application/json:
+              schema:
+                type:
+                  array
+                  #jobs:
+                  #$ref: "#/components/schemas/jobWithId"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
   /jobs:
     get:
       security:
