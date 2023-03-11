@@ -5,8 +5,11 @@ resource "aws_lambda_function" "lambda" {
   handler          = var.handler
   runtime          = var.runtime
   source_code_hash = filebase64sha256(var.lambda_zip_path)
-  environment {
-    variables = var.environment
+  dynamic "environment" {
+    for_each = length(keys(var.environment)) == 0 ? [] : [1]
+    content {
+      variables = var.environment
+    }
   }
   timeout    = var.timeout
   depends_on = [aws_cloudwatch_log_group.lambda]
