@@ -76,3 +76,19 @@ jobs:
         run: |
           pipx install openapi2jsonschema
           utils/test_json_schemas_updated.sh
+
+  diagrams-png-generation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Expose GitHub Runtime
+        # This is used to allow gha caching for buildx later on
+        uses: crazy-max/ghaction-github-runtime@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Check if .py diagrams are up-to-date with generated .pngs
+        run: |
+          GHA_DOCKER_CACHING=true utils/test_diagrams_are_up_to_date.sh
