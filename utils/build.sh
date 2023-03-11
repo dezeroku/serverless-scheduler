@@ -17,7 +17,7 @@ function usage() {
     cat << HEREDOC
 build.sh SCOPE
 where SCOPE can be one of:
-$(echo "${BUILD_TARGETS}" | tr ' ' '\n' | sed -e 's/^/- /')
+$(echo "${BUILD_TARGETS:-}" | tr ' ' '\n' | sed -e 's/^/- /')
 HEREDOC
 
     exit 1
