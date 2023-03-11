@@ -27,6 +27,7 @@ with Diagram("High Level Overview", show=False, outformat=["png"]):
                     Lambda("update"),
                     Lambda("delete"),
                     Lambda("get"),
+                    Lambda("job_types"),
                 ]
 
             items_db = DDB("Items")
@@ -45,7 +46,7 @@ with Diagram("High Level Overview", show=False, outformat=["png"]):
         with Cluster("distribution"):
             distribution_sns = SNS("Distribution")
 
-    with Cluster("html-monitor-job-consumer"):
+    with Cluster("serverless-scheduler-html-checker"):
         html_handler_sqs = [SQS("html_monitor_job")]
 
         html_handler_lambda = Lambda("HTMLMonitorJobHandler")
