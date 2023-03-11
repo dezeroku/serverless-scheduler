@@ -25,7 +25,7 @@ common = { path = "../common/", develop = true }
 serverless-scheduler-plugin-example-api = { path = "../serverless-scheduler-plugin-example-api", develop = true }
 
 [tool.coverage.run]
-omit = ["*tests*", "*common*"]
+omit = ["*tests*", "*common*", "*libs*", "*serverless-scheduler-plugin-example-api*"]
 
 [tool.pylint.MASTER]
 py-version = "3.9"
