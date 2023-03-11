@@ -15,7 +15,7 @@ fi
 docker buildx build . --build-arg UID="$(id -u)" --build-arg GID="$(id -u)" -t diagrams-builder ${EXTRA_ARGS:-}
 popd
 
-docker run -v "$PWD:/diagrams" -it diagrams-builder /bin/sh -c 'cd /diagrams; for x in $(ls *.py); do python $x; done;'
+docker run -v "$PWD:/diagrams" -i diagrams-builder /bin/sh -c 'cd /diagrams; for x in $(ls *.py); do python $x; done;'
 
 mkdir -p created
 
