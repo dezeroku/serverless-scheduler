@@ -24,7 +24,7 @@ paths:
             application/json:
               schema:
                 type:
-                  array
+                  object
                   #jobs:
                   #$ref: "#/components/schemas/jobWithId"
         401:
