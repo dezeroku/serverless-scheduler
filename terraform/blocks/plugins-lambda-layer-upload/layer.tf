@@ -1,4 +1,4 @@
-resource "aws_lambda_layer_version" "common_layer" {
+resource "aws_lambda_layer_version" "plugin_layer" {
   filename   = var.layer_zip_path
   layer_name = "${var.prefix}-plugin-layer"
 
