@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Lambda REST API for managing monitor jobs"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 readme = "README.md"
+exclude = ["**/*"]
+include = ["items/**/*.py"]
 
 [tool.poetry.dependencies]
 python = "^3.9"

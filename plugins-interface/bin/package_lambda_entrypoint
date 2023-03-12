@@ -12,7 +12,7 @@ rm -rf ".packaging"
 # At the very least, maybe let's build packages for the plugins and use that?
 # Right now, we are just copying everything as-it and using it during the build
 mkdir -p ".packaging/temp"
-rsync -r --exclude="*/.venv/" --exclude="*/.terraform/" --exclude="*/*~" "${RUNDIR}/../../plugins" ".packaging/temp/"
+rsync -r --exclude="*/.venv/" --exclude="*/.terraform/" "${RUNDIR}/../../plugins" ".packaging/temp/"
 
 # It's a Lambda layer
 export CUSTOM_PACKAGING_DIRECTORY="python"

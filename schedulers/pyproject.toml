@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "EventBridge Schedulers controller"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 readme = "README.md"
+exclude = ["**/*"]
+include = ["schedulers/**/*.py"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
