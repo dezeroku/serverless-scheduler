@@ -36,26 +36,28 @@ def handler(
     scheduler: EventBridgeSchedulerClient,
     scheduler_group: str,
     scheduler_role_arn: str,
-):
+) -> list[str]:
     message_ids = list(map(lambda x: x["messageId"], records))
     try:
         for rec in records:
             change_event = SchedulerChangeEvent(**json.loads(rec["body"]))
+            scheduler_id = change_event.scheduler_id
 
             if change_event.change_type == SchedulerChangeType.REMOVE:
                 job = None
             else:
                 job = change_event.scheduled_job
 
-            manager = SchedulerManager(
-                scheduler, scheduler_group, change_event.scheduler_id, job
-            )
+            manager = SchedulerManager(scheduler, scheduler_group, scheduler_id, job)
 
             if change_event.change_type == SchedulerChangeType.CREATE:
+                logger.info("CREATE: %s", scheduler_id)
                 manager.create(sns_topic_arn, scheduler_role_arn)
             elif change_event.change_type == SchedulerChangeType.MODIFY:
+                logger.info("MODIFY: %s", scheduler_id)
                 manager.update(sns_topic_arn, scheduler_role_arn)
             elif change_event.change_type == SchedulerChangeType.REMOVE:
+                logger.info("REMOVE: %s", scheduler_id)
                 manager.delete()
             else:
                 raise ValueError(
