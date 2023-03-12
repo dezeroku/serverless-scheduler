@@ -4,7 +4,7 @@ set -euo pipefail
 RUNDIR="$(readlink -f "$(dirname "$0")")"
 pushd "${RUNDIR}/.."
 
-export COMPONENT_NAME=plugins_interface
+export COMPONENT_NAME=serverless_scheduler_plugins_interface
 
 rm -rf ".packaging"
 

@@ -1,9 +1,11 @@
 [tool.poetry]
-name = "plugins-interface"
+name = "serverless-scheduler-plugins-interface"
 version = "0.1.0"
 description = "Meta-package for collecting API definitions for serverless-scheduler-*"
 authors = ["dezeroku <dezeroku@gmail.com>"]
 readme = "README.md"
+exclude = ["**/*"]
+include = ["serverless_scheduler_plugins_interface/**/*.py"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
