@@ -1,5 +1,9 @@
 import importlib
+import logging
 import pkgutil
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def discover_plugins(plugins_prefix):
@@ -18,7 +22,6 @@ def discover_plugins(plugins_prefix):
         for _, name, _ in pkgutil.iter_modules()
         if name.startswith(plugins_prefix) and name.endswith("_api")
     }
-    print(discovered_plugins)
     enum_mapping_all = {}
     class_mapping_all = {}
     for plugin in discovered_plugins.values():
@@ -27,7 +30,6 @@ def discover_plugins(plugins_prefix):
 
     all_classes_list = class_mapping_all.values()
 
-    print(enum_mapping_all)
-    print(class_mapping_all)
-    print(all_classes_list)
+    logger.info("Loaded plugins: %s", str(class_mapping_all))
+
     return enum_mapping_all, class_mapping_all, all_classes_list
