@@ -43,7 +43,7 @@ Couple screenshots from the provided web UI.
 
 ## TL;DR
 
-Prepare your own `<DEPLOY_ENV>-secret-values.tfvars` files for directories in `terraform/deployments` and `plugins/<plugin name>/terraform/`, and run
+Prepare your own `*-secret-values.tfvars` files based on `.example` files in `config/<DEPLOY_ENV>/`, and run
 
 ```
 ./utils/complete_build.sh
@@ -67,7 +67,7 @@ First build the packages by issuing
 ./utils/build.sh items
 ```
 
-then prepare the `<ENV>-secret-values.tfvars` in `terraform/deployments/core` (you can base on `dev-secret-values.tfvars.example` and finally
+then prepare the `config/<DEPLOY_ENV>/items-infra-secret-values.tfvars` (you can base on `config/<DEPLOY_ENV>/items-infra-secret-values.tfvars.example` and finally
 
 ```
 DEPLOY_ENV=<ENV> ./utils/deploy.sh items-infra
