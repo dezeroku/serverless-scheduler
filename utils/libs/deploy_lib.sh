@@ -17,18 +17,18 @@ DEPLOYABLE_TARGETS="items-infra common-lambda-layer-upload plugins-lambda-layer-
 function deploy_terraform() {
     local deploy_target="${1}"
     if [[ "${deploy_target}" =~ plugins/.* ]]; then
-        deploy_terraform_impl "$(sanitize_plugin_name "${deploy_target}")" "${PLUGINS_DIR}/${deploy_target#"plugins/"}/terraform" "true" "$(readlink -f "${RUNDIR}/../config")"
+        deploy_terraform_impl "$(sanitize_plugin_name "${deploy_target}")" "${PLUGINS_DIR}/${deploy_target#"plugins/"}/terraform" "true" "$(readlink -f "${RUNDIR}/../config")" "${ALLOW_WORKSPACE_CREATION:-false}" "${AUTO_APPROVE:-false}"
     else
-        deploy_terraform_impl "${deploy_target}" "${DEPLOYMENTS_DIR}/${deploy_target}" "false" "$(readlink -f "${RUNDIR}/../config")"
+        deploy_terraform_impl "${deploy_target}" "${DEPLOYMENTS_DIR}/${deploy_target}" "false" "$(readlink -f "${RUNDIR}/../config")" "${ALLOW_WORKSPACE_CREATION:-false}" "${AUTO_APPROVE:-false}"
     fi
 }
 
 function destroy_terraform() {
     local destroy_target="${1}"
     if [[ "${destroy_target}" =~ plugins/.* ]]; then
-        destroy_terraform_impl "$(sanitize_plugin_name "${destroy_target}")" "${PLUGINS_DIR}/${destroy_target#"plugins/"}/terraform" "true" "$(readlink -f "${RUNDIR}/../config")"
+        destroy_terraform_impl "$(sanitize_plugin_name "${destroy_target}")" "${PLUGINS_DIR}/${destroy_target#"plugins/"}/terraform" "true" "$(readlink -f "${RUNDIR}/../config")" "${AUTO_APPROVE:-false}"
     else
-        destroy_terraform_impl "${destroy_target}" "${DEPLOYMENTS_DIR}/${destroy_target}" "false" "$(readlink -f "${RUNDIR}/../config/")"
+        destroy_terraform_impl "${destroy_target}" "${DEPLOYMENTS_DIR}/${destroy_target}" "false" "$(readlink -f "${RUNDIR}/../config/")" "${AUTO_APPROVE:-false}"
     fi
 }
 
@@ -89,15 +89,30 @@ function deploy_terraform_impl() {
     # A single directory containing TF variables for all deployments
     local global_config="${4}"
 
+    local allow_workspace_creation="${5}"
+
+    local auto_approve="${6}"
+
     pushd "${deployment_dir}" || exit 1
 
-    terraform workspace select "${DEPLOY_ENV}"
+    if [[ "${allow_workspace_creation}" == "true" ]]; then
+        if ! terraform workspace select "${DEPLOY_ENV}"; then
+            echo "Creating new workspace ${DEPLOY_ENV}"
+            terraform workspace new "${DEPLOY_ENV}"
+        fi
+    else
+        terraform workspace select "${DEPLOY_ENV}"
+    fi
 
     suffix="$(terraform_impl_get_vars "${deploy_target}" "${deployment_dir}" "${is_plugin}" "${global_config}")"
 
     if [[ "$(type -t "${deploy_target}-pre-deploy-terraform")" == function ]]; then
         echo "Running pre-deploy-terraform for ${deploy_target}"
         suffix="${suffix} $("${deploy_target}-pre-deploy-terraform")"
+    fi
+
+    if [[ "${auto_approve}" == "true" ]]; then
+        suffix="${suffix} -auto-approve"
     fi
 
     # shellcheck disable=SC2086 # Intended globbing
@@ -113,6 +128,8 @@ function destroy_terraform_impl() {
     local destroy_target="${1}"
     local deployment_dir="${2}"
     local is_plugin="${3}"
+    local global_config="${4}"
+    local auto_approve="${5}"
 
     pushd "${deployment_dir}" || exit 1
 
@@ -125,6 +142,10 @@ function destroy_terraform_impl() {
         suffix="${suffix} $("${destroy_target}-pre-destroy-terraform")"
     fi
 
+    if [[ "${auto_approve}" == "true" ]]; then
+        suffix="${suffix} -auto-approve"
+    fi
+
     # shellcheck disable=SC2086 # Intended globbing
     terraform destroy ${suffix}
 
@@ -133,6 +154,8 @@ function destroy_terraform_impl() {
 
 function usage() {
     cat << HEREDOC
+ALLOW_WORKSPACE_CREATION=[false/true]
+AUTO_APPROVE=[false/true]
 $0 SCOPE
 where SCOPE can be one of:
 $(echo "${DEPLOYABLE_TARGETS}" | tr ' ' '\n' | sed -e 's/^/- /')
