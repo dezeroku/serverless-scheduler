@@ -1,0 +1,6 @@
+remote_state_env.hcl
+.terragrunt-cache
+terraform*
+.terraform*
+*secret-values*
+!secret-values*.example
