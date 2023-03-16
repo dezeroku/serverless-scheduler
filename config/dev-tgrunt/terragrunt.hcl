@@ -30,12 +30,6 @@ provider "aws" {
 EOF
 }
 
-inputs = {
-  aws_region = local.common_vars.locals.aws_region
-  service    = local.common_vars.locals.service
-  stage      = local.common_vars.locals.stage
-}
-
 locals {
   common_vars       = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   remote_state_vars = read_terragrunt_config(find_in_parent_folders("remote_state_env.hcl"))
