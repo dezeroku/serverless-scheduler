@@ -31,7 +31,7 @@ EOF
 }
 
 locals {
-  common_vars       = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-  remote_state_vars = read_terragrunt_config(find_in_parent_folders("remote_state_env.hcl"))
-  helper_vars       = read_terragrunt_config(find_in_parent_folders("helpers_env.hcl"))
+  common_vars       = read_terragrunt_config("${get_parent_terragrunt_dir()}/env.hcl")
+  remote_state_vars = read_terragrunt_config("${get_parent_terragrunt_dir()}/remote_state_env.hcl")
+  helper_vars       = read_terragrunt_config("${get_parent_terragrunt_dir()}/helpers_env.hcl")
 }
