@@ -39,4 +39,5 @@ inputs = {
 locals {
   common_vars       = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   remote_state_vars = read_terragrunt_config(find_in_parent_folders("remote_state_env.hcl"))
+  helper_vars = read_terragrunt_config(find_in_parent_folders("helpers_env.hcl"))
 }
