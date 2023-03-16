@@ -7,7 +7,7 @@ remote_state {
   config = {
     bucket = local.remote_state_vars.locals.remote_state_bucket
 
-    key     = "${local.common_vars.locals.service}/${path_relative_to_include()}/terraform.tfstate"
+    key     = "${local.common_vars.locals.service}/${local.common_vars.locals.stage}/${path_relative_to_include()}/terraform.tfstate"
     region  = local.remote_state_vars.locals.remote_state_region
     encrypt = true
     #dynamodb_table = "my-lock-table"
