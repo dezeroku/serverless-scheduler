@@ -108,3 +108,7 @@ In practice the consumer doesn't even have to be a Lambda function, although it'
 
 Installed plugins have access to the `common` layer (via the ARN provided), but they don't have access to `plugins` layer.
 The reasoning here is that a scope of a plugin should be completely covered by the single plugin.
+
+# Misc docs
+
+[Plugins](docs/md/plugins.md)
