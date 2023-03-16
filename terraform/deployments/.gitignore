@@ -1,4 +1,4 @@
 remote_state_env.hcl
 .terragrunt-cache
-*secret-values*
-!secret-values*.example
+_secret_values
+!_secret_values_examples

@@ -4,7 +4,7 @@ terraform {
   extra_arguments "common_vars" {
     commands = get_terraform_commands_that_need_vars()
     required_var_files = [
-      "./secret-values.tfvars",
+      "${get_terragrunt_dir()}/../_secret_values/items-infra-secret-values.tfvars",
     ]
   }
 }

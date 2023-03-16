@@ -32,6 +32,6 @@ EOF
 
 locals {
   common_vars       = read_terragrunt_config("${get_terragrunt_dir()}/../env.hcl")
-  remote_state_vars = read_terragrunt_config("${get_terragrunt_dir()}/../remote_state_env.hcl")
+  remote_state_vars = read_terragrunt_config("${get_terragrunt_dir()}/../_secret_values/remote_state_env.hcl")
   helper_vars       = read_terragrunt_config("${get_parent_terragrunt_dir()}/helpers_env.hcl")
 }
