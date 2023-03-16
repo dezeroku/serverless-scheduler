@@ -1,17 +1,12 @@
 terraform {
-  source = "../../../terraform//blocks/items-infra"
+  source = "../../..//blocks/items-infra"
 
   extra_arguments "common_vars" {
     commands = get_terraform_commands_that_need_vars()
     required_var_files = [
-      "core-values.tfvars.json",
       "./secret-values.tfvars",
     ]
   }
-}
-
-include "root" {
-  path = find_in_parent_folders()
 }
 
 generate "provider_acm" {
@@ -34,9 +29,10 @@ EOF
 }
 
 inputs = {
-  aws_region = local.common_vars.locals.aws_region
-  service    = local.common_vars.locals.service
-  stage      = local.common_vars.locals.stage
+  aws_region                  = local.common_vars.locals.aws_region
+  service                     = local.common_vars.locals.service
+  stage                       = local.common_vars.locals.stage
+  api_gateway_api_mapping_key = "v1"
 }
 
 locals {

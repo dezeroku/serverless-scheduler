@@ -7,7 +7,7 @@ remote_state {
   config = {
     bucket = local.remote_state_vars.locals.remote_state_bucket
 
-    key     = "${local.common_vars.locals.service}/${local.common_vars.locals.stage}/${path_relative_to_include()}/terraform.tfstate"
+    key     = "${local.common_vars.locals.service}/${local.common_vars.locals.stage}/${basename(path_relative_to_include())}/terraform.tfstate"
     region  = local.remote_state_vars.locals.remote_state_region
     encrypt = true
     #dynamodb_table = "my-lock-table"
@@ -31,7 +31,7 @@ EOF
 }
 
 locals {
-  common_vars       = read_terragrunt_config("${get_parent_terragrunt_dir()}/env.hcl")
-  remote_state_vars = read_terragrunt_config("${get_parent_terragrunt_dir()}/remote_state_env.hcl")
+  common_vars       = read_terragrunt_config("${get_terragrunt_dir()}/../env.hcl")
+  remote_state_vars = read_terragrunt_config("${get_terragrunt_dir()}/../remote_state_env.hcl")
   helper_vars       = read_terragrunt_config("${get_parent_terragrunt_dir()}/helpers_env.hcl")
 }
