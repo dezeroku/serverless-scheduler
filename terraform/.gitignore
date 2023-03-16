@@ -1,4 +1,2 @@
 terraform*
 .terraform*
-!terraform.tfvars.json
-*secret-values.tfvars
