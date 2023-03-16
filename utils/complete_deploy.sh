@@ -9,9 +9,6 @@ cd "${RUNDIR}/.."
 # shellcheck source=utils/libs/common.sh
 . "${RUNDIR}/libs/common.sh"
 
-# shellcheck source=utils/deploy_lib.sh
-. "${RUNDIR}/libs/deploy_lib.sh"
-
 [ -z "${DEPLOY_ENV:-}" ] && DEPLOY_ENV="dev"
 
 pushd terraform/deployments
