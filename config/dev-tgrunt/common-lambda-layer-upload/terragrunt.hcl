@@ -7,12 +7,12 @@ include "root" {
 }
 
 inputs = {
-    prefix=dependency.items_infra.outputs.prefix
-    layer_zip_path="${local.helper_vars.locals.deploy_dir}/common-lambda.zip"
+  prefix         = dependency.items_infra.outputs.prefix
+  layer_zip_path = "${local.helper_vars.locals.deploy_dir}/common-lambda.zip"
 }
 
 dependency "items_infra" {
-    config_path = "../items-infra"
+  config_path = "../items-infra"
 }
 
 locals {

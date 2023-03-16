@@ -7,12 +7,12 @@ include "root" {
 }
 
 inputs = {
-    front_bucket_name=dependency.items_infra.outputs.front_bucket_id
-    build_dir_path="${local.helper_vars.locals.deploy_dir}/front/"
+  front_bucket_name = dependency.items_infra.outputs.front_bucket_id
+  build_dir_path    = "${local.helper_vars.locals.deploy_dir}/front/"
 }
 
 dependency "items_infra" {
-    config_path = "../items-infra"
+  config_path = "../items-infra"
 }
 
 locals {
