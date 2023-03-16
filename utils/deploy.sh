@@ -15,4 +15,5 @@ cd "${RUNDIR}/.."
 DEPLOY_TARGET="${1}"
 contains "${DEPLOYABLE_TARGETS}" "${DEPLOY_TARGET}" || usage
 
-deploy_terraform "${DEPLOY_TARGET}"
+pushd terraform/deployments/"${DEPLOY_ENV}/${DEPLOY_TARGET}"
+terragrunt apply

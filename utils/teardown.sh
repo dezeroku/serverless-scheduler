@@ -15,5 +15,5 @@ cd "${RUNDIR}/.."
 DESTROY_TARGET="${1}"
 contains "${DEPLOYABLE_TARGETS}" "${DESTROY_TARGET}" || usage
 
-destroy_terraform "${DESTROY_TARGET}"
-rm -rf ".deployment-temp/${DEPLOY_ENV}/terraform/${DESTROY_TARGET}-outputs.json"
+pushd terraform/deployments/"${DEPLOY_ENV}/${DESTROY_TARGET}"
+terragrunt destroy
