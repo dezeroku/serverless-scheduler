@@ -56,6 +56,10 @@ jobs:
       #  with:
       #    path: ~/.tflint.d/plugins
       #    key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}-${{ env.tflint_version }}
+      - name: Setup Terragrunt
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: 0.42.7
       - uses: terraform-linters/setup-tflint@v3
         name: Setup TFLint
         #if: steps.cache-tflint.outputs.cache-hit != 'true'
