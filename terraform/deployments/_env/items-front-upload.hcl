@@ -1,5 +1,10 @@
 terraform {
   source = "../../..//blocks/items-front-upload"
+
+  before_hook "apply_pool_id" {
+    commands = ["apply", "plan"]
+    execute  = ["sed", "-i", "s/CLIENT_POOL_ID: \".*\"/CLIENT_POOL_ID: \"${dependency.items_infra.outputs.cognito_user_pool_client_id}\"/", "${local.helper_vars.locals.deploy_dir}/front/env-config.js"]
+  }
 }
 
 inputs = {
