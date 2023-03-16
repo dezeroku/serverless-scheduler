@@ -1,9 +1,5 @@
 terraform {
-  source = "../../../terraform//blocks/plugins-lambda-layer-upload"
-}
-
-include "root" {
-  path = find_in_parent_folders()
+  source = "../../..//blocks/plugins-lambda-layer-upload"
 }
 
 inputs = {

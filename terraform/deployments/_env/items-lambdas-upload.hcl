@@ -1,9 +1,5 @@
 terraform {
-  source = "../../../terraform//blocks/items-lambdas-upload"
-}
-
-include "root" {
-  path = find_in_parent_folders()
+  source = "../../..//blocks/items-lambdas-upload"
 }
 
 inputs = {

@@ -1,9 +1,5 @@
 terraform {
-  source = "../../../terraform//blocks/distribution-sns"
-}
-
-include "root" {
-  path = find_in_parent_folders()
+  source = "../../..//blocks/distribution-sns"
 }
 
 inputs = {

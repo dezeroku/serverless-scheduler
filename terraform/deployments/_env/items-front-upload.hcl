@@ -1,9 +1,5 @@
 terraform {
-  source = "../../../terraform//blocks/items-front-upload"
-}
-
-include "root" {
-  path = find_in_parent_folders()
+  source = "../../..//blocks/items-front-upload"
 }
 
 inputs = {

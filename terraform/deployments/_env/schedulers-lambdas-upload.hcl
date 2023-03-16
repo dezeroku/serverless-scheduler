@@ -1,9 +1,5 @@
 terraform {
-  source = "../../../terraform//blocks/schedulers-lambdas-upload"
-}
-
-include "root" {
-  path = find_in_parent_folders()
+  source = "../../..//blocks/schedulers-lambdas-upload"
 }
 
 inputs = {
