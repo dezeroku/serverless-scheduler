@@ -1,5 +1,5 @@
 terraform {
-  source = "../../..//blocks/items-infra"
+  source = "../../../src//blocks/items-infra"
 
   extra_arguments "common_vars" {
     commands = get_terraform_commands_that_need_vars()

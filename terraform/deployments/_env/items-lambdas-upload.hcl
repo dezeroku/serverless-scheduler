@@ -1,5 +1,5 @@
 terraform {
-  source = "../../..//blocks/items-lambdas-upload"
+  source = "../../../src//blocks/items-lambdas-upload"
 }
 
 inputs = {

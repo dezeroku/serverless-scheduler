@@ -1,5 +1,5 @@
 terraform {
-  source = "../../..//blocks/common-lambda-layer-upload"
+  source = "../../../src//blocks/common-lambda-layer-upload"
 }
 
 inputs = {

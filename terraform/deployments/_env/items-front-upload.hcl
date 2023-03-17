@@ -1,5 +1,5 @@
 terraform {
-  source = "../../..//blocks/items-front-upload"
+  source = "../../../src//blocks/items-front-upload"
 
   before_hook "apply_pool_id" {
     commands = ["apply", "plan"]

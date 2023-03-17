@@ -1,5 +1,5 @@
 terraform {
-  source = "../../..//blocks/schedulers-lambdas-upload"
+  source = "../../../src//blocks/schedulers-lambdas-upload"
 }
 
 inputs = {

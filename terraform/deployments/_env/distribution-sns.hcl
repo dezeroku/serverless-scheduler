@@ -1,5 +1,5 @@
 terraform {
-  source = "../../..//blocks/distribution-sns"
+  source = "../../../src//blocks/distribution-sns"
 }
 
 inputs = {
