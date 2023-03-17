@@ -1,4 +1,0 @@
-locals {
-    remote_state_region = "eu-central-1"
-    remote_state_bucket = "<YOUR_BUCKET_NAME>"
-}
