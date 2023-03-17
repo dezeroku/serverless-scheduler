@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-poetry run pylint items tests
+poetry run python3 -m pylint items tests
