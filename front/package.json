@@ -9,7 +9,7 @@
     "@types/react-dom": "16.9.4",
     "@types/react-router-dom": "^5.1.5",
     "axios": "^0.21.2",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "^5.2.3",
     "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
