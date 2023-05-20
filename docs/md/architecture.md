@@ -1,6 +1,6 @@
 # Architecture
 
-![Architecture](docs/diagrams/created/high_level_overview.png?raw=true "High Level Overview")
+![Architecture](../diagrams/created/high_level_overview.png?raw=true "High Level Overview")
 
 There are few packages worth mentioning that together make the system work:
 
