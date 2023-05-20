@@ -1,5 +1,7 @@
 # Serverless Scheduler
 
+[![Tests and packaging](https://github.com/dezeroku/serverless-scheduler/actions/workflows/flow.yml/badge.svg)](https://github.com/dezeroku/serverless-scheduler/actions/workflows/flow.yml)
+
 AWS based serverless solution for scheduling and running tasks.
 The main use at the moment is monitoring websites for changes in HTML, however it's easy to extend it with plugins that can be implemented to do whatever you like.
 
