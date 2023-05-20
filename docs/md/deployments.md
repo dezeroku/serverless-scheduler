@@ -1,5 +1,14 @@
 # Deployments
 
+## TL;DR
+
+Prepare your own `*-secret-values.tfvars` files based on `.example` files in `config/<DEPLOY_ENV>/`, and run
+
+```
+./utils/complete_build.sh
+./utils/complete_deploy.sh
+```
+
 ## Deployment of a singular component
 
 Each group has its own terraform "blocks", that define parts of the infra.
