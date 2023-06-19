@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -44,7 +44,7 @@ jobs:
     needs: poetry-install
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
@@ -64,7 +64,7 @@ jobs:
     needs: poetry-install
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
