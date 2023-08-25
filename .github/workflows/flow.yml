@@ -65,7 +65,7 @@ jobs:
         #if: steps.cache-tflint.outputs.cache-hit != 'true'
         with:
           tflint_version: ${{ env.tflint_version }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.6.0
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.6.0
       - name: Check if swagger .py json schemas are up-to-date with swagger.yaml
         run: |
           pipx install openapi2jsonschema
